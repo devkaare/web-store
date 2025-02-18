@@ -5,6 +5,7 @@ import (
 
 	// "github.com/devkaare/todo/handler"
 	// "github.com/devkaare/todo/repository/todo"
+	"github.com/a-h/templ"
 	"github.com/devkaare/web-store/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -25,10 +26,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	fileServer := http.FileServer(http.FS(views.Files))
 	r.Handle("/assets/*", fileServer)
-
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "/user", http.StatusSeeOther)
-	})
+	r.Get("/", templ.Handler(views.Base()).ServeHTTP)
 	r.Route("/user", s.RegisterUserRoutes)
 
 	return r
