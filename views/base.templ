@@ -1,0 +1,37 @@
+package views
+
+templ Base() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>Todo | by Kaare</title>
+			<meta name="color-scheme" content="light dark"/>
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"/>
+			// TODO: Add Tailwind
+			<script src="assets/js/htmx.min.js"></script>
+		</head>
+		<body>
+			<main>
+				<header>
+					<h1>Kaare's Web Store</h1>
+					<p>A simple project by Kaare</p>
+					<nav>
+						<ul>
+							<li>
+								<a href="/">Overview</a>
+							</li>
+						</ul>
+					</nav>
+				</header>
+				<section>
+					{ children... }
+				</section>
+				<footer>
+					<p>© 2025 Kaare</p>
+				</footer>
+			</main>
+		</body>
+	</html>
+}
