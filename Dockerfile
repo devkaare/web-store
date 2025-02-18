@@ -6,8 +6,9 @@ RUN go mod download
 
 COPY . .
 
-RUN go install github.com/a-h/templ/cmd/templ@latest
-RUN templ generate 
+RUN go install github.com/a-h/templ/cmd/templ@latest && \
+    templ generate && \
+    
 
 RUN go build -o /main cmd/api/main.go
 
