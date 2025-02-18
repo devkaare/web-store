@@ -29,6 +29,7 @@ tmp/
 # Project build
 main
 *templ.go
+tailwindcss
 
 # OS X generated file
 .DS_Store
