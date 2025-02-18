@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log"
 	"time"
-	// "github.com/devkaare/todo/model"
+	// "github.com/devkaare/web-store/model"
 )
 
 type PostgresRepo struct {
