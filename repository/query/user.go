@@ -52,27 +52,28 @@ func (r *PostgresRepo) CreateUser(user *model.User) error {
 	return nil
 }
 
-// func (r *PostgresRepo) GetTodoList() ([]model.Todo, error) {
-// 	var todos []model.Todo
-//
-// 	rows, err := r.Client.Query("SELECT * FROM todo")
-// 	if err != nil {
-// 		return todos, err
-// 	}
-// 	defer rows.Close()
-//
-// 	for rows.Next() {
-// 		var todo model.Todo
-// 		if err := rows.Scan(&todo.ID, &todo.Title, &todo.Description); err != nil {
-// 			return nil, fmt.Errorf("GetTodoList %d: %v", todo.ID, err)
-// 		}
-// 		todos = append(todos, todo)
-// 	}
-// 	if err := rows.Err(); err != nil {
-// 		return nil, fmt.Errorf("GetTodoList %v:", err)
-// 	}
-// 	return todos, nil
-// }
+func (r *PostgresRepo) GetUsers() ([]model.User, error) {
+	var users []model.User
+
+	rows, err := r.Client.Query("SELECT * FROM todo")
+	if err != nil {
+		return todos, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var user model.User
+		if err := rows.Scan(&todo.ID, &todo.Title, &todo.Description); err != nil {
+			return nil, fmt.Errorf("GetTodoList %d: %v", todo.ID, err)
+		}
+		todos = append(todos, todo)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("GetTodoList %v:", err)
+	}
+	return todos, nil
+}
+
 //
 // func (r *PostgresRepo) GetTodoByID(id uint32) (*model.Todo, error) {
 // 	todo := &model.Todo{}
