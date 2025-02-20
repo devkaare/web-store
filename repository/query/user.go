@@ -55,9 +55,9 @@ func (r *PostgresRepo) CreateUser(user *model.User) error {
 func (r *PostgresRepo) GetUsers() ([]model.User, error) {
 	var users []model.User
 
-	rows, err := r.Client.Query("SELECT * FROM todo")
+	rows, err := r.Client.Query("SELECT * FROM users")
 	if err != nil {
-		return todos, err
+		return users, err
 	}
 	defer rows.Close()
 
