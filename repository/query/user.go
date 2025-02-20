@@ -7,7 +7,8 @@ import (
 	"fmt"
 	"log"
 	"time"
-	// "github.com/devkaare/web-store/model"
+
+	"github.com/devkaare/web-store/model"
 )
 
 type PostgresRepo struct {
@@ -39,18 +40,18 @@ func (r *PostgresRepo) Close() error {
 	return r.Client.Close()
 }
 
-// func (r *PostgresRepo) CreateTodo(todo *model.Todo) error {
-// 	_, err := r.Client.Exec(
-// 		"INSERT INTO todo (id, title, description) VALUES ($1, $2, $3)",
-// 		todo.ID, todo.Title, todo.Description,
-// 	)
-// 	if err != nil {
-// 		return fmt.Errorf("CreateTodo: %v", err)
-// 	}
-//
-// 	return nil
-// }
-//
+func (r *PostgresRepo) CreateUser(user *model.User) error {
+	_, err := r.Client.Exec(
+		"INSERT INTO users (user_id, email, password) VALUES ($1, $2, $3)",
+		user.UserID, user.Email, user.Password,
+	)
+	if err != nil {
+		return fmt.Errorf("CreateUser: %v", err)
+	}
+
+	return nil
+}
+
 // func (r *PostgresRepo) GetTodoList() ([]model.Todo, error) {
 // 	var todos []model.Todo
 //
