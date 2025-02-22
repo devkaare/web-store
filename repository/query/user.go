@@ -3,7 +3,7 @@ package query
 import (
 	"context"
 	"database/sql"
-	// "errors"
+	"errors"
 	"fmt"
 	"log"
 	"time"
@@ -63,32 +63,30 @@ func (r *PostgresRepo) GetUsers() ([]model.User, error) {
 
 	for rows.Next() {
 		var user model.User
-		if err := rows.Scan(&todo.ID, &todo.Title, &todo.Description); err != nil {
-			return nil, fmt.Errorf("GetTodoList %d: %v", todo.ID, err)
+		if err := rows.Scan(&user.UserID, &user.Email, &user.Password); err != nil {
+			return nil, fmt.Errorf("GetUsers %d: %v", user.UserID, err)
 		}
-		todos = append(todos, todo)
+		users = append(users, user)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("GetTodoList %v:", err)
 	}
-	return todos, nil
+	return users, nil
 }
 
-//
-// func (r *PostgresRepo) GetTodoByID(id uint32) (*model.Todo, error) {
-// 	todo := &model.Todo{}
-//
-// 	row := r.Client.QueryRow("SELECT * FROM todo WHERE id = $1", id)
-// 	if err := row.Scan(&todo.ID, &todo.Title, &todo.Description); err != nil {
-// 		if err == sql.ErrNoRows {
-// 			return todo, errors.New("todo not found")
-// 		}
-// 		return todo, fmt.Errorf("GetTodoByID %d: %v", id, err)
-// 	}
-// 	return todo, nil
-//
-// }
-//
+func (r *PostgresRepo) GetUserByID(userID uint32) (model.User, error) {
+	var user model.User
+	row := r.Client.QueryRow("SELECT * FROM users WHERE user_id = $1", userID)
+	if err := row.Scan(&user.UserID, &user.Email, &user.Password); err != nil {
+		if err == sql.ErrNoRows {
+			return user, errors.New("user not found")
+		}
+		return user, fmt.Errorf("GetTodoByID %d: %v", userID, err)
+	}
+	return user, nil
+
+}
+
 // func (r *PostgresRepo) UpdateTodoByID(todo *model.Todo) error {
 // 	_, err := r.Client.Exec("UPDATE todo SET title = $2, description = $3 WHERE id = $1", todo.ID, todo.Title, todo.Description)
 // 	if err != nil {
