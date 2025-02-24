@@ -52,7 +52,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (u *User) GetUser(w http.ResponseWriter, r *http.Request) {
+func (u *User) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	URLParam := chi.URLParam(r, "ID")
 	userID, err := strconv.Atoi(URLParam)
 	if err != nil {

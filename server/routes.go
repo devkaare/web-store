@@ -3,9 +3,9 @@ package server
 import (
 	"net/http"
 
-	// "github.com/devkaare/todo/handler"
-	// "github.com/devkaare/todo/repository/todo"
 	"github.com/a-h/templ"
+	"github.com/devkaare/web-store/handler"
+	"github.com/devkaare/web-store/repository/query"
 	"github.com/devkaare/web-store/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -27,18 +27,23 @@ func (s *Server) RegisterRoutes() http.Handler {
 	fileServer := http.FileServer(http.FS(views.Files))
 	r.Handle("/assets/*", fileServer)
 	r.Get("/", templ.Handler(views.Base()).ServeHTTP)
-	r.Route("/user", s.RegisterUserRoutes)
+	r.Route("/users", s.RegisterUserRoutes)
+	r.Route("/utils", s.RegisterUtilsRoutes)
 
 	return r
 }
 
 func (s *Server) RegisterUserRoutes(r chi.Router) {
-	// todoHandler := &handler.Todo{
-	// 	Repo: &todo.PostgresRepo{
-	// 		Client: s.db,
-	// 	},
-	// }
-	//
+	userHandler := &handler.User{
+		Repo: &query.PostgresRepo{
+			Client: s.db,
+		},
+	}
+
+	r.Post("/", userHandler.CreateUser)
+	r.Get("/", userHandler.GetUsers)
+	r.Get("/{ID}", userHandler.GetUserByID)
+
 	// r.Get("/health", todoHandler.Health)
 	// r.Post("/", todoHandler.Create)
 	// r.Get("/", todoHandler.List)
@@ -46,4 +51,14 @@ func (s *Server) RegisterUserRoutes(r chi.Router) {
 	// r.Get("/edit/{ID}", todoHandler.EditByID)
 	// r.Put("/{ID}", todoHandler.UpdateByID)
 	// r.Delete("/{ID}", todoHandler.DeleteByID)
+}
+
+func (s *Server) RegisterUtilsRoutes(r chi.Router) {
+	utilsHandler := &handler.Utils{
+		Repo: &query.PostgresRepo{
+			Client: s.db,
+		},
+	}
+
+	r.Get("/health", utilsHandler.Health)
 }
