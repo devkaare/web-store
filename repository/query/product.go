@@ -1,7 +1,7 @@
 package query
 
 import (
-	// "database/sql"
+	"database/sql"
 	"fmt"
 
 	"github.com/devkaare/web-store/model"
@@ -42,39 +42,39 @@ func (r *PostgresRepo) GetProducts() ([]model.Product, error) {
 	return products, nil
 }
 
-// func (r *PostgresRepo) GetProductByProductID(userID uint32) (*model.Product, bool, error) {
-// 	user := &model.Product{}
-//
-// 	row := r.Client.QueryRow("SELECT * FROM users WHERE user_id = $1", userID)
-// 	if err := row.Scan(&product.ProductID, &product.Email, &product.Password); err != nil {
-// 		if err == sql.ErrNoRows {
-// 			return user, false, err
-// 		}
-// 		return user, false, fmt.Errorf("GetProductByProductID %d: %v", userID, err)
-// 	}
-// 	return user, true, nil
-//
-// }
-//
-// func (r *PostgresRepo) UpdateProductByProductID(user *model.Product) error {
-// 	_, err := r.Client.Exec("UPDATE user SET email = $2, password = $3 WHERE user_id = $1", product.ProductID, product.Email, product.Password)
-// 	if err != nil {
-// 		return fmt.Errorf("UpdateProductByProductID: %v", err)
-// 	}
-// 	return nil
-// }
-//
-// func (r *PostgresRepo) DeleteProductByProductID(userID uint32) error {
-// 	result, err := r.Client.Exec("DELETE FROM users WHERE user_id = $1", userID)
-// 	if err != nil {
-// 		return fmt.Errorf("DeleteProductByProductID %d, %v", userID, err)
-// 	}
-// 	count, err := result.RowsAffected()
-// 	if err != nil {
-// 		return fmt.Errorf("DeleteProductByProductID %d: %v", userID, err)
-// 	}
-// 	if count < 1 {
-// 		return fmt.Errorf("DeleteProductByProductID %d: no such user", userID)
-// 	}
-// 	return nil
-// }
+func (r *PostgresRepo) GetProductByProductID(productID uint32) (*model.Product, bool, error) {
+	product := &model.Product{}
+
+	row := r.Client.QueryRow("SELECT * FROM products WHERE product_id = $1", productID)
+	if err := row.Scan(&product.ProductID, &product.Name, &product.Price, product.Sizes, product.ImagePath); err != nil {
+		if err == sql.ErrNoRows {
+			return product, false, err
+		}
+		return product, false, fmt.Errorf("GetProductByProductID %d: %v", productID, err)
+	}
+	return product, true, nil
+
+}
+
+func (r *PostgresRepo) UpdateProductByProductID(product *model.Product) error {
+	_, err := r.Client.Exec("UPDATE product SET name = $2, price = $3, sizes = $4, image_path = $5 WHERE product_id = $1", product.ProductID, product.Name, product.Price, product.Sizes, product.ImagePath)
+	if err != nil {
+		return fmt.Errorf("UpdateProductByProductID: %v", err)
+	}
+	return nil
+}
+
+func (r *PostgresRepo) DeleteProductByProductID(productID uint32) error {
+	result, err := r.Client.Exec("DELETE FROM products WHERE product_id = $1", productID)
+	if err != nil {
+		return fmt.Errorf("DeleteProductByProductID %d, %v", productID, err)
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("DeleteProductByProductID %d: %v", productID, err)
+	}
+	if count < 1 {
+		return fmt.Errorf("DeleteProductByProductID %d: no such product", productID)
+	}
+	return nil
+}
