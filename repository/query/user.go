@@ -48,7 +48,7 @@ func (r *PostgresRepo) GetUserByUserID(userID uint32) (*model.User, bool, error)
 	row := r.Client.QueryRow("SELECT * FROM users WHERE user_id = $1", userID)
 	if err := row.Scan(&user.UserID, &user.Email, &user.Password); err != nil {
 		if err == sql.ErrNoRows {
-			return user, false, err
+			return user, false, nil
 		}
 		return user, false, fmt.Errorf("GetUserByUserID %d: %v", userID, err)
 	}
@@ -58,7 +58,7 @@ func (r *PostgresRepo) GetUserByUserID(userID uint32) (*model.User, bool, error)
 
 // TODO: Change to update email or update password
 func (r *PostgresRepo) UpdateUserByUserID(user *model.User) error {
-	_, err := r.Client.Exec("UPDATE user SET email = $2, password = $3 WHERE user_id = $1", user.UserID, user.Email, user.Password)
+	_, err := r.Client.Exec("UPDATE users SET email = $2, password = $3 WHERE user_id = $1", user.UserID, user.Email, user.Password)
 	if err != nil {
 		return fmt.Errorf("UpdateUserByUserID: %v", err)
 	}

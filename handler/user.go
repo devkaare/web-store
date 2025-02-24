@@ -1,19 +1,13 @@
 package handler
 
 import (
-	// "context"
-	// "encoding/json"
 	"fmt"
 	"log"
-	// "errors"
-	// "log"
-	// "math/rand/v2"
 	"net/http"
 	"strconv"
 
 	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository/query"
-	// "github.com/devkaare/todo/views"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -52,7 +46,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (u *User) GetUserByID(w http.ResponseWriter, r *http.Request) {
+func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 	URLParam := chi.URLParam(r, "ID")
 	userID, err := strconv.Atoi(URLParam)
 	if err != nil {
@@ -61,120 +55,82 @@ func (u *User) GetUserByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, _, err := u.Repo.GetUserByUserID(uint32(userID))
+	user, ok, err := u.Repo.GetUserByUserID(uint32(userID))
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		fmt.Fprintf(w, "user with user_id: %d does not exist", userID)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	fmt.Fprintln(w, user)
 }
 
-// func (u *User) Create(w http.ResponseWriter, r *http.Request) {
-// 	todo := &model.Todo{
-// 		ID:          rand.Uint32N(2147483647),
-// 		Title:       r.FormValue("title"),
-// 		Description: r.FormValue("description"),
-// 	}
-// 	if _, err := t.Repo.GetTodoByID(todo.ID); err == errors.New("todo not found") && err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-//
-// 	if err := t.Repo.CreateTodo(todo); err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-// 	views.TodoPost(todo).Render(context.Background(), w)
-// }
-//
-// func (u *User) List(w http.ResponseWriter, r *http.Request) {
-// 	todos, err := t.Repo.GetTodoList()
-// 	if err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-// 	views.TodoForm(todos).Render(context.Background(), w)
-// }
-//
-// func (u *User) GetByID(w http.ResponseWriter, r *http.Request) {
-// 	URLParam := chi.URLParam(r, "ID")
-// 	id, err := strconv.Atoi(URLParam)
-// 	if err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-//
-// 	todo, err := t.Repo.GetTodoByID(uint32(id))
-// 	if err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-// 	views.TodoByIDForm(todo).Render(context.Background(), w)
-// }
-//
-// func (u *User) UpdateByID(w http.ResponseWriter, r *http.Request) {
-// 	URLParam := chi.URLParam(r, "ID")
-// 	id, err := strconv.Atoi(URLParam)
-// 	if err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-//
-// 	todo := &model.Todo{
-// 		ID:          uint32(id),
-// 		Title:       r.FormValue("title"),
-// 		Description: r.FormValue("description"),
-// 	}
-//
-// 	if err := t.Repo.UpdateTodoByID(todo); err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-//
-// 	w.Write([]byte("<p>Successfully updated todo!</p>"))
-// }
-//
-// func (u *User) DeleteByID(w http.ResponseWriter, r *http.Request) {
-// 	URLParam := chi.URLParam(r, "ID")
-// 	id, err := strconv.Atoi(URLParam)
-// 	if err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-//
-// 	if err := t.Repo.DeleteTodoByID(uint32(id)); err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-//
-// 	w.Write([]byte("<p>Successfully deleted todo!</p>"))
-// }
-//
-// func (u *User) EditByID(w http.ResponseWriter, r *http.Request) {
-// 	URLParam := chi.URLParam(r, "ID")
-// 	id, err := strconv.Atoi(URLParam)
-// 	if err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-//
-// 	todo, err := t.Repo.GetTodoByID(uint32(id))
-// 	if err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-// 	views.TodoByIDPost(todo).Render(context.Background(), w)
-// }
+func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
+	URLParam := chi.URLParam(r, "ID")
+	userID, err := strconv.Atoi(URLParam)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	_, ok, err := u.Repo.GetUserByUserID(uint32(userID))
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		fmt.Fprintf(w, "user with user_id: %d does not exist", userID)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if err := u.Repo.DeleteUserByUserID(uint32(userID)); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
+	URLParam := chi.URLParam(r, "ID")
+	userID, err := strconv.Atoi(URLParam)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	_, ok, err := u.Repo.GetUserByUserID(uint32(userID))
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		fmt.Fprintf(w, "user with user_id: %d does not exist", userID)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+
+	user := &model.User{
+		UserID:   uint32(userID),
+		Email:    email,
+		Password: password,
+	}
+
+	if err := u.Repo.UpdateUserByUserID(user); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}

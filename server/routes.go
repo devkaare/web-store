@@ -42,7 +42,9 @@ func (s *Server) RegisterUserRoutes(r chi.Router) {
 
 	r.Post("/", userHandler.CreateUser)
 	r.Get("/", userHandler.GetUsers)
-	r.Get("/{ID}", userHandler.GetUserByID)
+	r.Get("/{ID}", userHandler.GetUserByUserID)
+	r.Delete("/{ID}", userHandler.DeleteUserByUserID)
+	r.Put("/{ID}", userHandler.UpdateUserByUserID)
 
 	// r.Get("/health", todoHandler.Health)
 	// r.Post("/", todoHandler.Create)
