@@ -82,4 +82,4 @@ watch:
             fi; \
         fi
 
-.PHONY: all build run test clean watch docker-build docker-run docker-down itest templ-install tailwind-install
+.PHONY: all build run test clean watch docker-build docker-run docker-down db-run db-down itest templ-install tailwind-install
