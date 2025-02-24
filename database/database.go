@@ -31,7 +31,13 @@ func New() *sql.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, email TEXT NOT NULL, password TEXT NOT NULL)"); err != nil {
+		log.Fatal(err)
+	}
+
+	// TODO: Change sizes to use postgres arrays
+	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS products (product_id SERIAL PRIMARY KEY, name TEXT NOT NULL, price INT NOT NULL, sizes TEXT NOT NULL, image_path TEXT NOT NULL)"); err != nil {
 		log.Fatal(err)
 	}
 	return db
