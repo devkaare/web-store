@@ -40,5 +40,6 @@ func New() *sql.DB {
 	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS products (product_id SERIAL PRIMARY KEY, name TEXT NOT NULL, price INT NOT NULL, sizes TEXT NOT NULL, image_path TEXT NOT NULL)"); err != nil {
 		log.Fatal(err)
 	}
+
 	return db
 }
