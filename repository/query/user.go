@@ -1,55 +1,23 @@
 package query
 
 import (
-	"context"
 	"database/sql"
-	"errors"
 	"fmt"
-	"log"
-	"time"
 
 	"github.com/devkaare/web-store/model"
 )
 
-type PostgresRepo struct {
-	Client *sql.DB
-}
-
-func (r *PostgresRepo) Health() map[string]string {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer cancel()
-
-	stats := make(map[string]string)
-
-	err := r.Client.PingContext(ctx)
+func (r *PostgresRepo) CreateUser(user *model.User) (int, error) {
+	lastInsertedID := 0
+	err := r.Client.QueryRow(
+		"INSERT INTO users (email, password) VALUES ($1, $2) RETURNING user_id",
+		user.Email, user.Password,
+	).Scan(&lastInsertedID)
 	if err != nil {
-		stats["status"] = "down"
-		stats["error"] = fmt.Sprintf("db down: %v", err)
-		log.Fatalf("db down: %v", err)
-		return stats
+		return lastInsertedID, fmt.Errorf("CreateUser: %v", err)
 	}
 
-	stats["status"] = "up"
-	stats["message"] = "It's healthy"
-
-	return stats
-}
-
-func (r *PostgresRepo) Close() error {
-	log.Println("Disconnected from database")
-	return r.Client.Close()
-}
-
-func (r *PostgresRepo) CreateUser(user *model.User) error {
-	_, err := r.Client.Exec(
-		"INSERT INTO users (user_id, email, password) VALUES ($1, $2, $3)",
-		user.UserID, user.Email, user.Password,
-	)
-	if err != nil {
-		return fmt.Errorf("CreateUser: %v", err)
-	}
-
-	return nil
+	return lastInsertedID, nil
 }
 
 func (r *PostgresRepo) GetUsers() ([]model.User, error) {
@@ -69,43 +37,45 @@ func (r *PostgresRepo) GetUsers() ([]model.User, error) {
 		users = append(users, user)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("GetTodoList %v:", err)
+		return nil, fmt.Errorf("GetUsers %v:", err)
 	}
 	return users, nil
 }
 
-func (r *PostgresRepo) GetUserByID(userID uint32) (model.User, error) {
-	var user model.User
+func (r *PostgresRepo) GetUserByUserID(userID uint32) (*model.User, bool, error) {
+	user := &model.User{}
+
 	row := r.Client.QueryRow("SELECT * FROM users WHERE user_id = $1", userID)
 	if err := row.Scan(&user.UserID, &user.Email, &user.Password); err != nil {
 		if err == sql.ErrNoRows {
-			return user, errors.New("user not found")
+			return user, false, err
 		}
-		return user, fmt.Errorf("GetTodoByID %d: %v", userID, err)
+		return user, false, fmt.Errorf("GetUserByUserID %d: %v", userID, err)
 	}
-	return user, nil
+	return user, true, nil
 
 }
 
-// func (r *PostgresRepo) UpdateTodoByID(todo *model.Todo) error {
-// 	_, err := r.Client.Exec("UPDATE todo SET title = $2, description = $3 WHERE id = $1", todo.ID, todo.Title, todo.Description)
-// 	if err != nil {
-// 		return fmt.Errorf("UpdateTodoByID: %v", err)
-// 	}
-// 	return nil
-// }
-//
-// func (r *PostgresRepo) DeleteTodoByID(id uint32) error {
-// 	result, err := r.Client.Exec("DELETE FROM todo WHERE id = $1", id)
-// 	if err != nil {
-// 		return fmt.Errorf("DeleteTodoByID %d, %v", id, err)
-// 	}
-// 	count, err := result.RowsAffected()
-// 	if err != nil {
-// 		return fmt.Errorf("DeleteTodoByID %d: %v", id, err)
-// 	}
-// 	if count < 1 {
-// 		return fmt.Errorf("DeleteTodoByID %d: no such todo", id)
-// 	}
-// 	return nil
-// }
+// TODO: Change to update email or update password
+func (r *PostgresRepo) UpdateUserByUserID(user *model.User) error {
+	_, err := r.Client.Exec("UPDATE user SET email = $2, password = $3 WHERE user_id = $1", user.UserID, user.Email, user.Password)
+	if err != nil {
+		return fmt.Errorf("UpdateUserByUserID: %v", err)
+	}
+	return nil
+}
+
+func (r *PostgresRepo) DeleteUserByUserID(userID uint32) error {
+	result, err := r.Client.Exec("DELETE FROM users WHERE user_id = $1", userID)
+	if err != nil {
+		return fmt.Errorf("DeleteUserByUserID %d, %v", userID, err)
+	}
+	count, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("DeleteUserByUserID %d: %v", userID, err)
+	}
+	if count < 1 {
+		return fmt.Errorf("DeleteUserByUserID %d: no such user", userID)
+	}
+	return nil
+}

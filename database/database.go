@@ -31,7 +31,7 @@ func New() *sql.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS todo (id INT NOT NULL PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL)"); err != nil {
+	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, email TEXT NOT NULL, password TEXT NOT NULL)"); err != nil {
 		log.Fatal(err)
 	}
 	return db
