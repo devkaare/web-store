@@ -22,7 +22,7 @@ services:
       psql:
         condition: service_healthy
     networks:
-      - web-store
+      - web_store
   psql:
     image: postgres:latest
     restart: unless-stopped
@@ -31,7 +31,7 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "${DB_PORT}:5433"
+      - "${DB_PORT}:5432"
     volumes:
       - psql_volume:/var/lib/postgresql/data
     healthcheck:
@@ -41,9 +41,9 @@ services:
       retries: 3
       start_period: 15s
     networks:
-      - web-store
+      - web_store
 
 volumes:
   psql_volume:
 networks:
-  web-store:
+  web_store:

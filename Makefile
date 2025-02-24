@@ -31,7 +31,7 @@ build: tailwind-install templ-install
 # Run the application
 run:
 	@go run $(MAIN_FILE)
-	#
+
 # Create DB container
 docker-build:
 	@docker compose up --build
@@ -43,6 +43,14 @@ docker-run:
 # Shutdown DB container
 docker-down:
 	@docker-compose down
+
+# Run DB service
+db-run:
+	@docker compose up -d psql
+
+# Shutdown DB service
+db-down:
+	@docker compose stop psql
 
 # Test the application
 test:
