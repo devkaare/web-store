@@ -41,9 +41,9 @@ func New() *sql.DB {
 		log.Fatal(err)
 	}
 
-	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS cart_items (user_id INT PRIMARY KEY, product_id INT NOT NULL, size TEXT NOT NULL, quantity INT NOT NULL"); err != nil {
-		log.Fatal(err)
-	}
+	// if _, err := db.Exec("CREATE TABLE IF NOT EXISTS cart_items (user_id INT PRIMARY KEY, product_id INT NOT NULL, size TEXT NOT NULL, quantity INT NOT NULL"); err != nil {
+	// log.Fatal(err)
+	// }
 
 	return db
 }
