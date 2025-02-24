@@ -33,6 +33,16 @@ func (s *Server) RegisterRoutes() http.Handler {
 	return r
 }
 
+func (s *Server) RegisterUtilsRoutes(r chi.Router) {
+	utilsHandler := &handler.Utils{
+		Repo: &query.PostgresRepo{
+			Client: s.db,
+		},
+	}
+
+	r.Get("/health", utilsHandler.Health)
+}
+
 func (s *Server) RegisterUserRoutes(r chi.Router) {
 	userHandler := &handler.User{
 		Repo: &query.PostgresRepo{
@@ -45,14 +55,4 @@ func (s *Server) RegisterUserRoutes(r chi.Router) {
 	r.Get("/{ID}", userHandler.GetUserByUserID)
 	r.Put("/{ID}", userHandler.UpdateUserByUserID)
 	r.Delete("/{ID}", userHandler.DeleteUserByUserID)
-}
-
-func (s *Server) RegisterUtilsRoutes(r chi.Router) {
-	utilsHandler := &handler.Utils{
-		Repo: &query.PostgresRepo{
-			Client: s.db,
-		},
-	}
-
-	r.Get("/health", utilsHandler.Health)
 }
