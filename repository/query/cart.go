@@ -6,7 +6,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *PostgresRepo) AddToCart(cartItem *model.CartItem) error {
+func (r *PostgresRepo) AddCartItem(cartItem *model.CartItem) error {
 	_, err := r.Client.Exec(
 		"INSERT INTO cart_items (user_id, product_id, size, quantity) VALUES ($1, $2, $3, $4)",
 		cartItem.UserID, cartItem.ProductID, cartItem.Size, cartItem.Quantity,
@@ -52,12 +52,12 @@ func (r *PostgresRepo) GetCartItemsByUserID(userID int) ([]model.CartItem, error
 	for rows.Next() {
 		var cartItem model.CartItem
 		if err := rows.Scan(&cartItem.UserID, &cartItem.ProductID, &cartItem.Size, cartItem.Quantity); err != nil {
-			return nil, fmt.Errorf("GetCartItems %d: %v", cartItem.UserID, err)
+			return nil, fmt.Errorf("GetCartItemsByUserID %d: %v", cartItem.UserID, err)
 		}
 		cartItems = append(cartItems, cartItem)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("GetCartItems %v:", err)
+		return nil, fmt.Errorf("GetCartItemsByUserID %v:", err)
 	}
 	return cartItems, nil
 }
@@ -65,7 +65,7 @@ func (r *PostgresRepo) GetCartItemsByUserID(userID int) ([]model.CartItem, error
 func (r *PostgresRepo) UpdateCartItemQuantity(cartItem *model.CartItem) error {
 	_, err := r.Client.Exec("UPDATE cart_items SET quantity = $4 WHERE user_id = $1 AND product_id = $2 AND size = $3", cartItem.UserID, cartItem.ProductID, cartItem.Size, cartItem.Quantity)
 	if err != nil {
-		return fmt.Errorf("UpdateCartByCartID: %v", err)
+		return fmt.Errorf("UpdateCartItemQuantity: %v", err)
 	}
 	return nil
 }
