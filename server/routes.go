@@ -43,16 +43,8 @@ func (s *Server) RegisterUserRoutes(r chi.Router) {
 	r.Post("/", userHandler.CreateUser)
 	r.Get("/", userHandler.GetUsers)
 	r.Get("/{ID}", userHandler.GetUserByUserID)
-	r.Delete("/{ID}", userHandler.DeleteUserByUserID)
 	r.Put("/{ID}", userHandler.UpdateUserByUserID)
-
-	// r.Get("/health", todoHandler.Health)
-	// r.Post("/", todoHandler.Create)
-	// r.Get("/", todoHandler.List)
-	// r.Get("/{ID}", todoHandler.GetByID)
-	// r.Get("/edit/{ID}", todoHandler.EditByID)
-	// r.Put("/{ID}", todoHandler.UpdateByID)
-	// r.Delete("/{ID}", todoHandler.DeleteByID)
+	r.Delete("/{ID}", userHandler.DeleteUserByUserID)
 }
 
 func (s *Server) RegisterUtilsRoutes(r chi.Router) {
