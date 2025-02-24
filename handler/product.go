@@ -76,3 +76,68 @@ func (p *Product) GetProductByProductID(w http.ResponseWriter, r *http.Request) 
 
 	fmt.Fprintln(w, product)
 }
+
+func (u *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
+	URLParam := chi.URLParam(r, "ID")
+	productID, err := strconv.Atoi(URLParam)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	_, ok, err := u.Repo.GetProductByProductID(uint32(productID))
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		fmt.Fprintf(w, "product with product_id: %d does not exist", productID)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if err := u.Repo.DeleteProductByProductID(uint32(productID)); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+// func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
+// 	URLParam := chi.URLParam(r, "ID")
+// 	userID, err := strconv.Atoi(URLParam)
+// 	if err != nil {
+// 		log.Println(err)
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		return
+// 	}
+//
+// 	_, ok, err := u.Repo.GetUserByUserID(uint32(userID))
+// 	if err != nil {
+// 		log.Println(err)
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		return
+// 	}
+// 	if !ok {
+// 		fmt.Fprintf(w, "user with user_id: %d does not exist", userID)
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	}
+//
+// 	email := r.FormValue("email")
+// 	password := r.FormValue("password")
+//
+// 	user := &model.User{
+// 		UserID:   uint32(userID),
+// 		Email:    email,
+// 		Password: password,
+// 	}
+//
+// 	if err := u.Repo.UpdateUserByUserID(user); err != nil {
+// 		log.Println(err)
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		return
+// 	}
+// }
