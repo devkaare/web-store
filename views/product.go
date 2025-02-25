@@ -6,13 +6,16 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/a-h/templ"
 	"github.com/devkaare/web-store/model"
+	"github.com/go-chi/chi/v5"
 )
 
 func ProductHandler(w http.ResponseWriter, r *http.Request) {
-	resp, err := http.Get("http://localhost:3000/products/12")
+	_, productID := strconv.Atoi(chi.URLParam(r, "ID"))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:3000/products/%d", productID))
 	if err != nil {
 		log.Fatal(err)
 		w.WriteHeader(http.StatusInternalServerError)
