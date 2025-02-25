@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/devkaare/web-store/auth"
+	"github.com/devkaare/web-store/hash"
 	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository/query"
 	"github.com/go-chi/chi/v5"
@@ -35,7 +35,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	passwordHash, err := auth.HashPassword(password)
+	passwordHash, err := hash.HashPassword(password)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -47,7 +47,6 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Password: passwordHash,
 	}
 
-	// TODO: Use returned userID for auth
 	if _, err := u.Repo.CreateUser(user); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -116,7 +115,7 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	passwordHash, err := auth.HashPassword(password)
+	passwordHash, err := hash.HashPassword(password)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

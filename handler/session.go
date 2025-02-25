@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/devkaare/web-store/auth"
+	"github.com/devkaare/web-store/hash"
 	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository/query"
 	"github.com/google/uuid"
@@ -30,7 +30,7 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if !ok || auth.CheckPasswordHash(expectedPassword, user.Password) {
+	if !ok || hash.CheckPasswordHash(expectedPassword, user.Password) {
 		fmt.Fprintln(w, "invalid credentials")
 		w.WriteHeader(http.StatusUnauthorized)
 		return
