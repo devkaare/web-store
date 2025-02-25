@@ -95,11 +95,52 @@ func TestCreateUser(t *testing.T) {
 
 	fmt.Println(strings.NewReader(rawData.Encode()))
 	req, err := http.NewRequest("POST", urlStr, strings.NewReader(rawData.Encode()))
-	// req.Header.Add("Authorization", "auth_token=\"XXXXXXX\"")
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	if err != nil {
 		t.Fatalf("TestCreateUser: %v", err)
 	}
+
+	// req.Header.Add("Authorization", "auth_token=\"XXXXXXX\"")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	r.ServeHTTP(respRec, req)
+
+	fmt.Println(respRec.Result().Status)
+}
+
+func TestDeleteUser(t *testing.T) {
+	setup()
+
+	req, err = http.NewRequest("DELETE", "/users/1", nil)
+	if err != nil {
+		t.Fatalf("TestDeleteUser: %v", err)
+	}
+
+	r.ServeHTTP(respRec, req)
+
+	fmt.Println(respRec.Result().Status)
+}
+
+func TestUpdateUser(t *testing.T) {
+	setup()
+
+	apiUrl := "http://localhost:3000"
+	resource := "/users/1"
+	rawData := url.Values{}
+	rawData.Set("email", "willsmithspersonalemail@gmail.com")
+	rawData.Set("password", "supersecret123")
+
+	u, _ := url.ParseRequestURI(apiUrl)
+	u.Path = resource
+	urlStr := u.String()
+
+	fmt.Println(strings.NewReader(rawData.Encode()))
+	req, err := http.NewRequest("PUT", urlStr, strings.NewReader(rawData.Encode()))
+	if err != nil {
+		t.Fatalf("TestUpdateUser: %v", err)
+	}
+
+	// req.Header.Add("Authorization", "auth_token=\"XXXXXXX\"")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	r.ServeHTTP(respRec, req)
 
