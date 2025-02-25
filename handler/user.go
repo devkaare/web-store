@@ -30,7 +30,6 @@ func (u *User) GetUsers(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-// curl -X POST localhost:3000/users -d "email=johndoe@gmail.com&password=secretpass8888"
 func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
@@ -96,7 +95,6 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// curl -X PUT localhost:3000/users/1 -d "email=newjohndoe@gmail.com&password=newPassword"
 func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
