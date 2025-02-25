@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -202,4 +203,17 @@ func (s *Session) LogOut(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
+
+func (s *Session) GetSessions(w http.ResponseWriter, r *http.Request) {
+	sessions, err := s.Repo.GetSessions()
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(sessions)
+	_, _ = w.Write(jsonResp)
 }
