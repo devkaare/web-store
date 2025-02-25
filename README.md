@@ -1,3 +1,3 @@
-# Kaare's Web Store
+# Kaare's Webstore
 
 > WIP

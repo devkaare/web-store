@@ -28,15 +28,15 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Handle("/assets/*", fileServer)
 	r.Get("/", templ.Handler(views.Base()).ServeHTTP)
 
-	r.Route("/utils", s.RegisterUtilsRoutes)
-	r.Route("/users", s.RegisterUserRoutes)
-	r.Route("/products", s.RegisterProductRoutes)
-	r.Route("/carts", s.RegisterCartRoutes)
+	r.Route("/utils", s.registerUtilsRoutes)
+	r.Route("/users", s.registerUserRoutes)
+	r.Route("/products", s.registerProductRoutes)
+	r.Route("/carts", s.registerCartRoutes)
 
 	return r
 }
 
-func (s *Server) RegisterUtilsRoutes(r chi.Router) {
+func (s *Server) registerUtilsRoutes(r chi.Router) {
 	utilsHandler := &handler.Utils{
 		Repo: &query.PostgresRepo{
 			Client: s.db,
@@ -46,7 +46,7 @@ func (s *Server) RegisterUtilsRoutes(r chi.Router) {
 	r.Get("/health", utilsHandler.Health)
 }
 
-func (s *Server) RegisterUserRoutes(r chi.Router) {
+func (s *Server) registerUserRoutes(r chi.Router) {
 	userHandler := &handler.User{
 		Repo: &query.PostgresRepo{
 			Client: s.db,
@@ -60,7 +60,7 @@ func (s *Server) RegisterUserRoutes(r chi.Router) {
 	r.Delete("/{ID}", userHandler.DeleteUserByUserID)
 }
 
-func (s *Server) RegisterProductRoutes(r chi.Router) {
+func (s *Server) registerProductRoutes(r chi.Router) {
 	productHandler := &handler.Product{
 		Repo: &query.PostgresRepo{
 			Client: s.db,
@@ -75,7 +75,7 @@ func (s *Server) RegisterProductRoutes(r chi.Router) {
 	r.Delete("/{ID}", productHandler.DeleteProductByProductID)
 }
 
-func (s *Server) RegisterCartRoutes(r chi.Router) {
+func (s *Server) registerCartRoutes(r chi.Router) {
 	cartHandler := &handler.CartItem{
 		Repo: &query.PostgresRepo{
 			Client: s.db,
