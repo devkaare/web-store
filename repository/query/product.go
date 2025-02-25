@@ -59,6 +59,8 @@ func (r *PostgresRepo) GetProductByProductID(productID uint32) (*model.Product, 
 func (r *PostgresRepo) GetProductsByPage(page uint32) ([]model.Product, error) {
 	var products []model.Product
 
+	// TODO: Add pagination to get 10 products per page
+
 	return products, nil
 }
 
