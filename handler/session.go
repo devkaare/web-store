@@ -20,6 +20,33 @@ func isExpired(s *model.Session) bool {
 	return s.Expiry.Before(time.Now())
 }
 
+func (s *Session) SignUp(w http.ResponseWriter, r *http.Request) {
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+
+	_, ok, err := s.Repo.GetUserByEmail(email)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if ok {
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
+
+	user := &model.User{
+		Email:    email,
+		Password: password,
+	}
+
+	if _, err := s.Repo.CreateUser(user); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
 func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	expectedPassword := r.FormValue("password")

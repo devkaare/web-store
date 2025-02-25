@@ -95,6 +95,7 @@ func (s *Server) registerSessionRoutes(r chi.Router) {
 		},
 	}
 
+	r.Post("/signup", sessionHandler.SignUp)
 	r.Post("/signin", sessionHandler.SignIn)
 	r.Post("/refresh", sessionHandler.Refresh)
 	r.Get("/welcome", sessionHandler.Welcome)
