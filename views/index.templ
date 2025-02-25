@@ -12,8 +12,8 @@ templ index(products []model.Product) {
 		for _, p := range products {
 			<div>
 				<img src={ p.ImagePath }/>
-				<p>{ p.Name } <strong>${ string(templ.SafeURL(fmt.Sprintf("%d", p.Price))) }</strong></p>
-				<a href={ templ.SafeURL(fmt.Sprintf("/products/%d", p.ProductID)) }></a>
+				<p>{ p.Name } <strong>${ fmt.Sprintf("%d", p.Price) }</strong></p>
+				<a href={ templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) }>View</a>
 			</div>
 		}
 		// TODO: Add page nav buttons

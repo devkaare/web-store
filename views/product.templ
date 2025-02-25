@@ -10,7 +10,7 @@ templ product(p *model.Product) {
 	@components.Base() {
 		<div>
 			<h2>{ p.Name }</h2>
-			<p><strong>${ string(templ.SafeURL(fmt.Sprintf("%d", p.Price))) }</strong></p>
+			<p><strong>${ fmt.Sprintf("%d", p.Price) }</strong></p>
 			<form>
 				<label for="sizes">Choose a size:</label>
 				<select id="sizes" name="sizes">
