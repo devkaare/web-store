@@ -19,7 +19,7 @@ var (
 	db      *sql.DB
 
 	port       = 3000
-	testUserID = 9
+	testUserID = 12
 )
 
 func setup() {
@@ -80,6 +80,29 @@ func TestGetUsers(t *testing.T) {
 	data, err := io.ReadAll(result)
 	if err != nil {
 		t.Fatalf("TestGetUsers: %v", err)
+	}
+
+	fmt.Println(string(data))
+}
+
+func TestGetUserByUserID(t *testing.T) {
+	setup()
+
+	req, err = http.NewRequest("GET", fmt.Sprintf("/users/%d", testUserID), nil)
+	if err != nil {
+		t.Fatalf("TestGetUserByUserID: %v", err)
+	}
+
+	r.ServeHTTP(respRec, req)
+
+	if respRec.Code != http.StatusOK {
+		t.Fatalf("TestGetUserByUserID: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
+	}
+
+	result := respRec.Result().Body
+	data, err := io.ReadAll(result)
+	if err != nil {
+		t.Fatalf("TestGetUserByUserID: %v", err)
 	}
 
 	fmt.Println(string(data))
