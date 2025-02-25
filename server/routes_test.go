@@ -107,19 +107,6 @@ func TestCreateUser(t *testing.T) {
 	fmt.Println(respRec.Result().Status)
 }
 
-func TestDeleteUser(t *testing.T) {
-	setup()
-
-	req, err = http.NewRequest("DELETE", "/users/1", nil)
-	if err != nil {
-		t.Fatalf("TestDeleteUser: %v", err)
-	}
-
-	r.ServeHTTP(respRec, req)
-
-	fmt.Println(respRec.Result().Status)
-}
-
 func TestUpdateUser(t *testing.T) {
 	setup()
 
@@ -141,6 +128,19 @@ func TestUpdateUser(t *testing.T) {
 
 	// req.Header.Add("Authorization", "auth_token=\"XXXXXXX\"")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	r.ServeHTTP(respRec, req)
+
+	fmt.Println(respRec.Result().Status)
+}
+
+func TestDeleteUser(t *testing.T) {
+	setup()
+
+	req, err = http.NewRequest("DELETE", "/users/1", nil)
+	if err != nil {
+		t.Fatalf("TestDeleteUser: %v", err)
+	}
 
 	r.ServeHTTP(respRec, req)
 
