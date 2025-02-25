@@ -27,8 +27,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 	fileServer := http.FileServer(http.FS(views.Files))
 	r.Handle("/assets/*", fileServer)
 	r.Get("/", templ.Handler(views.Base()).ServeHTTP)
-	r.Route("/users", s.RegisterUserRoutes)
+
 	r.Route("/utils", s.RegisterUtilsRoutes)
+	r.Route("/users", s.RegisterUserRoutes)
+	r.Route("/products", s.RegisterProductRoutes)
+	r.Route("/cart", s.RegisterCartRoutes)
 
 	return r
 }
