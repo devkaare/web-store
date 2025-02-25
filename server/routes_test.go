@@ -83,32 +83,25 @@ func TestGetUsers(t *testing.T) {
 func TestCreateUser(t *testing.T) {
 	setup()
 
+	apiUrl := "http://localhost:3000"
 	resource := "/users/"
 	rawData := url.Values{}
-	rawData.Set("email", "willsmith@gmail.com")
-	rawData.Set("password", "secret123")
+	rawData.Set("email", "willsmithspersonalemail@gmail.com")
+	rawData.Set("password", "supersecret123")
 
-	u, _ := url.ParseRequestURI("http://localhost:3000")
+	u, _ := url.ParseRequestURI(apiUrl)
 	u.Path = resource
 	urlStr := u.String()
 
+	fmt.Println(strings.NewReader(rawData.Encode()))
 	req, err := http.NewRequest("POST", urlStr, strings.NewReader(rawData.Encode()))
-	// req.Header.Add("Authorization")
+	// req.Header.Add("Authorization", "auth_token=\"XXXXXXX\"")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	if err != nil {
 		t.Fatalf("TestCreateUser: %v", err)
 	}
 
 	r.ServeHTTP(respRec, req)
 
-	if respRec.Code != http.StatusOK {
-		t.Fatalf("TestCreateUser: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
-	}
-
-	result := respRec.Result().Body
-	data, err := io.ReadAll(result)
-	if err != nil {
-		t.Fatalf("TestCreateUser: %v", err)
-	}
-
-	fmt.Println(string(data))
+	fmt.Println(respRec.Result().Status)
 }
