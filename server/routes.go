@@ -3,7 +3,6 @@ package server
 import (
 	"net/http"
 
-	"github.com/a-h/templ"
 	"github.com/devkaare/web-store/handler"
 	"github.com/devkaare/web-store/repository/query"
 	"github.com/devkaare/web-store/views"
@@ -26,7 +25,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	fileServer := http.FileServer(http.FS(views.Files))
 	r.Handle("/assets/*", fileServer)
-	r.Get("/", templ.Handler(views.Base()).ServeHTTP)
 
 	r.Route("/utils", s.registerUtilsRoutes)
 	r.Route("/users", s.registerUserRoutes)
