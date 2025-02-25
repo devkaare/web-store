@@ -11,11 +11,16 @@ import (
 	"testing"
 )
 
-var r http.Handler
-var req *http.Request
-var err error
-var respRec *httptest.ResponseRecorder
-var db *sql.DB
+var (
+	r       http.Handler
+	req     *http.Request
+	err     error
+	respRec *httptest.ResponseRecorder
+	db      *sql.DB
+
+	port       = 3000
+	testUserID = 9
+)
 
 func setup() {
 	testServer := &Server{
@@ -83,7 +88,7 @@ func TestGetUsers(t *testing.T) {
 func TestCreateUser(t *testing.T) {
 	setup()
 
-	apiUrl := "http://localhost:3000"
+	apiUrl := fmt.Sprintf("http://localhost:%d", port)
 	resource := "/users/"
 	rawData := url.Values{}
 	rawData.Set("email", "willsmithspersonalemail@gmail.com")
@@ -105,15 +110,17 @@ func TestCreateUser(t *testing.T) {
 	r.ServeHTTP(respRec, req)
 
 	fmt.Println(respRec.Result().Status)
+
+	TestGetUsers(t)
 }
 
 func TestUpdateUser(t *testing.T) {
 	setup()
 
-	apiUrl := "http://localhost:3000"
-	resource := "/users/1"
+	apiUrl := fmt.Sprintf("http://localhost:%d", port)
+	resource := fmt.Sprintf("/users/%d", testUserID)
 	rawData := url.Values{}
-	rawData.Set("email", "willsmithspersonalemail@gmail.com")
+	rawData.Set("email", "coolwillsmith@gmail.com")
 	rawData.Set("password", "supersecret123")
 
 	u, _ := url.ParseRequestURI(apiUrl)
@@ -132,12 +139,14 @@ func TestUpdateUser(t *testing.T) {
 	r.ServeHTTP(respRec, req)
 
 	fmt.Println(respRec.Result().Status)
+
+	TestGetUsers(t)
 }
 
 func TestDeleteUser(t *testing.T) {
 	setup()
 
-	req, err = http.NewRequest("DELETE", "/users/1", nil)
+	req, err = http.NewRequest("DELETE", fmt.Sprintf("/users/%d", testUserID), nil)
 	if err != nil {
 		t.Fatalf("TestDeleteUser: %v", err)
 	}
@@ -145,4 +154,6 @@ func TestDeleteUser(t *testing.T) {
 	r.ServeHTTP(respRec, req)
 
 	fmt.Println(respRec.Result().Status)
+
+	TestGetUsers(t)
 }
