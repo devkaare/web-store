@@ -9,7 +9,6 @@ import (
 
 templ index(products []model.Product) {
 	@components.Base() {
-		<h1>Welcome!</h1>
 		for _, p := range products {
 			<div>
 				<img src={ p.ImagePath }/>
@@ -17,5 +16,6 @@ templ index(products []model.Product) {
 				<a href={ templ.SafeURL(fmt.Sprintf("/products/%d", p.ProductID)) }></a>
 			</div>
 		}
+		// TODO: Add page nav buttons
 	}
 }

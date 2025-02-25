@@ -30,7 +30,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/{ID}", views.ProductHandler)
 	r.Post("/signup", views.SignUpHandler)
 	r.Post("/signin", views.SignInHandler)
-	r.Post("/cart", views.SignInHandler)
+	r.Get("/cart", views.SignInHandler)
 
 	r.Route("/utils", s.registerUtilsRoutes)
 	r.Route("/users", s.registerUserRoutes)

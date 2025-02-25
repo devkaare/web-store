@@ -12,7 +12,7 @@ import (
 )
 
 func IndexPageHandler(w http.ResponseWriter, r *http.Request) {
-	resp, err := http.Get("http://localhost:3000/products")
+	resp, err := http.Get("http://localhost:3000/products/listings?page=1")
 	if err != nil {
 		log.Fatal(err)
 		w.WriteHeader(http.StatusInternalServerError)
