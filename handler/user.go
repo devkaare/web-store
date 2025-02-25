@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/devkaare/web-store/auth"
 	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository/query"
 	"github.com/go-chi/chi/v5"
@@ -33,13 +34,20 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	user := &model.User{
-		Email:    email,
-		Password: password, // TODO: Hash pass
+	passwordHash, err := auth.HashPassword(password)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	_, err := u.Repo.CreateUser(user) // TODO: Use returned userID for auth
-	if err != nil {
+	user := &model.User{
+		Email:    email,
+		Password: passwordHash, // TODO: Hash pass
+	}
+
+	// TODO: Use returned userID for auth
+	if _, err := u.Repo.CreateUser(user); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -122,10 +130,17 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
+	passwordHash, err := auth.HashPassword(password)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	user := &model.User{
 		UserID:   uint32(userID),
 		Email:    email,
-		Password: password,
+		Password: passwordHash,
 	}
 
 	if err := u.Repo.UpdateUserByUserID(user); err != nil {
