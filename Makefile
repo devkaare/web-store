@@ -29,7 +29,7 @@ build: tailwind-install templ-install
 	@go build -o main $(MAIN_FILE)
 
 # Run the application
-run:
+run: build
 	@go run $(MAIN_FILE)
 
 # Create DB container

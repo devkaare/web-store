@@ -14,6 +14,7 @@ templ index(products []model.Product) {
 				<img src={ p.ImagePath }/>
 				<p>{ p.Name } <strong>${ fmt.Sprintf("%d", p.Price) }</strong></p>
 				<a href={ templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) }>View</a>
+				// WARN: surround templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) with string() when inside HTMX fields
 			</div>
 		}
 		// TODO: Add page nav buttons

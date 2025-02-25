@@ -26,17 +26,17 @@ func (s *Server) RegisterRoutes() http.Handler {
 	fileServer := http.FileServer(http.FS(views.Files))
 	r.Handle("/assets/*", fileServer)
 
-	r.Get("/", views.IndexPageHandler)
-	r.Get("/{ID}", views.ProductHandler)
-	r.Post("/signup", views.SignUpHandler)
-	r.Post("/signin", views.SignInHandler)
-	r.Get("/cart", views.SignInHandler)
-
 	r.Route("/utils", s.registerUtilsRoutes)
 	r.Route("/users", s.registerUserRoutes)
 	r.Route("/products", s.registerProductRoutes)
 	r.Route("/carts", s.registerCartRoutes)
 	r.Route("/sessions", s.registerSessionRoutes)
+
+	r.Get("/signup", views.SignUpHandler)
+	r.Get("/signin", views.SignInHandler)
+	r.Get("/cart", views.CartHandler)
+	r.Get("/listings", views.IndexPageHandler)
+	r.Get("/listings/{ID}", views.ProductHandler)
 
 	return r
 }

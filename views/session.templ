@@ -6,7 +6,7 @@ templ signIn() {
 	@components.Base() {
 		<div>
 			<h1>Log In</h1>
-			<form action="/session/signin" method="post">
+			<form action="/sessions/signin">
 				<label for="email">Email:</label>
 				<input type="text" id="email" name="email"/>
 				<br/>
@@ -26,7 +26,7 @@ templ signUp() {
 	@components.Base() {
 		<div>
 			<h1>Sign Up</h1>
-			<form action="/session/signup" method="post">
+			<form action="/sessions/signup">
 				<label for="email">Email:</label>
 				<input type="text" id="email" name="email"/>
 				<br/>
