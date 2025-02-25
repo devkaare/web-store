@@ -32,7 +32,7 @@ func (r *PostgresRepo) GetProducts() ([]model.Product, error) {
 
 	for rows.Next() {
 		var product model.Product
-		if err := rows.Scan(&product.ProductID, &product.Name, &product.Price, product.Sizes, product.ImagePath); err != nil {
+		if err := rows.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
 			return nil, fmt.Errorf("GetProducts %d: %v", product.ProductID, err)
 		}
 		products = append(products, product)
@@ -47,7 +47,7 @@ func (r *PostgresRepo) GetProductByProductID(productID uint32) (*model.Product, 
 	product := &model.Product{}
 
 	row := r.Client.QueryRow("SELECT * FROM products WHERE product_id = $1", productID)
-	if err := row.Scan(&product.ProductID, &product.Name, &product.Price, product.Sizes, product.ImagePath); err != nil {
+	if err := row.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
 		if err == sql.ErrNoRows {
 			return product, false, nil
 		}

@@ -29,7 +29,7 @@ func (r *PostgresRepo) GetCartItems() ([]model.CartItem, error) {
 
 	for rows.Next() {
 		var cartItem model.CartItem
-		if err := rows.Scan(&cartItem.UserID, &cartItem.ProductID, &cartItem.Size, cartItem.Quantity); err != nil {
+		if err := rows.Scan(&cartItem.UserID, &cartItem.ProductID, &cartItem.Size, &cartItem.Quantity); err != nil {
 			return nil, fmt.Errorf("GetCartItems %d: %v", cartItem.UserID, err)
 		}
 		cartItems = append(cartItems, cartItem)
@@ -51,7 +51,7 @@ func (r *PostgresRepo) GetCartItemsByUserID(userID uint32) ([]model.CartItem, er
 
 	for rows.Next() {
 		var cartItem model.CartItem
-		if err := rows.Scan(&cartItem.UserID, &cartItem.ProductID, &cartItem.Size, cartItem.Quantity); err != nil {
+		if err := rows.Scan(&cartItem.UserID, &cartItem.ProductID, &cartItem.Size, &cartItem.Quantity); err != nil {
 			return nil, fmt.Errorf("GetCartItemsByUserID %d: %v", cartItem.UserID, err)
 		}
 		cartItems = append(cartItems, cartItem)
