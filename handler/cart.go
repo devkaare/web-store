@@ -27,8 +27,16 @@ func (c *CartItem) GetCartItems(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
-	URLParam := chi.URLParam(r, "ID")
-	userID, err := strconv.Atoi(URLParam)
+	rawUserID := chi.URLParam(r, "userID")
+	rawProductID := chi.URLParam(r, "productID")
+
+	userID, err := strconv.Atoi(rawUserID)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	productID, err := strconv.Atoi(rawProductID)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -37,15 +45,8 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 
 	size := r.FormValue("size")
 	rawQuantity := r.FormValue("quantity")
-	rawProductID := r.FormValue("productID")
 
 	quantity, err := strconv.Atoi(rawQuantity)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	productID, err := strconv.Atoi(rawProductID)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -67,7 +68,7 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
-	URLParam := chi.URLParam(r, "ID")
+	URLParam := chi.URLParam(r, "userID")
 	userID, err := strconv.Atoi(URLParam)
 	if err != nil {
 		log.Println(err)

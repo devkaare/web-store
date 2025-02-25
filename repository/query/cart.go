@@ -8,7 +8,7 @@ import (
 
 func (r *PostgresRepo) CreateCartItem(cartItem *model.CartItem) error {
 	_, err := r.Client.Exec(
-		"INSERT INTO cart_items (user_id, product_id, size, quantity) VALUES ($1, $2, $3, $4)",
+		"INSERT INTO cart_items (user_id, product_id, sizes, quantity) VALUES ($1, $2, $3, $4)",
 		cartItem.UserID, cartItem.ProductID, cartItem.Size, cartItem.Quantity,
 	)
 	if err != nil {
@@ -63,7 +63,7 @@ func (r *PostgresRepo) GetCartItemsByUserID(userID uint32) ([]model.CartItem, er
 }
 
 func (r *PostgresRepo) UpdateCartItemQuantity(cartItem *model.CartItem) error {
-	_, err := r.Client.Exec("UPDATE cart_items SET quantity = $4 WHERE user_id = $1 AND product_id = $2 AND size = $3", cartItem.UserID, cartItem.ProductID, cartItem.Size, cartItem.Quantity)
+	_, err := r.Client.Exec("UPDATE cart_items SET quantity = $4 WHERE user_id = $1 AND product_id = $2 AND sizes = $3", cartItem.UserID, cartItem.ProductID, cartItem.Size, cartItem.Quantity)
 	if err != nil {
 		return fmt.Errorf("UpdateCartItemQuantity: %v", err)
 	}
@@ -71,7 +71,7 @@ func (r *PostgresRepo) UpdateCartItemQuantity(cartItem *model.CartItem) error {
 }
 
 func (r *PostgresRepo) DeleteCartItem(cartItem *model.CartItem) error {
-	result, err := r.Client.Exec("DELETE FROM cart_items WHERE user_id = $1 AND product_id = $2 AND size = $3", cartItem.UserID, cartItem.ProductID, cartItem.Size)
+	result, err := r.Client.Exec("DELETE FROM cart_items WHERE user_id = $1 AND product_id = $2 AND sizes = $3", cartItem.UserID, cartItem.ProductID, cartItem.Size)
 	if err != nil {
 		return fmt.Errorf("DeleteCartItem %d, %v", cartItem.UserID, err)
 	}

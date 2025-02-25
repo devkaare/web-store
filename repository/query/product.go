@@ -20,7 +20,6 @@ func (r *PostgresRepo) CreateProduct(product *model.Product) (int, error) {
 	return lastInsertedID, nil
 }
 
-// WARN: This won't work, either try to clear DB or update code
 func (r *PostgresRepo) GetProducts() ([]model.Product, error) {
 	var products []model.Product
 
@@ -65,7 +64,7 @@ func (r *PostgresRepo) GetProductsByPage(page uint32) ([]model.Product, error) {
 }
 
 func (r *PostgresRepo) UpdateProductByProductID(product *model.Product) error {
-	_, err := r.Client.Exec("UPDATE product SET name = $2, price = $3, sizes = $4, image_path = $5 WHERE product_id = $1", product.ProductID, product.Name, product.Price, product.Sizes, product.ImagePath)
+	_, err := r.Client.Exec("UPDATE products SET name = $2, price = $3, sizes = $4, image_path = $5 WHERE product_id = $1", product.ProductID, product.Name, product.Price, product.Sizes, product.ImagePath)
 	if err != nil {
 		return fmt.Errorf("UpdateProductByProductID: %v", err)
 	}
