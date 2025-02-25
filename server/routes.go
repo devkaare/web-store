@@ -70,6 +70,7 @@ func (s *Server) RegisterProductRoutes(r chi.Router) {
 	r.Post("/", productHandler.CreateProduct)
 	r.Get("/", productHandler.GetProducts)
 	r.Get("/{ID}", productHandler.GetProductsByProductID)
+	r.Get("/listings", productHandler.GetProductsByPage)
 	r.Put("/{ID}", productHandler.UpdateProductByProductID)
 	r.Delete("/{ID}", productHandler.DeleteProductByProductID)
 }

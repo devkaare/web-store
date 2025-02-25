@@ -77,6 +77,25 @@ func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request)
 	fmt.Fprintln(w, product)
 }
 
+func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
+	rawPage := r.URL.Query().Get("page")
+	page, err := strconv.Atoi(rawPage)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	products, err := p.Repo.GetProductsByPage(uint32(page))
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintln(w, products)
+}
+
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
 	URLParam := chi.URLParam(r, "ID")
 	productID, err := strconv.Atoi(URLParam)

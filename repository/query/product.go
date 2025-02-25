@@ -58,8 +58,25 @@ func (r *PostgresRepo) GetProductByProductID(productID uint32) (*model.Product, 
 func (r *PostgresRepo) GetProductsByPage(page uint32) ([]model.Product, error) {
 	var products []model.Product
 
-	// TODO: Add pagination to get 10 products per page
+	limit := 10
+	offset := (int(page) - 1) * limit
 
+	rows, err := r.Client.Query("SELECT product_id, name, price, sizes, image_path FROM products LIMIT $1 OFFSET $2", limit, offset)
+	if err != nil {
+		return products, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var product model.Product
+		if err := rows.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
+			return nil, fmt.Errorf("GetProductsByPage %d: %v", product.ProductID, err)
+		}
+		products = append(products, product)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("GetProductsByPage %v:", err)
+	}
 	return products, nil
 }
 
