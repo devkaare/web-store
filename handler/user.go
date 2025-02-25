@@ -30,6 +30,7 @@ func (u *User) GetUsers(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, users)
 }
 
+// curl -X POST localhost:3000/users -d "email=johndoe@gmail.com&password=secretpass8888"
 func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
@@ -43,7 +44,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	user := &model.User{
 		Email:    email,
-		Password: passwordHash, // TODO: Hash pass
+		Password: passwordHash,
 	}
 
 	// TODO: Use returned userID for auth
@@ -55,13 +56,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
-	URLParam := chi.URLParam(r, "ID")
-	userID, err := strconv.Atoi(URLParam)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
 	user, ok, err := u.Repo.GetUserByUserID(uint32(userID))
 	if err != nil {
@@ -79,13 +74,7 @@ func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
-	URLParam := chi.URLParam(r, "ID")
-	userID, err := strconv.Atoi(URLParam)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
 	_, ok, err := u.Repo.GetUserByUserID(uint32(userID))
 	if err != nil {
@@ -106,14 +95,9 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// curl -X PUT localhost:3000/users/1 -d "email=newjohndoe@gmail.com&password=newPassword"
 func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
-	URLParam := chi.URLParam(r, "ID")
-	userID, err := strconv.Atoi(URLParam)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
 	_, ok, err := u.Repo.GetUserByUserID(uint32(userID))
 	if err != nil {

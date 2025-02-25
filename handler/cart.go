@@ -26,32 +26,12 @@ func (c *CartItem) GetCartItems(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, cartItems)
 }
 
+// curl -X POST localhost:3000/carts -d "userID=1&productID=2&size=s&quantity=1"
 func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
-	rawUserID := chi.URLParam(r, "userID")
-	rawProductID := chi.URLParam(r, "productID")
-
-	userID, err := strconv.Atoi(rawUserID)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	productID, err := strconv.Atoi(rawProductID)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
+	userID, _ := strconv.Atoi(r.FormValue("userID"))
+	productID, _ := strconv.Atoi(r.FormValue("productID"))
+	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
 	size := r.FormValue("size")
-	rawQuantity := r.FormValue("quantity")
-
-	quantity, err := strconv.Atoi(rawQuantity)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 
 	product := &model.CartItem{
 		UserID:    uint32(userID),
@@ -68,13 +48,7 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
-	URLParam := chi.URLParam(r, "userID")
-	userID, err := strconv.Atoi(URLParam)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
 
 	cartItems, err := c.Repo.GetCartItemsByUserID(uint32(userID))
 	if err != nil {
@@ -86,23 +60,11 @@ func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) 
 	fmt.Fprintln(w, cartItems)
 }
 
+// curl -X DELETE localhost:3000/carts/1/2\?size=s
 func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
-	size := chi.URLParam(r, "size")
-	rawUserID := chi.URLParam(r, "userID")
-	rawProductID := chi.URLParam(r, "productID")
-
-	userID, err := strconv.Atoi(rawUserID)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	productID, err := strconv.Atoi(rawProductID)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "productID"))
+	size := r.URL.Query().Get("size")
 
 	cartItem := &model.CartItem{
 		UserID:    uint32(userID),
@@ -117,30 +79,12 @@ func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// curl -X PUT localhost:3000/carts/1/2 -d "size=s&quantity=9"
 func (c *CartItem) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
-	size := chi.URLParam(r, "size")
-	rawQuantity := chi.URLParam(r, "quantity")
-	rawUserID := chi.URLParam(r, "userID")
-	rawProductID := chi.URLParam(r, "productID")
-
-	quantity, err := strconv.Atoi(rawQuantity)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	userID, err := strconv.Atoi(rawUserID)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	productID, err := strconv.Atoi(rawProductID)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "productID"))
+	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
+	size := r.FormValue("size")
 
 	cartItem := &model.CartItem{
 		UserID:    uint32(userID),

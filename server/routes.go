@@ -82,9 +82,9 @@ func (s *Server) RegisterCartRoutes(r chi.Router) {
 		},
 	}
 
-	r.Post("/{userID}/{productID}", cartHandler.CreateCartItem)
+	r.Post("/", cartHandler.CreateCartItem)
 	r.Get("/", cartHandler.GetCartItems)
 	r.Get("/{userID}", cartHandler.GetCartItemsByUserID)
-	r.Put("/{userID}/{productID}/{size}/{quantity}", cartHandler.UpdateCartItemQuantity)
-	r.Delete("/{userID}/{productID}/{size}", cartHandler.DeleteCartItem)
+	r.Put("/{userID}/{productID}", cartHandler.UpdateCartItemQuantity)
+	r.Delete("/{userID}/{productID}", cartHandler.DeleteCartItem)
 }

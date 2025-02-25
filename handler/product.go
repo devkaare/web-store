@@ -26,18 +26,12 @@ func (p *Product) GetProducts(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, products)
 }
 
+// curl -X POST localhost:3000/products -d "name=shirt&price=10&sizes=s,m,l,xl&imagePath=shirt.png"
 func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
 	sizes := r.FormValue("sizes")
 	imagePath := r.FormValue("imagePath")
-	rawPrice := r.FormValue("price")
-
-	price, err := strconv.Atoi(rawPrice)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	price, _ := strconv.Atoi(r.FormValue("price"))
 
 	product := &model.Product{
 		Name:      name,
@@ -54,13 +48,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request) {
-	URLParam := chi.URLParam(r, "ID")
-	productID, err := strconv.Atoi(URLParam)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
 	product, ok, err := p.Repo.GetProductByProductID(uint32(productID))
 	if err != nil {
@@ -78,13 +66,7 @@ func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request)
 }
 
 func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
-	rawPage := r.URL.Query().Get("page")
-	page, err := strconv.Atoi(rawPage)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 
 	products, err := p.Repo.GetProductsByPage(uint32(page))
 	if err != nil {
@@ -97,13 +79,7 @@ func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
-	URLParam := chi.URLParam(r, "ID")
-	productID, err := strconv.Atoi(URLParam)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
 	_, ok, err := p.Repo.GetProductByProductID(uint32(productID))
 	if err != nil {
@@ -124,14 +100,9 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+// curl -X PUT localhost:3000/products/1 -d "name=updatedShirt&price=12&sizes=s,m,l,xl&imagePath=updated_shirt.png"
 func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Request) {
-	URLParam := chi.URLParam(r, "ID")
-	productID, err := strconv.Atoi(URLParam)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
 	_, ok, err := p.Repo.GetProductByProductID(uint32(productID))
 	if err != nil {
@@ -148,14 +119,7 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 	name := r.FormValue("name")
 	sizes := r.FormValue("sizes")
 	imagePath := r.FormValue("imagePath")
-	rawPrice := r.FormValue("price")
-
-	price, err := strconv.Atoi(rawPrice)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	price, _ := strconv.Atoi(r.FormValue("price"))
 
 	product := &model.Product{
 		ProductID: uint32(productID),
