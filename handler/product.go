@@ -53,7 +53,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (p *Product) GetProductByProductID(w http.ResponseWriter, r *http.Request) {
+func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request) {
 	URLParam := chi.URLParam(r, "ID")
 	productID, err := strconv.Atoi(URLParam)
 	if err != nil {

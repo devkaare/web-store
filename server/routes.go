@@ -56,3 +56,31 @@ func (s *Server) RegisterUserRoutes(r chi.Router) {
 	r.Put("/{ID}", userHandler.UpdateUserByUserID)
 	r.Delete("/{ID}", userHandler.DeleteUserByUserID)
 }
+
+func (s *Server) RegisterProductRoutes(r chi.Router) {
+	productHandler := &handler.Product{
+		Repo: &query.PostgresRepo{
+			Client: s.db,
+		},
+	}
+
+	r.Post("/", productHandler.CreateProduct)
+	r.Get("/", productHandler.GetProducts)
+	r.Get("/{ID}", productHandler.GetProductsByProductID)
+	r.Put("/{ID}", productHandler.UpdateProductByProductID)
+	r.Delete("/{ID}", productHandler.DeleteProductByProductID)
+}
+
+func (s *Server) RegisterCartRoutes(r chi.Router) {
+	cartHandler := &handler.CartItem{
+		Repo: &query.PostgresRepo{
+			Client: s.db,
+		},
+	}
+
+	r.Post("/", cartHandler.CreateCartItem)
+	r.Get("/", cartHandler.GetCartItems)
+	r.Get("/{ID}", cartHandler.GetCartItemsByUserID)
+	r.Put("/{userID}/{productID}/{size}/{quantity}", cartHandler.UpdateCartItemQuantity)
+	r.Delete("/{userID}/{productID}/{size}", cartHandler.DeleteCartItem)
+}
