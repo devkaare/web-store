@@ -6,6 +6,8 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 )
 
@@ -73,6 +75,39 @@ func TestGetUsers(t *testing.T) {
 	data, err := io.ReadAll(result)
 	if err != nil {
 		t.Fatalf("TestGetUsers: %v", err)
+	}
+
+	fmt.Println(string(data))
+}
+
+func TestCreateUser(t *testing.T) {
+	setup()
+
+	resource := "/users/"
+	rawData := url.Values{}
+	rawData.Set("email", "willsmith@gmail.com")
+	rawData.Set("password", "secret123")
+
+	u, _ := url.ParseRequestURI("http://localhost:3000")
+	u.Path = resource
+	urlStr := u.String()
+
+	req, err := http.NewRequest("POST", urlStr, strings.NewReader(rawData.Encode()))
+	// req.Header.Add("Authorization")
+	if err != nil {
+		t.Fatalf("TestCreateUser: %v", err)
+	}
+
+	r.ServeHTTP(respRec, req)
+
+	if respRec.Code != http.StatusOK {
+		t.Fatalf("TestCreateUser: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
+	}
+
+	result := respRec.Result().Body
+	data, err := io.ReadAll(result)
+	if err != nil {
+		t.Fatalf("TestCreateUser: %v", err)
 	}
 
 	fmt.Println(string(data))
