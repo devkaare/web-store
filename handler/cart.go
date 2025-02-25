@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -23,7 +23,9 @@ func (c *CartItem) GetCartItems(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, cartItems)
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(cartItems)
+	_, _ = w.Write(jsonResp)
 }
 
 // curl -X POST localhost:3000/carts -d "userID=1&productID=2&size=s&quantity=1"
@@ -57,7 +59,9 @@ func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	fmt.Fprintln(w, cartItems)
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(cartItems)
+	_, _ = w.Write(jsonResp)
 }
 
 // curl -X DELETE localhost:3000/carts/1/2\?size=s

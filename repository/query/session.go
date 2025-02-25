@@ -56,17 +56,17 @@ func (r *PostgresRepo) GetSessionBySessionID(sessionID string) (*model.Session, 
 	return session, true, nil
 }
 
-func (r *PostgresRepo) DeleteSessionBySessionID(sessionID uint32) error {
+func (r *PostgresRepo) DeleteSessionBySessionID(sessionID string) error {
 	result, err := r.Client.Exec("DELETE FROM sessions WHERE session_id = $1", sessionID)
 	if err != nil {
-		return fmt.Errorf("DeleteSessionBySessionID %d, %v", sessionID, err)
+		return fmt.Errorf("DeleteSessionBySessionID %s, %v", sessionID, err)
 	}
 	count, err := result.RowsAffected()
 	if err != nil {
-		return fmt.Errorf("DeleteSessionBySessionID %d: %v", sessionID, err)
+		return fmt.Errorf("DeleteSessionBySessionID %s: %v", sessionID, err)
 	}
 	if count < 1 {
-		return fmt.Errorf("DeleteSessionBySessionID %d: no such session", sessionID)
+		return fmt.Errorf("DeleteSessionBySessionID %s: no such session", sessionID)
 	}
 
 	return nil

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -23,7 +24,9 @@ func (p *Product) GetProducts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, products)
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(products)
+	_, _ = w.Write(jsonResp)
 }
 
 // curl -X POST localhost:3000/products -d "name=shirt&price=10&sizes=s,m,l,xl&imagePath=shirt.png"
@@ -62,7 +65,9 @@ func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	fmt.Fprintln(w, product)
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(product)
+	_, _ = w.Write(jsonResp)
 }
 
 func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
@@ -75,7 +80,9 @@ func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, products)
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(products)
+	_, _ = w.Write(jsonResp)
 }
 
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {

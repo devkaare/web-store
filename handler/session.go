@@ -19,7 +19,7 @@ func isExpired(s *model.Session) bool {
 	return s.Expiry.Before(time.Now())
 }
 
-func (p *Protected) Signin(w http.ResponseWriter, r *http.Request) {
+func (p *Protected) SignIn(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	expectedPassword := r.FormValue("password")
 
@@ -82,7 +82,7 @@ func (p *Product) Welcome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isExpired(session) {
-		if err := p.Repo.DeleteSessionBySessionID(session.UserID); err != nil {
+		if err := p.Repo.DeleteSessionBySessionID(sessionID); err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -94,37 +94,84 @@ func (p *Product) Welcome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "welcome user: %d", session.UserID)
 }
 
-// func (p *Protected) Refresh(w http.ResponseWriter, r *http.Request) {
-// 	c, err := r.Cookie("session_token")
-// 	if err != nil {
-// 		if err == http.ErrNoCookie {
-// 			w.WriteHeader(http.StatusUnauthorized)
-// 			return
-// 		}
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-// 	sessionID := c.Value
-//
-// 	session, ok, err := p.Repo.GetSessionBySessionID(sessionID)
-// 	if !ok {
-// 		w.WriteHeader(http.StatusUnauthorized)
-// 		return
-// 	}
-// 	if err != nil {
-// 		log.Println(err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-//
-// 	if isExpired(session) {
-// 		if err := p.Repo.DeleteSessionBySessionID(session.UserID); err != nil {
-// 			log.Println(err)
-// 			w.WriteHeader(http.StatusInternalServerError)
-// 			return
-// 		}
-// 		w.WriteHeader(http.StatusUnauthorized)
-// 		return
-// 	}
-// }
+func (p *Protected) Refresh(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("session_token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	sessionID := c.Value
+
+	session, ok, err := p.Repo.GetSessionBySessionID(sessionID)
+	if !ok {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if isExpired(session) {
+		if err := p.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	newSessionID := uuid.NewString()
+	expiresAt := time.Now().Add(120 * time.Second)
+
+	newSession := &model.Session{
+		SessionID: newSessionID,
+		UserID:    session.UserID,
+		Expiry:    expiresAt,
+	}
+
+	if err := p.Repo.CreateSession(newSession); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if err := p.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:    "session_token",
+		Value:   newSessionID,
+		Expires: time.Now().Add(120 * time.Second),
+	})
+}
+
+func (p *Protected) LogOut(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("session_token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	sessionID := c.Value
+
+	if err := p.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
