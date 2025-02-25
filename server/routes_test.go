@@ -54,3 +54,26 @@ func TestHealth(t *testing.T) {
 
 	fmt.Println(string(data))
 }
+
+func TestGetUsers(t *testing.T) {
+	setup()
+
+	req, err = http.NewRequest("GET", "/users", nil)
+	if err != nil {
+		t.Fatalf("TestGetUsers: %v", err)
+	}
+
+	r.ServeHTTP(respRec, req)
+
+	if respRec.Code != http.StatusOK {
+		t.Fatalf("TestGetUsers: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
+	}
+
+	result := respRec.Result().Body
+	data, err := io.ReadAll(result)
+	if err != nil {
+		t.Fatalf("TestGetUsers: %v", err)
+	}
+
+	fmt.Println(string(data))
+}

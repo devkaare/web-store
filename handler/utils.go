@@ -12,6 +12,7 @@ type Utils struct {
 }
 
 func (u *Utils) Health(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	jsonResp, _ := json.Marshal(u.Repo.Health())
 	_, _ = w.Write(jsonResp)
 }

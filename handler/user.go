@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -24,10 +25,9 @@ func (u *User) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// jsonResp, _ := json.Marshal(users)
-	// _, _ = w.Write(jsonResp)
-
-	fmt.Fprintln(w, users)
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(users)
+	_, _ = w.Write(jsonResp)
 }
 
 // curl -X POST localhost:3000/users -d "email=johndoe@gmail.com&password=secretpass8888"
@@ -70,7 +70,9 @@ func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintln(w, user)
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(user)
+	_, _ = w.Write(jsonResp)
 }
 
 func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
