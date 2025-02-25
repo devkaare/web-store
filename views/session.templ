@@ -2,7 +2,7 @@ package views
 
 import "github.com/devkaare/web-store/views/components"
 
-templ LogIn() {
+templ signIn() {
 	@components.Base() {
 		<div>
 			<h1>Log In</h1>
@@ -22,7 +22,7 @@ templ LogIn() {
 	}
 }
 
-templ SignUp() {
+templ signUp() {
 	@components.Base() {
 		<div>
 			<h1>Sign Up</h1>
@@ -37,7 +37,7 @@ templ SignUp() {
 				<br/>
 				<input type="submit" value="Submit"/>
 			</form>
-			<a href="/signup">Sign Up</a>
+			<a href="/signin">Sign In</a>
 		</div>
 	}
 }

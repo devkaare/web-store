@@ -1,2 +1,26 @@
 package views
 
+import (
+	"fmt"
+
+	"github.com/devkaare/web-store/views/components"
+)
+
+type CartProp struct {
+	UserID    uint32
+	ProductID uint32
+	Size      string
+	Quantity  uint32
+	Name      string
+	Price     uint32
+}
+
+templ cart(cart []CartProp) {
+	@components.Base() {
+		for _, item := range cart {
+			<p>{ item.Name } <strong>{ string(templ.SafeURL(fmt.Sprintf("%d", item.Price))) }</strong></p>
+			<p>{ item.Size } { string(templ.SafeURL(fmt.Sprintf("%d", item.Quantity))) }</p>
+			// TODO: Add increment/decrement field and delete button
+		}
+	}
+}

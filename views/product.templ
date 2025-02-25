@@ -1,2 +1,28 @@
 package views
 
+import (
+	"github.com/devkaare/web-store/model"
+	"github.com/devkaare/web-store/views/components"
+	"fmt"
+)
+
+templ product(p *model.Product) {
+	@components.Base() {
+		<div>
+			<h2>{ p.Name }</h2>
+			<p><strong>${ string(templ.SafeURL(fmt.Sprintf("%d", p.Price))) }</strong></p>
+			<form>
+				<label for="sizes">Choose a size:</label>
+				<select id="sizes" name="sizes">
+					<option value="s">Small</option>
+					<option value="m">Medium</option>
+					<option value="l">Large</option>
+					<option value="xl">Extra Large</option>
+				</select>
+				<label for="quantity">Quantity:</label>
+				<input type="number"/>
+				<input type="submit" value="Submit"/>
+			</form>
+		</div>
+	}
+}

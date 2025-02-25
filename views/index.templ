@@ -1,9 +1,21 @@
 package views
 
-import "github.com/devkaare/web-store/views/components"
+import (
+	"fmt"
 
-templ Index() {
+	"github.com/devkaare/web-store/views/components"
+	"github.com/devkaare/web-store/model"
+)
+
+templ index(products []model.Product) {
 	@components.Base() {
 		<h1>Welcome!</h1>
+		for _, p := range products {
+			<div>
+				<img src={ p.ImagePath }/>
+				<p>{ p.Name } <strong>${ string(templ.SafeURL(fmt.Sprintf("%d", p.Price))) }</strong></p>
+				<a href={ templ.SafeURL(fmt.Sprintf("/products/%d", p.ProductID)) }></a>
+			</div>
+		}
 	}
 }
