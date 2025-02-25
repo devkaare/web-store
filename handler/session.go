@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type Protected struct {
+type Session struct {
 	Repo *query.PostgresRepo
 }
 
@@ -19,11 +19,11 @@ func isExpired(s *model.Session) bool {
 	return s.Expiry.Before(time.Now())
 }
 
-func (p *Protected) SignIn(w http.ResponseWriter, r *http.Request) {
+func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	expectedPassword := r.FormValue("password")
 
-	user, ok, err := p.Repo.GetUserByEmail(email)
+	user, ok, err := s.Repo.GetUserByEmail(email)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -44,7 +44,7 @@ func (p *Protected) SignIn(w http.ResponseWriter, r *http.Request) {
 		Expiry:    expiresAt,
 	}
 
-	if err := p.Repo.CreateSession(session); err != nil {
+	if err := s.Repo.CreateSession(session); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -57,7 +57,7 @@ func (p *Protected) SignIn(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (p *Product) Welcome(w http.ResponseWriter, r *http.Request) {
+func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -70,7 +70,7 @@ func (p *Product) Welcome(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionID := c.Value
 
-	session, ok, err := p.Repo.GetSessionBySessionID(sessionID)
+	session, ok, err := s.Repo.GetSessionBySessionID(sessionID)
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -82,7 +82,7 @@ func (p *Product) Welcome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isExpired(session) {
-		if err := p.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+		if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -94,7 +94,7 @@ func (p *Product) Welcome(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "welcome user: %d", session.UserID)
 }
 
-func (p *Protected) Refresh(w http.ResponseWriter, r *http.Request) {
+func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -107,7 +107,7 @@ func (p *Protected) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionID := c.Value
 
-	session, ok, err := p.Repo.GetSessionBySessionID(sessionID)
+	session, ok, err := s.Repo.GetSessionBySessionID(sessionID)
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
@@ -119,7 +119,7 @@ func (p *Protected) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isExpired(session) {
-		if err := p.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+		if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -137,13 +137,13 @@ func (p *Protected) Refresh(w http.ResponseWriter, r *http.Request) {
 		Expiry:    expiresAt,
 	}
 
-	if err := p.Repo.CreateSession(newSession); err != nil {
+	if err := s.Repo.CreateSession(newSession); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err := p.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+	if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -156,7 +156,7 @@ func (p *Protected) Refresh(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (p *Protected) LogOut(w http.ResponseWriter, r *http.Request) {
+func (s *Session) LogOut(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -169,7 +169,7 @@ func (p *Protected) LogOut(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionID := c.Value
 
-	if err := p.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+	if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

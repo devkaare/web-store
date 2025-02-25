@@ -32,6 +32,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Route("/users", s.registerUserRoutes)
 	r.Route("/products", s.registerProductRoutes)
 	r.Route("/carts", s.registerCartRoutes)
+	r.Route("/sessions", s.registerSessionRoutes)
 
 	return r
 }
@@ -87,4 +88,17 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 	r.Get("/{userID}", cartHandler.GetCartItemsByUserID)
 	r.Put("/{userID}/{productID}", cartHandler.UpdateCartItemQuantity)
 	r.Delete("/{userID}/{productID}", cartHandler.DeleteCartItem)
+}
+
+func (s *Server) registerSessionRoutes(r chi.Router) {
+	sessionHandler := &handler.Session{
+		Repo: &query.PostgresRepo{
+			Client: s.db,
+		},
+	}
+
+	r.Post("/signin", sessionHandler.SignIn)
+	r.Get("/refresh", sessionHandler.Refresh)
+	r.Get("/welcome", sessionHandler.Welcome)
+	r.Get("/logout", sessionHandler.LogOut)
 }
