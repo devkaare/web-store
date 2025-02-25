@@ -1,2 +1,19 @@
 package views
 
+import "github.com/devkaare/web-store/views/components"
+
+templ LogIn() {
+	@components.Base() {
+		<div>
+			<h1>Log In</h1>
+			<form>
+				<label for="email">Email:</label>
+				<input type="text" id="email" name="email"/>
+				<label for="password">Password:</label>
+				<input type="text" id="password" name="password"/>
+				<input type="submit" value="Submit"/>
+			</form>
+			<a href="/signup">Sign Up</a>
+		</div>
+	}
+}
