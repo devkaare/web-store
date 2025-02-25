@@ -16,14 +16,14 @@ type Product struct {
 }
 
 func (p *Product) GetProducts(w http.ResponseWriter, r *http.Request) {
-	users, err := p.Repo.GetProducts()
+	products, err := p.Repo.GetProducts()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Fprintln(w, users)
+	fmt.Fprintln(w, products)
 }
 
 func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {

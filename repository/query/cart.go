@@ -6,13 +6,13 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *PostgresRepo) AddCartItem(cartItem *model.CartItem) error {
+func (r *PostgresRepo) CreateCartItem(cartItem *model.CartItem) error {
 	_, err := r.Client.Exec(
 		"INSERT INTO cart_items (user_id, product_id, size, quantity) VALUES ($1, $2, $3, $4)",
 		cartItem.UserID, cartItem.ProductID, cartItem.Size, cartItem.Quantity,
 	)
 	if err != nil {
-		return fmt.Errorf("AddToCart: %v", err)
+		return fmt.Errorf("CreateCartItem: %v", err)
 	}
 
 	return nil
@@ -40,7 +40,7 @@ func (r *PostgresRepo) GetCartItems() ([]model.CartItem, error) {
 	return cartItems, nil
 }
 
-func (r *PostgresRepo) GetCartItemsByUserID(userID int) ([]model.CartItem, error) {
+func (r *PostgresRepo) GetCartItemsByUserID(userID uint32) ([]model.CartItem, error) {
 	var cartItems []model.CartItem
 
 	rows, err := r.Client.Query("SELECT * FROM cart_items WHERE user_id = $1", userID)
