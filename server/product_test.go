@@ -26,10 +26,10 @@ func TestCreateProduct(t *testing.T) {
 
 	rawData := url.Values{}
 
-	rawData.Set("name", testProduct.Name)
-	rawData.Set("price", fmt.Sprintf("%d", testProduct.Price))
-	rawData.Set("sizes", string(testProduct.Sizes))
-	rawData.Set("imagePath", testProduct.ImagePath)
+	rawData.Add("name", testProduct.Name)
+	rawData.Add("price", fmt.Sprintf("%d", testProduct.Price))
+	rawData.Add("sizes", testProduct.Sizes)
+	rawData.Add("imagePath", testProduct.ImagePath)
 
 	u, _ := url.ParseRequestURI(apiUrl)
 	u.Path = resource
@@ -37,7 +37,7 @@ func TestCreateProduct(t *testing.T) {
 
 	req, err := http.NewRequest("POST", urlStr, strings.NewReader(rawData.Encode()))
 	if err != nil {
-		t.Fatalf("TestCreateUser: %v", err)
+		t.Fatalf("TestCreateProduct: %v", err)
 	}
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
@@ -58,7 +58,6 @@ func TestCreateProduct(t *testing.T) {
 	testProduct.ProductID = result.ProductID
 }
 
-//
 // func TestGetUserByUserID(t *testing.T) {
 // 	setup()
 //

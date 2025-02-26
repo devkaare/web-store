@@ -36,6 +36,12 @@ func TestConnectToDB(t *testing.T) {
 	}
 }
 
+func TestMain(m *testing.M) {
+	setup()
+	TestConnectToDB(&testing.T{})
+	m.Run()
+}
+
 func TestHealth(t *testing.T) {
 	setup()
 
