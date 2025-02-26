@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -10,10 +11,10 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-var testProduct = model.Product{
+var testProduct = &model.Product{
 	Name:      "testshirt",
 	Price:     10,
-	Sizes:     []byte(`{"sizes": {"Small", "Medium", "Large", "Extra Large"}}`),
+	Sizes:     "{\"sizes\": {\"Small\", \"Medium\", \"Large\", \"Extra Large\"}}",
 	ImagePath: "./views/assets/images/shirt.png",
 }
 
@@ -46,6 +47,15 @@ func TestCreateProduct(t *testing.T) {
 	if respRec.Result().StatusCode != http.StatusOK {
 		t.Fatalf("TestCreateProduct: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
 	}
+
+	var result model.Product
+
+	d := json.NewDecoder(respRec.Result().Body)
+	if err := d.Decode(&result); err != nil {
+		t.Fatalf("TestCreateProduct: %v", err)
+	}
+
+	testProduct.ProductID = result.ProductID
 }
 
 //

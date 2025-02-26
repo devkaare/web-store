@@ -11,7 +11,7 @@ import (
 
 func getSizesFromByte(p *model.Product) []string {
 	var data []string
-	_ = json.Unmarshal(p.Sizes, &data)
+	_ = json.Unmarshal([]byte(p.Sizes), &data)
 
 	return data
 }

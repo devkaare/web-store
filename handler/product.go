@@ -39,15 +39,22 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	product := &model.Product{
 		Name:      name,
 		Price:     uint32(price),
-		Sizes:     []byte(sizes),
+		Sizes:     sizes,
 		ImagePath: imagePath,
 	}
 
-	if _, err := p.Repo.CreateProduct(product); err != nil {
+	productID, err := p.Repo.CreateProduct(product)
+	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	product.ProductID = productID
+
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(product)
+	_, _ = w.Write(jsonResp)
 }
 
 func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request) {
@@ -131,7 +138,7 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 		ProductID: uint32(productID),
 		Name:      name,
 		Price:     uint32(price),
-		Sizes:     []byte(sizes),
+		Sizes:     sizes,
 		ImagePath: imagePath,
 	}
 

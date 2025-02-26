@@ -7,8 +7,8 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *PostgresRepo) CreateUser(user *model.User) (int, error) {
-	lastInsertedID := 0
+func (r *PostgresRepo) CreateUser(user *model.User) (uint32, error) {
+	var lastInsertedID uint32 = 0
 	err := r.Client.QueryRow(
 		"INSERT INTO users (email, password) VALUES ($1, $2) RETURNING user_id",
 		user.Email, user.Password,
