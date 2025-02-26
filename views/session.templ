@@ -5,8 +5,8 @@ import "github.com/devkaare/web-store/views/components"
 templ signIn() {
 	@components.Base() {
 		<div>
-			<h1>Log In</h1>
-			<form action="/sessions/signin">
+			<h1>Sign In</h1>
+			<form action="/sessions/signin" method="post">
 				<label for="email">Email:</label>
 				<input type="text" id="email" name="email"/>
 				<br/>
@@ -26,7 +26,7 @@ templ signUp() {
 	@components.Base() {
 		<div>
 			<h1>Sign Up</h1>
-			<form action="/sessions/signup">
+			<form action="/sessions/signup" method="post">
 				<label for="email">Email:</label>
 				<input type="text" id="email" name="email"/>
 				<br/>

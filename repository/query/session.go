@@ -8,8 +8,8 @@ import (
 )
 
 func (r *PostgresRepo) CreateSession(session *model.Session) error {
-	err := r.Client.QueryRow(
-		"INSERT INTO sessions (session_id, user_id, expiry) VALUES ($1, $2 $3)",
+	_, err := r.Client.Exec(
+		"INSERT INTO sessions (session_id, user_id, expiry) VALUES ($1, $2, $3)",
 		session.SessionID, session.UserID, session.Expiry,
 	)
 	if err != nil {

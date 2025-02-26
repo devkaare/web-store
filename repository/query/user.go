@@ -79,16 +79,16 @@ func (r *PostgresRepo) DeleteUserByUserID(userID uint32) error {
 	return nil
 }
 
-func (r *PostgresRepo) GetUserByEmail(email string) (*model.User, bool, error) {
+func (r *PostgresRepo) GetUserByEmail(email string) (*model.User, error) {
 	user := &model.User{}
 
 	row := r.Client.QueryRow("SELECT * FROM users WHERE email = $1", email)
 	if err := row.Scan(&user.UserID, &user.Email, &user.Password); err != nil {
 		if err == sql.ErrNoRows {
-			return user, false, nil
+			return user, err
 		}
-		return user, false, fmt.Errorf("GetUserByEmail %s: %v", email, err)
+		return user, fmt.Errorf("GetUserByEmail %s: %v", email, err)
 	}
-	return user, true, nil
+	return user, nil
 
 }

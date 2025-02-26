@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -25,14 +26,10 @@ func (s *Session) SignUp(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	_, ok, err := s.Repo.GetUserByEmail(email)
-	if err != nil {
+	_, err := s.Repo.GetUserByEmail(email)
+	if err != sql.ErrNoRows && err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if ok {
-		w.WriteHeader(http.StatusConflict)
 		return
 	}
 
@@ -52,14 +49,13 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	expectedPassword := r.FormValue("password")
 
-	user, ok, err := s.Repo.GetUserByEmail(email)
-	if err != nil {
+	existingUser, err := s.Repo.GetUserByEmail(email)
+	if err != sql.ErrNoRows && err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	if !ok || hash.CheckPasswordHash(expectedPassword, user.Password) {
-		fmt.Fprintln(w, "invalid credentials")
+	if hash.CheckPasswordHash(expectedPassword, existingUser.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -69,7 +65,7 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	session := &model.Session{
 		SessionID: sessionID,
-		UserID:    user.UserID,
+		UserID:    existingUser.UserID,
 		Expiry:    expiresAt,
 	}
 
