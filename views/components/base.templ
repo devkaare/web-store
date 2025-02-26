@@ -11,12 +11,16 @@ templ Base() {
 			<link href="assets/css/output.css" rel="stylesheet"/>
 			<script src="../assets/js/htmx.min.js"></script>
 		</head>
-		<body>
-			<main class="min-h-screen flex flex-col">
+		<body class="min-h-screen flex flex-col items-center ">
+			<div class="p-6 space-y-6 w-64 bg-gray-950">
 				@navbar()
-				{ children... }
+			</div>
+			<div class="relative flex flex-grow">
+				<main>
+					{ children... }
+				</main>
 				@footer()
-			</main>
+			</div>
 		</body>
 	</html>
 }
