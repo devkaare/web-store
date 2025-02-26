@@ -16,6 +16,11 @@ type Product struct {
 	Repo *query.PostgresRepo
 }
 
+func getSizesFromByte(p *Product) []string {
+
+	return []string{}
+}
+
 func (p *Product) GetProducts(w http.ResponseWriter, r *http.Request) {
 	products, err := p.Repo.GetProducts()
 	if err != nil {

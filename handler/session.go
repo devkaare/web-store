@@ -19,7 +19,8 @@ type Session struct {
 }
 
 func isExpired(s *model.Session) bool {
-	return s.Expiry.Before(time.Now())
+	t, _ := time.Parse("02-01-2006 15:04:05", s.Expiry)
+	return t.Before(time.Now())
 }
 
 func (s *Session) SignUp(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +67,7 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 	session := &model.Session{
 		SessionID: sessionID,
 		UserID:    existingUser.UserID,
-		Expiry:    expiresAt,
+		Expiry:    expiresAt.String(),
 	}
 
 	if err := s.Repo.CreateSession(session); err != nil {
@@ -159,7 +160,7 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	newSession := &model.Session{
 		SessionID: newSessionID,
 		UserID:    session.UserID,
-		Expiry:    expiresAt,
+		Expiry:    expiresAt.String(),
 	}
 
 	if err := s.Repo.CreateSession(newSession); err != nil {
