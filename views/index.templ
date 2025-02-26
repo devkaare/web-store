@@ -9,11 +9,11 @@ import (
 
 templ index(products []model.Product) {
 	@components.Base() {
-		@components.PaginationNavBar()
 		for _, p := range products {
 			<div>
+				<h3>{ p.Name }</h3>
 				<img src={ p.ImagePath }/>
-				<p>{ p.Name } <strong>${ fmt.Sprintf("%d", p.Price) }</strong></p>
+				<p><strong>${ fmt.Sprintf("%d", p.Price) }</strong></p>
 				<a href={ templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) }>View</a>
 				// WARN: surround templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) with string() when inside HTMX fields
 			</div>

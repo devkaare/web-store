@@ -1,15 +1,23 @@
 package components
 
 templ navbar() {
-	<header>
-		<h1>Kaare's Web Store</h1>
+	<div>
+		<h1>Kaare's Webstore</h1>
 		<p>A simple project by Kaare</p>
+	</div>
+	<div>
 		<nav>
 			<ul>
-				<li>
-					<a href="/">Overview</a>
-				</li>
+				<ul><a href="?page=1" rel="first">First</a></ul>
+				<ul><a href="?page=2" rel="prev">Previous</a></ul>
+				<ul><a href="?page=1">1</a></ul>
+				<ul><a href="?page=2">2</a></ul>
+				<ul class="active"><a href="?page=3">3</a></ul>
+				<ul><a href="?page=4">4</a></ul>
+				<ul><a href="?page=5">5</a></ul>
+				<ul><a href="?page=4" rel="next">Next</a></ul>
+				<ul><a href="?page=5" rel="last">Last</a></ul>
 			</ul>
 		</nav>
-	</header>
+	</div>
 }
