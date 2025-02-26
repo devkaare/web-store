@@ -9,6 +9,7 @@ import (
 
 templ index(products []model.Product) {
 	@components.Base() {
+		@components.PaginationNavBar()
 		for _, p := range products {
 			<div>
 				<img src={ p.ImagePath }/>
@@ -17,6 +18,5 @@ templ index(products []model.Product) {
 				// WARN: surround templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) with string() when inside HTMX fields
 			</div>
 		}
-		// TODO: Add page nav buttons
 	}
 }
