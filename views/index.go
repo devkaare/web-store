@@ -20,7 +20,7 @@ func IndexPageHandler(w http.ResponseWriter, r *http.Request) {
 	var products []model.Product
 
 	d := json.NewDecoder(resp.Body)
-	if err := d.Decode(products); err != nil {
+	if err := d.Decode(&products); err != nil {
 		log.Fatal(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
