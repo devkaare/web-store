@@ -11,7 +11,7 @@ import (
 
 var (
 	port              = 3000
-	testUserID uint32 = 16
+	testUserID uint32 = 20
 )
 
 func TestCreateUser(t *testing.T) {
