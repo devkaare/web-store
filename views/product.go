@@ -10,12 +10,11 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/devkaare/web-store/model"
-	"github.com/go-chi/chi/v5"
 )
 
 func ProductHandler(w http.ResponseWriter, r *http.Request) {
-	_, productID := strconv.Atoi(chi.URLParam(r, "ID"))
-	resp, err := http.Get(fmt.Sprintf("http://localhost:3000/products/%d", productID))
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:3000/products/%d", page))
 	if err != nil {
 		log.Fatal(err)
 		w.WriteHeader(http.StatusInternalServerError)
