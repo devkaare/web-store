@@ -9,6 +9,8 @@ import (
 	"testing"
 )
 
+var port = 3000
+
 var (
 	r       http.Handler
 	req     *http.Request
@@ -19,7 +21,7 @@ var (
 
 func setup() {
 	testServer := &Server{
-		port: 3000,
+		port: port,
 		db:   db,
 	}
 	r = testServer.RegisterRoutes()

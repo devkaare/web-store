@@ -7,12 +7,15 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/devkaare/web-store/model"
 )
 
-var (
-	port              = 3000
-	testUserID uint32 = 20
-)
+var testUser = &model.User{
+	UserID:   1,
+	Email:    "johndoe@gmail.com",
+	Password: "strongpassword123",
+}
 
 func TestCreateUser(t *testing.T) {
 	setup()
@@ -44,7 +47,7 @@ func TestCreateUser(t *testing.T) {
 func TestGetUserByUserID(t *testing.T) {
 	setup()
 
-	req, err = http.NewRequest("GET", fmt.Sprintf("/users/%d", testUserID), nil)
+	req, err = http.NewRequest("GET", fmt.Sprintf("/users/%d", testUser.UserID), nil)
 	if err != nil {
 		t.Fatalf("TestGetUserByUserID: %v", err)
 	}
@@ -68,10 +71,10 @@ func TestUpdateUser(t *testing.T) {
 	setup()
 
 	apiUrl := fmt.Sprintf("http://localhost:%d", port)
-	resource := fmt.Sprintf("/users/%d", testUserID)
+	resource := fmt.Sprintf("/users/%d", testUser.UserID)
 	rawData := url.Values{}
-	rawData.Set("email", "coolwillsmith@gmail.com")
-	rawData.Set("password", "supersecret123")
+	rawData.Set("email", testUser.Email)
+	rawData.Set("password", testUser.Password)
 
 	u, _ := url.ParseRequestURI(apiUrl)
 	u.Path = resource
@@ -118,7 +121,7 @@ func TestGetUsers(t *testing.T) {
 func TestDeleteUser(t *testing.T) {
 	setup()
 
-	req, err = http.NewRequest("DELETE", fmt.Sprintf("/users/%d", testUserID), nil)
+	req, err = http.NewRequest("DELETE", fmt.Sprintf("/users/%d", testUser.UserID), nil)
 	if err != nil {
 		t.Fatalf("TestDeleteUser: %v", err)
 	}

@@ -3,34 +3,32 @@ package views
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/a-h/templ"
 	"github.com/devkaare/web-store/model"
+	"github.com/go-chi/chi/v5"
 )
 
 func ProductHandler(w http.ResponseWriter, r *http.Request) {
-	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
-	resp, err := http.Get(fmt.Sprintf("http://localhost:3000/products/%d", page))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
+	resp, err := http.Get(fmt.Sprintf("http://localhost:3000/products/%d", productID))
 	if err != nil {
 		log.Fatal(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	result := resp.Body
-	data, err := io.ReadAll(result)
-	fmt.Println(string(data))
+	var result model.Product
 
-	resProduct := &model.Product{}
-	if err := json.Unmarshal(data, resProduct); err != nil {
+	d := json.NewDecoder(resp.Body)
+	if err := d.Decode(&result); err != nil {
 		log.Fatal(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	templ.Handler(product(resProduct)).ServeHTTP(w, r)
+	templ.Handler(product(&result)).ServeHTTP(w, r)
 }

@@ -1,5 +1,7 @@
 package server
 
+import "github.com/devkaare/web-store/model"
+
 // import (
 // 	"fmt"
 // 	"io"
@@ -8,12 +10,14 @@ package server
 // 	"strings"
 // 	"testing"
 // )
-//
-// var (
-// 	port              = 3000
-// 	testUserID uint32 = 13
-// )
-//
+
+var testProduct = model.Product{
+	Name:      "testshirt",
+	Price:     10,
+	Sizes:     []byte(`{"sizes": {"small", "medium", "large", "extra_large"}}`),
+	ImagePath: "./views/assets/images/shirt.png",
+}
+
 // func TestCreateUser(t *testing.T) {
 // 	setup()
 //
