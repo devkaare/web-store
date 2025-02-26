@@ -2,8 +2,6 @@ package views
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
 	"log"
 	"net/http"
 
@@ -12,23 +10,21 @@ import (
 )
 
 func IndexPageHandler(w http.ResponseWriter, r *http.Request) {
-	resp, err := http.Get("http://localhost:3000/products/listings?page=3")
+	resp, err := http.Get("http://localhost:3000/products/listings?page=1")
 	if err != nil {
 		log.Fatal(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	result := resp.Body
-	data, err := io.ReadAll(result)
-	fmt.Println(string(data))
+	var products []model.Product
 
-	var resProducts []model.Product
-	if err := json.Unmarshal(data, &resProducts); err != nil {
+	d := json.NewDecoder(resp.Body)
+	if err := d.Decode(products); err != nil {
 		log.Fatal(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	templ.Handler(index(resProducts)).ServeHTTP(w, r)
+	templ.Handler(index(products)).ServeHTTP(w, r)
 }
