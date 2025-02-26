@@ -74,7 +74,7 @@ func (r *PostgresRepo) DeleteUserByUserID(userID uint32) error {
 		return fmt.Errorf("DeleteUserByUserID %d: %v", userID, err)
 	}
 	if count < 1 {
-		return fmt.Errorf("DeleteUserByUserID %d: no such user", userID)
+		return fmt.Errorf("DeleteUserByUserID %d: user not found", userID)
 	}
 	return nil
 }

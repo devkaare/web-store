@@ -66,7 +66,7 @@ func (r *PostgresRepo) DeleteSessionBySessionID(sessionID string) error {
 		return fmt.Errorf("DeleteSessionBySessionID %s: %v", sessionID, err)
 	}
 	if count < 1 {
-		return fmt.Errorf("DeleteSessionBySessionID %s: no such session", sessionID)
+		return fmt.Errorf("DeleteSessionBySessionID %s: session not found", sessionID)
 	}
 
 	return nil

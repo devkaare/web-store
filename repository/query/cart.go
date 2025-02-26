@@ -80,7 +80,7 @@ func (r *PostgresRepo) DeleteCartItem(cartItem *model.CartItem) error {
 		return fmt.Errorf("DeleteCartItem %d: %v", cartItem.UserID, err)
 	}
 	if count < 1 {
-		return fmt.Errorf("DeleteCartItem %d: no such cart item", cartItem.UserID)
+		return fmt.Errorf("DeleteCartItem %d: cart item not found", cartItem.UserID)
 	}
 	return nil
 }

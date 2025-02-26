@@ -1,3 +1,4 @@
+// TODO: Add protected routes using `req.Header.Add("Authorization", "auth_token=\"XXXXXXX\"")`
 package handler
 
 import (
@@ -63,8 +64,8 @@ func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !ok {
+		w.WriteHeader(http.StatusNoContent)
 		fmt.Fprintf(w, "user with user_id: %d does not exist", userID)
-		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -83,8 +84,8 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !ok {
+		w.WriteHeader(http.StatusNoContent)
 		fmt.Fprintf(w, "user with user_id: %d does not exist", userID)
-		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -105,8 +106,8 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if !ok {
+		w.WriteHeader(http.StatusNoContent)
 		fmt.Fprintf(w, "user with user_id: %d does not exist", userID)
-		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 

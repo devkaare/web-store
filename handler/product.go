@@ -60,8 +60,8 @@ func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	if !ok {
+		w.WriteHeader(http.StatusNoContent)
 		fmt.Fprintf(w, "product with product_id: %d does not exist", productID)
-		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -95,8 +95,8 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	if !ok {
+		w.WriteHeader(http.StatusNoContent)
 		fmt.Fprintf(w, "product with product_id: %d does not exist", productID)
-		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -118,8 +118,8 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	if !ok {
+		w.WriteHeader(http.StatusNoContent)
 		fmt.Fprintf(w, "product with product_id: %d does not exist", productID)
-		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 

@@ -98,7 +98,7 @@ func (r *PostgresRepo) DeleteProductByProductID(productID uint32) error {
 		return fmt.Errorf("DeleteProductByProductID %d: %v", productID, err)
 	}
 	if count < 1 {
-		return fmt.Errorf("DeleteProductByProductID %d: no such product", productID)
+		return fmt.Errorf("DeleteProductByProductID %d: product not found", productID)
 	}
 	return nil
 }

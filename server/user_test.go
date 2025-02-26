@@ -1,55 +1,18 @@
 package server
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"testing"
-
-	"github.com/devkaare/web-store/model"
 )
 
 var (
-	port       = 3000
-	testUserID = 12
+	port              = 3000
+	testUserID uint32 = 16
 )
-
-func checkUser(userID uint32) error {
-	req, err = http.NewRequest("GET", "/users", nil)
-	if err != nil {
-		return fmt.Errorf("checkUser: %v", err)
-	}
-
-	r.ServeHTTP(respRec, req)
-
-	if respRec.Code != http.StatusOK {
-		return fmt.Errorf("checkUser: expected: %d, received: %d", http.StatusOK, respRec.Code)
-	}
-
-	result := respRec.Result().Body
-	data, err := io.ReadAll(result)
-
-	if err != nil {
-		return fmt.Errorf("checkUser: %v", err)
-	}
-	var users []model.User
-
-	if err := json.Unmarshal(data, &users); err != nil {
-		return fmt.Errorf("checkUser: %v", err)
-	}
-
-	for _, u := range users {
-		if u.UserID == userID {
-			fmt.Printf("Successfully found user: %v\n", u)
-			return nil
-		}
-	}
-
-	return fmt.Errorf("checkUser: user with user_id: %d does not exist", userID)
-}
 
 func TestCreateUser(t *testing.T) {
 	setup()
@@ -64,43 +27,18 @@ func TestCreateUser(t *testing.T) {
 	u.Path = resource
 	urlStr := u.String()
 
-	fmt.Println(strings.NewReader(rawData.Encode()))
 	req, err := http.NewRequest("POST", urlStr, strings.NewReader(rawData.Encode()))
 	if err != nil {
 		t.Fatalf("TestCreateUser: %v", err)
 	}
 
-	// req.Header.Add("Authorization", "auth_token=\"XXXXXXX\"")
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	r.ServeHTTP(respRec, req)
 
-	fmt.Println(respRec.Result().Status)
-
-	TestGetUsers(t)
-}
-
-func TestGetUsers(t *testing.T) {
-	setup()
-
-	req, err = http.NewRequest("GET", "/users", nil)
-	if err != nil {
-		t.Fatalf("TestGetUsers: %v", err)
+	if respRec.Result().StatusCode != http.StatusOK {
+		t.Fatalf("TestCreateUser: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
 	}
-
-	r.ServeHTTP(respRec, req)
-
-	if respRec.Code != http.StatusOK {
-		t.Fatalf("TestGetUsers: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
-	}
-
-	result := respRec.Result().Body
-	data, err := io.ReadAll(result)
-	if err != nil {
-		t.Fatalf("TestGetUsers: %v", err)
-	}
-
-	fmt.Println(string(data))
 }
 
 func TestGetUserByUserID(t *testing.T) {
@@ -113,7 +51,7 @@ func TestGetUserByUserID(t *testing.T) {
 
 	r.ServeHTTP(respRec, req)
 
-	if respRec.Code != http.StatusOK {
+	if respRec.Result().StatusCode != http.StatusOK {
 		t.Fatalf("TestGetUserByUserID: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
 	}
 
@@ -123,7 +61,7 @@ func TestGetUserByUserID(t *testing.T) {
 		t.Fatalf("TestGetUserByUserID: %v", err)
 	}
 
-	fmt.Println(string(data))
+	fmt.Printf("[+] Successfully found user: %v\n", string(data))
 }
 
 func TestUpdateUser(t *testing.T) {
@@ -139,7 +77,6 @@ func TestUpdateUser(t *testing.T) {
 	u.Path = resource
 	urlStr := u.String()
 
-	fmt.Println(strings.NewReader(rawData.Encode()))
 	req, err := http.NewRequest("PUT", urlStr, strings.NewReader(rawData.Encode()))
 	if err != nil {
 		t.Fatalf("TestUpdateUser: %v", err)
@@ -150,9 +87,32 @@ func TestUpdateUser(t *testing.T) {
 
 	r.ServeHTTP(respRec, req)
 
-	fmt.Println(respRec.Result().Status)
+	if respRec.Result().StatusCode != http.StatusOK {
+		t.Fatalf("TestUpdateUser: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
+	}
+}
 
-	TestGetUsers(t)
+func TestGetUsers(t *testing.T) {
+	setup()
+
+	req, err = http.NewRequest("GET", "/users", nil)
+	if err != nil {
+		t.Fatalf("TestGetUsers: %v", err)
+	}
+
+	r.ServeHTTP(respRec, req)
+
+	if respRec.Result().StatusCode != http.StatusOK {
+		t.Fatalf("TestGetUsers: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
+	}
+
+	result := respRec.Result().Body
+	data, err := io.ReadAll(result)
+	if err != nil {
+		t.Fatalf("TestGetUsers: %v", err)
+	}
+
+	fmt.Printf("[+] Successfully got users: %v\n", string(data))
 }
 
 func TestDeleteUser(t *testing.T) {
@@ -165,7 +125,7 @@ func TestDeleteUser(t *testing.T) {
 
 	r.ServeHTTP(respRec, req)
 
-	fmt.Println(respRec.Result().Status)
-
-	TestGetUsers(t)
+	if respRec.Result().StatusCode != http.StatusOK {
+		t.Fatalf("TestDeleteUser: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
+	}
 }
