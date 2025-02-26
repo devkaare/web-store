@@ -31,7 +31,7 @@ func (r *PostgresRepo) GetSessions() ([]model.Session, error) {
 	for rows.Next() {
 		var session model.Session
 		if err := rows.Scan(&session.SessionID, &session.UserID, &session.Expiry); err != nil {
-			return nil, fmt.Errorf("GetSessions %s: %v", session.SessionID, err)
+			return sessions, fmt.Errorf("GetSessions %s: %v", session.SessionID, err)
 		}
 		sessions = append(sessions, session)
 	}
@@ -42,18 +42,18 @@ func (r *PostgresRepo) GetSessions() ([]model.Session, error) {
 	return sessions, nil
 }
 
-func (r *PostgresRepo) GetSessionBySessionID(sessionID string) (*model.Session, bool, error) {
+func (r *PostgresRepo) GetSessionBySessionID(sessionID string) (*model.Session, error) {
 	session := &model.Session{}
 
 	row := r.Client.QueryRow("SELECT * FROM sessions WHERE session_id = $1", sessionID)
 	if err := row.Scan(&session.SessionID, &session.UserID, &session.Expiry); err != nil {
 		if err == sql.ErrNoRows {
-			return session, false, nil
+			return session, nil
 		}
-		return session, false, fmt.Errorf("GetSessionBySessionID %s: %v", sessionID, err)
+		return session, fmt.Errorf("GetSessionBySessionID %s: %v", sessionID, err)
 	}
 
-	return session, true, nil
+	return session, nil
 }
 
 func (r *PostgresRepo) DeleteSessionBySessionID(sessionID string) error {

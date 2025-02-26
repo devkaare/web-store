@@ -1,3 +1,4 @@
+// TODO: Add more route tests
 package server
 
 import (

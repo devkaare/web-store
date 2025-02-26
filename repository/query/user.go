@@ -32,12 +32,12 @@ func (r *PostgresRepo) GetUsers() ([]model.User, error) {
 	for rows.Next() {
 		var user model.User
 		if err := rows.Scan(&user.UserID, &user.Email, &user.Password); err != nil {
-			return nil, fmt.Errorf("GetUsers %d: %v", user.UserID, err)
+			return users, fmt.Errorf("GetUsers %d: %v", user.UserID, err)
 		}
 		users = append(users, user)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("GetUsers %v:", err)
+		return users, fmt.Errorf("GetUsers %v:", err)
 	}
 	return users, nil
 }

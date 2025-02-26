@@ -32,12 +32,12 @@ func (r *PostgresRepo) GetProducts() ([]model.Product, error) {
 	for rows.Next() {
 		var product model.Product
 		if err := rows.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
-			return nil, fmt.Errorf("GetProducts %d: %v", product.ProductID, err)
+			return products, fmt.Errorf("GetProducts %d: %v", product.ProductID, err)
 		}
 		products = append(products, product)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("GetProducts %v:", err)
+		return products, fmt.Errorf("GetProducts %v:", err)
 	}
 	return products, nil
 }
@@ -70,12 +70,12 @@ func (r *PostgresRepo) GetProductsByPage(page uint32) ([]model.Product, error) {
 	for rows.Next() {
 		var product model.Product
 		if err := rows.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
-			return nil, fmt.Errorf("GetProductsByPage %d: %v", product.ProductID, err)
+			return products, fmt.Errorf("GetProductsByPage %d: %v", product.ProductID, err)
 		}
 		products = append(products, product)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("GetProductsByPage %v:", err)
+		return products, fmt.Errorf("GetProductsByPage %v:", err)
 	}
 	return products, nil
 }
