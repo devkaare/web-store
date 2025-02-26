@@ -1,10 +1,20 @@
 package views
 
 import (
+	"strings"
+	"fmt"
+	"encoding/json"
+
 	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/views/components"
-	"fmt"
 )
+
+func getSizesFromByte(p *model.Product) []string {
+	var data []string
+	_ = json.Unmarshal(p.Sizes, &data)
+
+	return data
+}
 
 templ product(p *model.Product) {
 	@components.Base() {
@@ -14,13 +24,12 @@ templ product(p *model.Product) {
 			<form>
 				<label for="sizes">Choose a size:</label>
 				<select id="sizes" name="sizes">
-					<option value="s">Small</option>
-					<option value="m">Medium</option>
-					<option value="l">Large</option>
-					<option value="xl">Extra Large</option>
+					for _, s := range getSizesFromByte(p) {
+						<option value={ s }>{ strings.ToUpper(s) }</option>
+					}
 				</select>
 				<label for="quantity">Quantity:</label>
-				<input type="number"/>
+				<input id="quantity" name="quantity" type="number"/>
 				<input type="submit" value="Submit"/>
 			</form>
 		</div>

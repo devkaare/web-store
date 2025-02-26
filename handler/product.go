@@ -16,13 +16,6 @@ type Product struct {
 	Repo *query.PostgresRepo
 }
 
-func getSizesFromByte(p *model.Product) []string {
-	var data []string
-	_ = json.Unmarshal(p.Sizes, &data)
-
-	return data
-}
-
 func (p *Product) GetProducts(w http.ResponseWriter, r *http.Request) {
 	products, err := p.Repo.GetProducts()
 	if err != nil {
