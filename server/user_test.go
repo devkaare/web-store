@@ -22,7 +22,9 @@ func TestCreateUser(t *testing.T) {
 
 	apiUrl := fmt.Sprintf("http://localhost:%d", port)
 	resource := "/users/"
+
 	rawData := url.Values{}
+
 	rawData.Set("email", "willsmithspersonalemail@gmail.com")
 	rawData.Set("password", "supersecret123")
 

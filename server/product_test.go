@@ -1,49 +1,53 @@
 package server
 
-import "github.com/devkaare/web-store/model"
+import (
+	"fmt"
+	"net/http"
+	"net/url"
+	"strings"
+	"testing"
 
-// import (
-// 	"fmt"
-// 	"io"
-// 	"net/http"
-// 	"net/url"
-// 	"strings"
-// 	"testing"
-// )
+	"github.com/devkaare/web-store/model"
+)
 
 var testProduct = model.Product{
 	Name:      "testshirt",
 	Price:     10,
-	Sizes:     []byte(`{"sizes": {"small", "medium", "large", "extra_large"}}`),
+	Sizes:     []byte(`{"sizes": {"Small", "Medium", "Large", "Extra Large"}}`),
 	ImagePath: "./views/assets/images/shirt.png",
 }
 
-// func TestCreateUser(t *testing.T) {
-// 	setup()
-//
-// 	apiUrl := fmt.Sprintf("http://localhost:%d", port)
-// 	resource := "/users/"
-// 	rawData := url.Values{}
-// 	rawData.Set("email", "willsmithspersonalemail@gmail.com")
-// 	rawData.Set("password", "supersecret123")
-//
-// 	u, _ := url.ParseRequestURI(apiUrl)
-// 	u.Path = resource
-// 	urlStr := u.String()
-//
-// 	req, err := http.NewRequest("POST", urlStr, strings.NewReader(rawData.Encode()))
-// 	if err != nil {
-// 		t.Fatalf("TestCreateUser: %v", err)
-// 	}
-//
-// 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-//
-// 	r.ServeHTTP(respRec, req)
-//
-// 	if respRec.Result().StatusCode != http.StatusOK {
-// 		t.Fatalf("TestCreateUser: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
-// 	}
-// }
+func TestCreateProduct(t *testing.T) {
+	setup()
+
+	apiUrl := fmt.Sprintf("http://localhost:%d", port)
+	resource := "/products/"
+
+	rawData := url.Values{}
+
+	rawData.Set("name", testProduct.Name)
+	rawData.Set("price", fmt.Sprintf("%d", testProduct.Price))
+	rawData.Set("sizes", string(testProduct.Sizes))
+	rawData.Set("imagePath", testProduct.ImagePath)
+
+	u, _ := url.ParseRequestURI(apiUrl)
+	u.Path = resource
+	urlStr := u.String()
+
+	req, err := http.NewRequest("POST", urlStr, strings.NewReader(rawData.Encode()))
+	if err != nil {
+		t.Fatalf("TestCreateUser: %v", err)
+	}
+
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	r.ServeHTTP(respRec, req)
+
+	if respRec.Result().StatusCode != http.StatusOK {
+		t.Fatalf("TestCreateProduct: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
+	}
+}
+
 //
 // func TestGetUserByUserID(t *testing.T) {
 // 	setup()
