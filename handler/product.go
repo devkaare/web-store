@@ -16,9 +16,11 @@ type Product struct {
 	Repo *query.PostgresRepo
 }
 
-func getSizesFromByte(p *Product) []string {
+func getSizesFromByte(p *model.Product) []string {
+	var data []string
+	_ = json.Unmarshal(p.Sizes, &data)
 
-	return []string{}
+	return data
 }
 
 func (p *Product) GetProducts(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +46,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	product := &model.Product{
 		Name:      name,
 		Price:     uint32(price),
-		Sizes:     sizes,
+		Sizes:     []byte(sizes),
 		ImagePath: imagePath,
 	}
 
@@ -137,7 +139,7 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 		ProductID: uint32(productID),
 		Name:      name,
 		Price:     uint32(price),
-		Sizes:     sizes,
+		Sizes:     []byte(sizes),
 		ImagePath: imagePath,
 	}
 
