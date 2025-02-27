@@ -16,7 +16,7 @@ var testProduct = &model.Product{
 	Name:      "testshirt",
 	Price:     10,
 	Sizes:     `["small", "medium", "large", "extra large"]`,
-	ImagePath: "./views/assets/images/shirt.png",
+	ImagePath: "",
 }
 
 func TestCreateProduct(t *testing.T) {
