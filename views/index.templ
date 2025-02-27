@@ -12,7 +12,7 @@ templ index(products []model.Product) {
 		for _, p := range products {
 			<div>
 				<h3>{ p.Name }</h3>
-				<img src={ p.ImagePath }/>
+				<img src={ string(templ.URL(p.ImagePath)) }/>
 				<p><strong>${ fmt.Sprintf("%d", p.Price) }</strong></p>
 				<a href={ templ.URL(fmt.Sprintf("/listings/%d", p.ProductID)) }>View</a>
 				// HTMX version `string(templ.URL(fmt.Sprintf("/listingsq/%d", p.ProductID)))`

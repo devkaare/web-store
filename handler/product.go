@@ -73,6 +73,10 @@ func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request)
 
 func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	if page < 1 {
+		page = 1
+	}
+
 	products, err := p.Repo.GetProductsByPage(uint32(page))
 	if err != nil {
 		log.Println(err)
