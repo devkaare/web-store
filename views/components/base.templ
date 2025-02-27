@@ -17,6 +17,18 @@ templ Base() {
 				{ children... }
 				@footer()
 			</main>
+			<script>
+				let page = 1
+
+				const url = new URL(location.href);
+
+				page = URLSearchParams.get('page')
+				// Convert to int?
+				// Increase/decrease by 1
+
+				url.searchParams.set("page", page);
+				location.replace(url);
+			</script>
 		</body>
 	</html>
 }
