@@ -48,7 +48,7 @@ func (r *PostgresRepo) GetSessionBySessionID(sessionID string) (*model.Session, 
 	row := r.Client.QueryRow("SELECT * FROM sessions WHERE session_id = $1", sessionID)
 	if err := row.Scan(&session.SessionID, &session.UserID, &session.Expiry); err != nil {
 		if err == sql.ErrNoRows {
-			return session, nil
+			return session, err
 		}
 		return session, fmt.Errorf("GetSessionBySessionID %s: %v", sessionID, err)
 	}
