@@ -9,7 +9,7 @@ Here are A FEW handy commands for using the API
 Add product:
 
 ```
-curl -X POST localhost:3000/products -d `&name="shirt"&price=10&sizes=["small","medium"]&image_path="shirt.png"`
+curl -X POST localhost:3000/products -d name="shirt"&price=10&sizes=["small","medium"]&image_path=""
 ```
 
 View products:
