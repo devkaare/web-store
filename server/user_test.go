@@ -25,8 +25,8 @@ func TestCreateUser(t *testing.T) {
 
 	rawData := url.Values{}
 
-	rawData.Set("email", "willsmithspersonalemail@gmail.com")
-	rawData.Set("password", "supersecret123")
+	rawData.Set("email", testUser.Email)
+	rawData.Set("password", testUser.Password)
 
 	u, _ := url.ParseRequestURI(apiUrl)
 	u.Path = resource
