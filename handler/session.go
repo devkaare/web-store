@@ -74,11 +74,6 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 
 	sessionID := uuid.NewString()
 	expiresAt := time.Now().Add(120 * time.Second)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 
 	session := &model.Session{
 		SessionID: sessionID,
