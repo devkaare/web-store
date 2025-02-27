@@ -16,6 +16,7 @@ func IndexPageHandler(w http.ResponseWriter, r *http.Request) {
 	if page < 1 {
 		page = 1
 	}
+	fmt.Println(page)
 
 	resp, err := http.Get(fmt.Sprintf("http://localhost:3000/products/listings?page=%d", page))
 	if err != nil {
