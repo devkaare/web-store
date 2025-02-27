@@ -14,13 +14,13 @@ templ product(p *productProp) {
 			<p><strong>${ fmt.Sprintf("%d", p.Price) }</strong></p>
 			<form>
 				<label for="sizes">Choose a size:</label>
-				<select id="sizes" name="sizes" size="4">
+				<select id="sizes" name="sizes" size="1">
 					for _, s := range p.Sizes {
 						<option value={ s }>{ strings.ToUpper(s) }</option>
 					}
 				</select>
 				<label for="quantity">Quantity:</label>
-				<input id="quantity" name="quantity" type="number"/>
+				<input id="quantity" name="quantity" type="number" min="1"/>
 				<input type="submit" value="Submit"/>
 			</form>
 		</div>
