@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,7 +13,6 @@ import (
 )
 
 var testUser = &model.User{
-	UserID:   1,
 	Email:    "johndoe@gmail.com",
 	Password: "strongpassword123",
 }
@@ -44,6 +44,15 @@ func TestCreateUser(t *testing.T) {
 	if respRec.Result().StatusCode != http.StatusOK {
 		t.Fatalf("TestCreateUser: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
 	}
+
+	var result model.User
+
+	d := json.NewDecoder(respRec.Result().Body)
+	if err := d.Decode(&result); err != nil {
+		t.Fatalf("TestCreateUser: %v", err)
+	}
+
+	testUser.UserID = result.UserID
 }
 
 func TestGetUserByUserID(t *testing.T) {

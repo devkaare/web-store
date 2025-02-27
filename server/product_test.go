@@ -90,8 +90,8 @@ func TestUpdateProduct(t *testing.T) {
 
 	rawData := url.Values{}
 
-	rawData.Add("name", testProduct.Name)
-	rawData.Add("price", fmt.Sprintf("%d", testProduct.Price))
+	rawData.Add("name", fmt.Sprintf("%s [SALE]", testProduct.Name))
+	rawData.Add("price", fmt.Sprintf("%d", testProduct.Price-5))
 	rawData.Add("sizes", testProduct.Sizes)
 	rawData.Add("imagePath", testProduct.ImagePath)
 
