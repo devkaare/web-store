@@ -47,11 +47,18 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Password: passwordHash,
 	}
 
-	if _, err := u.Repo.CreateUser(user); err != nil {
+	userID, err := u.Repo.CreateUser(user)
+	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	user.UserID = userID
+
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(user)
+	_, _ = w.Write(jsonResp)
 }
 
 func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
