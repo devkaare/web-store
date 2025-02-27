@@ -28,7 +28,6 @@ func (c *CartItem) GetCartItems(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-// curl -X POST localhost:3000/carts -d "userID=1&productID=2&size=s&quantity=1"
 func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(r.FormValue("userID"))
 	productID, _ := strconv.Atoi(r.FormValue("productID"))
@@ -64,7 +63,6 @@ func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) 
 	_, _ = w.Write(jsonResp)
 }
 
-// curl -X DELETE localhost:3000/carts/1/2\?size=s
 func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
 	productID, _ := strconv.Atoi(chi.URLParam(r, "productID"))
@@ -83,7 +81,6 @@ func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// curl -X PUT localhost:3000/carts/1/2 -d "size=s&quantity=9"
 func (c *CartItem) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
 	productID, _ := strconv.Atoi(chi.URLParam(r, "productID"))

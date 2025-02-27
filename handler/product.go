@@ -29,7 +29,6 @@ func (p *Product) GetProducts(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-// curl -X POST localhost:3000/products -d "name=shirt&price=10&sizes=s,m,l,xl&imagePath=shirt.png"
 func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
 	sizes := r.FormValue("sizes")
@@ -102,7 +101,6 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-// curl -X PUT localhost:3000/products/1 -d "name=updatedShirt&price=12&sizes=s,m,l,xl&imagePath=updated_shirt.png"
 func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Request) {
 	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
