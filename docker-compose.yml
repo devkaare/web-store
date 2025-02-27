@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: prod # You can change this to `prod`
+      target: prod # Change this to either `prod` or `dev`
     restart: unless-stopped
     ports:
       - ${PORT}:${PORT}
@@ -32,8 +32,8 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "${DB_PORT}:5432"
-    volumes:
-      - psql_volume:/var/lib/postgresql/data
+    # volumes: # Uncomment this (and the other part below) to enable persistance
+    #   - psql_volume:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}'"]
       interval: 5s
@@ -43,7 +43,7 @@ services:
     networks:
       - web_store
 
-volumes:
-  psql_volume:
+# volumes:
+#   psql_volume:
 networks:
   web_store:
