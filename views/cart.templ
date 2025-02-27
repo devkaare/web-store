@@ -8,9 +8,9 @@ import (
 
 templ cart(cart []cartProp) {
 	@components.Base() {
-		for _, item := range cart {
-			<p>{ item.Name } <strong>{ string(templ.SafeURL(fmt.Sprintf("%d", item.Price))) }</strong></p>
-			<p>{ item.Size } { string(templ.SafeURL(fmt.Sprintf("%d", item.Quantity))) }</p>
+		for _, i := range cart {
+			<p>{ i.Name } <strong>{ string(templ.SafeURL(fmt.Sprintf("%d", i.Price))) }</strong></p>
+			<p>{ i.Size } { string(templ.SafeURL(fmt.Sprintf("%d", i.Quantity))) }</p>
 			// TODO: Add increment/decrement field and delete button
 		}
 	}
