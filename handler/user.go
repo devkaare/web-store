@@ -2,8 +2,8 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -64,15 +64,10 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
-	user, ok, err := u.Repo.GetUserByUserID(uint32(userID))
-	if err != nil {
+	user, err := u.Repo.GetUserByUserID(uint32(userID))
+	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if !ok {
-		w.WriteHeader(http.StatusNoContent)
-		fmt.Fprintf(w, "user with user_id: %d does not exist", userID)
 		return
 	}
 
@@ -84,15 +79,9 @@ func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
-	_, ok, err := u.Repo.GetUserByUserID(uint32(userID))
-	if err != nil {
+	if _, err := u.Repo.GetUserByUserID(uint32(userID)); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if !ok {
-		w.WriteHeader(http.StatusNoContent)
-		fmt.Fprintf(w, "user with user_id: %d does not exist", userID)
 		return
 	}
 
@@ -106,15 +95,9 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
-	_, ok, err := u.Repo.GetUserByUserID(uint32(userID))
-	if err != nil {
+	if _, err := u.Repo.GetUserByUserID(uint32(userID)); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if !ok {
-		w.WriteHeader(http.StatusNoContent)
-		fmt.Fprintf(w, "user with user_id: %d does not exist", userID)
 		return
 	}
 

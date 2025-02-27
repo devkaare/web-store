@@ -42,17 +42,17 @@ func (r *PostgresRepo) GetProducts() ([]model.Product, error) {
 	return products, nil
 }
 
-func (r *PostgresRepo) GetProductByProductID(productID uint32) (*model.Product, bool, error) {
+func (r *PostgresRepo) GetProductByProductID(productID uint32) (*model.Product, error) {
 	product := &model.Product{}
 
 	row := r.Client.QueryRow("SELECT * FROM products WHERE product_id = $1", productID)
 	if err := row.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
 		if err == sql.ErrNoRows {
-			return product, false, nil
+			return product, err
 		}
-		return product, false, fmt.Errorf("GetProductByProductID %d: %v", productID, err)
+		return product, fmt.Errorf("GetProductByProductID %d: %v", productID, err)
 	}
-	return product, true, nil
+	return product, nil
 }
 
 func (r *PostgresRepo) GetProductsByPage(page uint32) ([]model.Product, error) {

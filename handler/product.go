@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -60,15 +60,10 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request) {
 	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
-	product, ok, err := p.Repo.GetProductByProductID(uint32(productID))
-	if err != nil {
+	product, err := p.Repo.GetProductByProductID(uint32(productID))
+	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if !ok {
-		w.WriteHeader(http.StatusNoContent)
-		fmt.Fprintf(w, "product with product_id: %d does not exist", productID)
 		return
 	}
 
@@ -94,15 +89,9 @@ func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
 	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
-	_, ok, err := p.Repo.GetProductByProductID(uint32(productID))
-	if err != nil {
+	if _, err := p.Repo.GetProductByProductID(uint32(productID)); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if !ok {
-		w.WriteHeader(http.StatusNoContent)
-		fmt.Fprintf(w, "product with product_id: %d does not exist", productID)
 		return
 	}
 
@@ -117,15 +106,9 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Request) {
 	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
-	_, ok, err := p.Repo.GetProductByProductID(uint32(productID))
-	if err != nil {
+	if _, err := p.Repo.GetProductByProductID(uint32(productID)); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if !ok {
-		w.WriteHeader(http.StatusNoContent)
-		fmt.Fprintf(w, "product with product_id: %d does not exist", productID)
 		return
 	}
 

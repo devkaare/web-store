@@ -42,17 +42,17 @@ func (r *PostgresRepo) GetUsers() ([]model.User, error) {
 	return users, nil
 }
 
-func (r *PostgresRepo) GetUserByUserID(userID uint32) (*model.User, bool, error) {
+func (r *PostgresRepo) GetUserByUserID(userID uint32) (*model.User, error) {
 	user := &model.User{}
 
 	row := r.Client.QueryRow("SELECT * FROM users WHERE user_id = $1", userID)
 	if err := row.Scan(&user.UserID, &user.Email, &user.Password); err != nil {
 		if err == sql.ErrNoRows {
-			return user, false, nil
+			return user, err
 		}
-		return user, false, fmt.Errorf("GetUserByUserID %d: %v", userID, err)
+		return user, fmt.Errorf("GetUserByUserID %d: %v", userID, err)
 	}
-	return user, true, nil
+	return user, nil
 
 }
 
