@@ -6,7 +6,7 @@ import (
 	"github.com/devkaare/web-store/views/components"
 )
 
-templ cart(cart []CartProp) {
+templ cart(cart []cartProp) {
 	@components.Base() {
 		for _, item := range cart {
 			<p>{ item.Name } <strong>{ string(templ.SafeURL(fmt.Sprintf("%d", item.Price))) }</strong></p>

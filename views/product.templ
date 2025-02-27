@@ -3,19 +3,11 @@ package views
 import (
 	"strings"
 	"fmt"
-	"encoding/json"
 
-	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/views/components"
 )
 
-func getSizesFromByte(p *model.Product) []string {
-	var sizes []string
-	_ = json.Unmarshal([]byte(p.Sizes), &sizes)
-	return sizes
-}
-
-templ product(p *model.Product) {
+templ product(p *productProp) {
 	@components.Base() {
 		<div>
 			<h2>{ p.Name }</h2>
@@ -23,7 +15,7 @@ templ product(p *model.Product) {
 			<form>
 				<label for="sizes">Choose a size:</label>
 				<select id="sizes" name="sizes">
-					for _, s := range getSizesFromByte(p) {
+					for _, s := range p.Sizes {
 						<option value={ s }>{ strings.ToUpper(s) }</option>
 					}
 				</select>
