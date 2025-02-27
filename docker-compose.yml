@@ -25,7 +25,7 @@ services:
       - web_store
   psql:
     image: postgres:latest
-    restart: unless-stopped
+    # restart: unless-stopped
     environment:
       POSTGRES_DB: ${DB_DATABASE}
       POSTGRES_USER: ${DB_USERNAME}

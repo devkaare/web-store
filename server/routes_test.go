@@ -29,7 +29,7 @@ func setup() {
 }
 
 func TestConnectToDB(t *testing.T) {
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", "kaare", "password", "localhost", "5432", "webstore", "public")
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", "kaare", "password", "localhost", "5432", "dbwebstore", "public")
 	db, err = sql.Open("pgx", connStr)
 	if err != nil {
 		t.Fatalf("TestConnectToDB: %v", err)
