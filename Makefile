@@ -50,7 +50,7 @@ db-run:
 
 # Shutdown DB service
 db-down:
-	@docker compose stop psql
+	@docker compose down psql
 
 # Test the application
 test:
