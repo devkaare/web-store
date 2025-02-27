@@ -20,9 +20,7 @@ type Session struct {
 }
 
 func isExpired(s *model.Session) bool {
-	// t := s.Expiry
-	t := time.Now().Add(120 * time.Second)
-	return t.Before(time.Now())
+	return s.Expiry.Before(time.Now())
 }
 
 func (s *Session) SignUp(w http.ResponseWriter, r *http.Request) {
@@ -75,8 +73,7 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sessionID := uuid.NewString()
-	expiresAtRaw := time.Now().Add(120 * time.Second)
-	expiresAt, err := expiresAtRaw.MarshalJSON()
+	expiresAt := time.Now().Add(120 * time.Second)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -86,7 +83,7 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 	session := &model.Session{
 		SessionID: sessionID,
 		UserID:    existingUser.UserID,
-		Expiry:    string(expiresAt),
+		Expiry:    expiresAt,
 	}
 
 	fmt.Println("Saving session to DB")
@@ -101,7 +98,7 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:    "session_token",
 		Value:   sessionID,
-		Expires: expiresAtRaw,
+		Expires: expiresAt,
 	})
 }
 
@@ -185,7 +182,7 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	newSession := &model.Session{
 		SessionID: newSessionID,
 		UserID:    session.UserID,
-		Expiry:    expiresAt.String(),
+		Expiry:    expiresAt,
 	}
 
 	if err := s.Repo.CreateSession(newSession); err != nil {

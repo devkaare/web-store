@@ -26,7 +26,7 @@ var (
 )
 
 func New() *sql.DB {
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&search_path=%s", username, password, host, port, database, schema)
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&TimeZone=UTC&search_path=%s", username, password, host, port, database, schema)
 	db, err := sql.Open("pgx", connStr)
 	if err != nil {
 		log.Fatal(err)
@@ -44,7 +44,7 @@ func New() *sql.DB {
 		log.Fatal(err)
 	}
 
-	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS sessions (session_id TEXT NOT NULL, user_id INT NOT NULL, expiry TEXT NOT NULL)"); err != nil {
+	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS sessions (session_id TEXT NOT NULL, user_id INT NOT NULL, expiry TIMESTAMP WITH TIME ZONE NOT NULL)"); err != nil {
 		log.Fatal(err)
 	}
 
