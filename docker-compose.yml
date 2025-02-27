@@ -22,7 +22,7 @@ services:
       psql:
         condition: service_healthy
     networks:
-      - web_store
+      - webstore
   psql:
     image: postgres:latest
     # restart: unless-stopped
@@ -33,7 +33,7 @@ services:
     ports:
       - "${DB_PORT}:5432"
     # volumes: # Uncomment this (and the other part below) to enable persistance
-    #   - psql_volume:/var/lib/postgresql/data
+    #   - psql-volume:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}'"]
       interval: 5s
@@ -41,9 +41,9 @@ services:
       retries: 3
       start_period: 15s
     networks:
-      - web_store
+      - webstore
 
 # volumes:
-#   psql_volume:
+#   psql-volume:
 networks:
-  web_store:
+  webstore:
