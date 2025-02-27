@@ -30,7 +30,7 @@ func TestCreateProduct(t *testing.T) {
 	rawData.Add("name", testProduct.Name)
 	rawData.Add("price", fmt.Sprintf("%d", testProduct.Price))
 	rawData.Add("sizes", testProduct.Sizes)
-	rawData.Add("imagePath", testProduct.ImagePath)
+	rawData.Add("image_path", testProduct.ImagePath)
 
 	u, _ := url.ParseRequestURI(apiUrl)
 	u.Path = resource
@@ -93,7 +93,7 @@ func TestUpdateProduct(t *testing.T) {
 	rawData.Add("name", fmt.Sprintf("%s [SALE]", testProduct.Name))
 	rawData.Add("price", fmt.Sprintf("%d", testProduct.Price-5))
 	rawData.Add("sizes", testProduct.Sizes)
-	rawData.Add("imagePath", testProduct.ImagePath)
+	rawData.Add("image_path", testProduct.ImagePath)
 
 	u, _ := url.ParseRequestURI(apiUrl)
 	u.Path = resource
