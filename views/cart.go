@@ -13,6 +13,7 @@ type cartProp struct {
 	Quantity  uint32
 	Name      string
 	Price     uint32
+	ImagePath string
 }
 
 func CartHandler(w http.ResponseWriter, r *http.Request) {
