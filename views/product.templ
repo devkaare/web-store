@@ -14,7 +14,7 @@ templ product(p *productProp) {
 			<p><strong>${ fmt.Sprintf("%d", p.Price) }</strong></p>
 			<form>
 				<label for="sizes">Choose a size:</label>
-				<select id="sizes" name="sizes">
+				<select id="sizes" name="sizes" size="4">
 					for _, s := range p.Sizes {
 						<option value={ s }>{ strings.ToUpper(s) }</option>
 					}
