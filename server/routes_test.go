@@ -34,6 +34,22 @@ func TestConnectToDB(t *testing.T) {
 	if err != nil {
 		t.Fatalf("TestConnectToDB: %v", err)
 	}
+
+	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, email TEXT NOT NULL, password TEXT NOT NULL)"); err != nil {
+		t.Fatalf("TestConnectToDB: %v", err)
+	}
+
+	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS products (product_id SERIAL PRIMARY KEY, name TEXT NOT NULL, price INT NOT NULL, sizes TEXT NOT NULL, image_path TEXT NOT NULL)"); err != nil {
+		t.Fatalf("TestConnectToDB: %v", err)
+	}
+
+	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS cart_items (user_id INT PRIMARY KEY, product_id INT NOT NULL, size TEXT NOT NULL, quantity INT NOT NULL)"); err != nil {
+		t.Fatalf("TestConnectToDB: %v", err)
+	}
+
+	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS sessions (session_id TEXT NOT NULL, user_id INT NOT NULL, expiry TIMESTAMP WITH TIME ZONE NOT NULL)"); err != nil {
+		t.Fatalf("TestConnectToDB: %v", err)
+	}
 }
 
 func TestMain(m *testing.M) {
