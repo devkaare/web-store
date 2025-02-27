@@ -15,7 +15,7 @@ import (
 var testProduct = &model.Product{
 	Name:      "testshirt",
 	Price:     10,
-	Sizes:     "{\"sizes\": {\"Small\", \"Medium\", \"Large\", \"Extra Large\"}}",
+	Sizes:     `["small", "medium", "large", "extra large"]`,
 	ImagePath: "./views/assets/images/shirt.png",
 }
 

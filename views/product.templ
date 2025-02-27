@@ -10,9 +10,9 @@ import (
 )
 
 func getSizesFromByte(p *model.Product) []string {
-	var sizes model.Sizes
+	var sizes []string
 	_ = json.Unmarshal([]byte(p.Sizes), &sizes)
-	return sizes.Sizes
+	return sizes
 }
 
 templ product(p *model.Product) {

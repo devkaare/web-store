@@ -6,15 +6,6 @@ import (
 	"github.com/devkaare/web-store/views/components"
 )
 
-type CartProp struct {
-	UserID    uint32
-	ProductID uint32
-	Size      string
-	Quantity  uint32
-	Name      string
-	Price     uint32
-}
-
 templ cart(cart []CartProp) {
 	@components.Base() {
 		for _, item := range cart {
