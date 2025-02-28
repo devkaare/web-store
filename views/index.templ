@@ -7,7 +7,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-templ index(products []model.Product) {
+templ index(currentPage int, products []model.Product) {
 	@components.Base() {
 		for _, p := range products {
 			<div>
@@ -18,5 +18,6 @@ templ index(products []model.Product) {
 				// HTMX version `string(templ.URL(fmt.Sprintf("/listingsq/%d", p.ProductID)))`
 			</div>
 		}
+		@components.Paginator(currentPage)
 	}
 }

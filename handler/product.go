@@ -77,7 +77,7 @@ func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 
-	products, err := p.Repo.GetProductsByPage(uint32(page))
+	products, err := p.Repo.GetProductsByPage(page)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

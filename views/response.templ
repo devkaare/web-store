@@ -1,0 +1,10 @@
+package views
+
+import "github.com/devkaare/web-store/views/components"
+
+templ response(r string) {
+	@components.Base() {
+		<div>{ r }</div>
+		<a href="/listings">Go back</a>
+	}
+}

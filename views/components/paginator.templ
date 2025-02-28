@@ -1,0 +1,15 @@
+package components 
+
+import "fmt"
+
+templ Paginator(currentPage int) {
+	<div>
+		<nav>
+			<ul>
+				<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage-1)) } rel="prev">Previous</a></li>
+				<li class="active"><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage)) }>{ fmt.Sprintf("%d", currentPage) }</a></li>
+				<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage+1)) } rel="next">Next</a></li>
+			</ul>
+		</nav>
+	</div>
+}

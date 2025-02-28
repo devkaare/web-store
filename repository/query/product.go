@@ -55,11 +55,11 @@ func (r *PostgresRepo) GetProductByProductID(productID uint32) (*model.Product, 
 	return product, nil
 }
 
-func (r *PostgresRepo) GetProductsByPage(page uint32) ([]model.Product, error) {
+func (r *PostgresRepo) GetProductsByPage(page int) ([]model.Product, error) {
 	var products []model.Product
 
-	limit := 10
-	offset := (int(page) - 1) * limit
+	limit := 4
+	offset := (page - 1) * limit
 
 	rows, err := r.Client.Query("SELECT product_id, name, price, sizes, image_path FROM products LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {
