@@ -15,6 +15,7 @@ DB_DATABASE=dbwebstore
 DB_USERNAME=kaare
 DB_PASSWORD=password
 DB_SCHEMA=public
+API_KEY=81566e986cf8cc685a05ac5b634af7f8
 ```
 
 Here are A FEW handy commands for using the API

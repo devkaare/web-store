@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 	"testing"
 
 	"github.com/devkaare/web-store/model"
@@ -20,19 +19,16 @@ var testUser = &model.User{
 func TestCreateUser(t *testing.T) {
 	setup()
 
-	apiUrl := fmt.Sprintf("http://localhost:%d", port)
-	resource := "/users/"
-
 	rawData := url.Values{}
 
-	rawData.Set("email", fmt.Sprintf("updated%s", testUser.Email))
-	rawData.Set("password", fmt.Sprintf("updated%s", testUser.Password))
+	rawData.Add("email", testUser.Email)
+	rawData.Add("password", testUser.Password)
 
-	u, _ := url.ParseRequestURI(apiUrl)
-	u.Path = resource
-	urlStr := u.String()
+	rawData.Add("api_key", testApiKey)
 
-	req, err := http.NewRequest("POST", urlStr, strings.NewReader(rawData.Encode()))
+	urlStr := fmt.Sprintf("http://localhost:%d/users?%v", port, rawData.Encode())
+
+	req, err := http.NewRequest("POST", urlStr, nil)
 	if err != nil {
 		t.Fatalf("TestCreateUser: %v", err)
 	}
@@ -58,7 +54,9 @@ func TestCreateUser(t *testing.T) {
 func TestGetUserByUserID(t *testing.T) {
 	setup()
 
-	req, err = http.NewRequest("GET", fmt.Sprintf("/users/%d", testUser.UserID), nil)
+	urlStr := fmt.Sprintf("http://localhost:%d/users/%d", port, testUser.UserID)
+
+	req, err = http.NewRequest("GET", urlStr, nil)
 	if err != nil {
 		t.Fatalf("TestGetUserByUserID: %v", err)
 	}
@@ -81,17 +79,16 @@ func TestGetUserByUserID(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	setup()
 
-	apiUrl := fmt.Sprintf("http://localhost:%d", port)
-	resource := fmt.Sprintf("/users/%d", testUser.UserID)
 	rawData := url.Values{}
-	rawData.Set("email", testUser.Email)
-	rawData.Set("password", testUser.Password)
 
-	u, _ := url.ParseRequestURI(apiUrl)
-	u.Path = resource
-	urlStr := u.String()
+	rawData.Add("email", testUser.Email)
+	rawData.Add("password", testUser.Password)
 
-	req, err := http.NewRequest("PUT", urlStr, strings.NewReader(rawData.Encode()))
+	rawData.Add("api_key", testApiKey)
+
+	urlStr := fmt.Sprintf("http://localhost:%d/users/%d?%v", port, testUser.UserID, rawData.Encode())
+
+	req, err := http.NewRequest("PUT", urlStr, nil)
 	if err != nil {
 		t.Fatalf("TestUpdateUser: %v", err)
 	}
@@ -109,7 +106,9 @@ func TestUpdateUser(t *testing.T) {
 func TestGetUsers(t *testing.T) {
 	setup()
 
-	req, err = http.NewRequest("GET", "/users", nil)
+	urlStr := fmt.Sprintf("http://localhost:%d/users", port)
+
+	req, err = http.NewRequest("GET", urlStr, nil)
 	if err != nil {
 		t.Fatalf("TestGetUsers: %v", err)
 	}
@@ -132,7 +131,13 @@ func TestGetUsers(t *testing.T) {
 func TestDeleteUser(t *testing.T) {
 	setup()
 
-	req, err = http.NewRequest("DELETE", fmt.Sprintf("/users/%d", testUser.UserID), nil)
+	rawData := url.Values{}
+
+	rawData.Add("api_key", testApiKey)
+
+	urlStr := fmt.Sprintf("http://localhost:%d/users/%d?%v", port, testUser.UserID, rawData.Encode())
+
+	req, err = http.NewRequest("DELETE", urlStr, nil)
 	if err != nil {
 		t.Fatalf("TestDeleteUser: %v", err)
 	}

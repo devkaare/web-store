@@ -1,4 +1,3 @@
-// TODO: Add protected routes using `req.Header.Add("Authorization", "auth_token=\"XXXXXXX\"")`
 package handler
 
 import (
@@ -32,6 +31,12 @@ func (u *User) GetUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
+	reqApiKey := r.URL.Query().Get("api_key")
+	if reqApiKey != apiKey {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
@@ -77,6 +82,12 @@ func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
+	reqApiKey := r.URL.Query().Get("api_key")
+	if reqApiKey != apiKey {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
 	if _, err := u.Repo.GetUserByUserID(uint32(userID)); err != nil && err != sql.ErrNoRows {
@@ -93,6 +104,12 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
+	reqApiKey := r.URL.Query().Get("api_key")
+	if reqApiKey != apiKey {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
 	if _, err := u.Repo.GetUserByUserID(uint32(userID)); err != nil && err != sql.ErrNoRows {

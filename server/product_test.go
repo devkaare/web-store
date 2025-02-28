@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
 	"testing"
 
 	"github.com/devkaare/web-store/model"
@@ -22,21 +21,17 @@ var testProduct = &model.Product{
 func TestCreateProduct(t *testing.T) {
 	setup()
 
-	apiUrl := fmt.Sprintf("http://localhost:%d", port)
-	resource := "/products/"
-
 	rawData := url.Values{}
 
 	rawData.Add("name", testProduct.Name)
 	rawData.Add("price", fmt.Sprintf("%d", testProduct.Price))
 	rawData.Add("sizes", testProduct.Sizes)
 	rawData.Add("image_path", testProduct.ImagePath)
+	rawData.Add("api_key", testApiKey)
 
-	u, _ := url.ParseRequestURI(apiUrl)
-	u.Path = resource
-	urlStr := u.String()
+	urlStr := fmt.Sprintf("http://localhost:%d/products?%v", port, rawData.Encode())
 
-	req, err := http.NewRequest("POST", urlStr, strings.NewReader(rawData.Encode()))
+	req, err := http.NewRequest("POST", urlStr, nil)
 	if err != nil {
 		t.Fatalf("TestCreateProduct: %v", err)
 	}
@@ -62,7 +57,9 @@ func TestCreateProduct(t *testing.T) {
 func TestGetProductByProductID(t *testing.T) {
 	setup()
 
-	req, err = http.NewRequest("GET", fmt.Sprintf("/products/%d", testProduct.ProductID), nil)
+	urlStr := fmt.Sprintf("http://localhost:%d/products/%d", port, testProduct.ProductID)
+
+	req, err = http.NewRequest("GET", urlStr, nil)
 	if err != nil {
 		t.Fatalf("TestGetProductByProductID: %v", err)
 	}
@@ -85,9 +82,6 @@ func TestGetProductByProductID(t *testing.T) {
 func TestUpdateProduct(t *testing.T) {
 	setup()
 
-	apiUrl := fmt.Sprintf("http://localhost:%d", port)
-	resource := fmt.Sprintf("/products/%d", testProduct.ProductID)
-
 	rawData := url.Values{}
 
 	rawData.Add("name", fmt.Sprintf("%s [SALE]", testProduct.Name))
@@ -95,11 +89,11 @@ func TestUpdateProduct(t *testing.T) {
 	rawData.Add("sizes", testProduct.Sizes)
 	rawData.Add("image_path", testProduct.ImagePath)
 
-	u, _ := url.ParseRequestURI(apiUrl)
-	u.Path = resource
-	urlStr := u.String()
+	rawData.Add("api_key", testApiKey)
 
-	req, err := http.NewRequest("PUT", urlStr, strings.NewReader(rawData.Encode()))
+	urlStr := fmt.Sprintf("http://localhost:%d/products/%d?%v", port, testProduct.ProductID, rawData.Encode())
+
+	req, err := http.NewRequest("PUT", urlStr, nil)
 	if err != nil {
 		t.Fatalf("TestUpdateProduct: %v", err)
 	}
@@ -117,7 +111,9 @@ func TestUpdateProduct(t *testing.T) {
 func TestGetProducts(t *testing.T) {
 	setup()
 
-	req, err = http.NewRequest("GET", "/products", nil)
+	urlStr := fmt.Sprintf("http://localhost:%d/products", port)
+
+	req, err = http.NewRequest("GET", urlStr, nil)
 	if err != nil {
 		t.Fatalf("TestGetProducts: %v", err)
 	}
@@ -140,7 +136,13 @@ func TestGetProducts(t *testing.T) {
 func TestDeleteProduct(t *testing.T) {
 	setup()
 
-	req, err = http.NewRequest("DELETE", fmt.Sprintf("/products/%d", testProduct.ProductID), nil)
+	rawData := url.Values{}
+
+	rawData.Add("api_key", testApiKey)
+
+	urlStr := fmt.Sprintf("http://localhost:%d/products/%d?%v", port, testProduct.ProductID, rawData.Encode())
+
+	req, err = http.NewRequest("DELETE", urlStr, nil)
 	if err != nil {
 		t.Fatalf("TestDeleteProduct: %v", err)
 	}

@@ -30,6 +30,12 @@ func (p *Product) GetProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
+	reqApiKey := r.URL.Query().Get("api_key")
+	if reqApiKey != apiKey {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	name := r.FormValue("name")
 	sizes := r.FormValue("sizes")
 	imagePath := r.FormValue("image_path")
@@ -90,6 +96,12 @@ func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
+	reqApiKey := r.URL.Query().Get("api_key")
+	if reqApiKey != apiKey {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
 	if _, err := p.Repo.GetProductByProductID(uint32(productID)); err != nil && err != sql.ErrNoRows {
@@ -106,6 +118,12 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 }
 
 func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Request) {
+	reqApiKey := r.URL.Query().Get("api_key")
+	if reqApiKey != apiKey {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
 
 	if _, err := p.Repo.GetProductByProductID(uint32(productID)); err != nil && err != sql.ErrNoRows {
