@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"context"
+	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -13,6 +15,47 @@ import (
 
 type CartItem struct {
 	Repo *query.PostgresRepo
+}
+
+func (c *CartItem) CartMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		cookie, err := r.Cookie("session_token")
+		if err != nil {
+			if err == http.ErrNoCookie {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		sessionID := cookie.Value
+
+		session, err := c.Repo.GetSessionBySessionID(sessionID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if isExpired(session) {
+			if err := c.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+				log.Println(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), "user_id", session.UserID)
+
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
 
 func (c *CartItem) GetCartItems(w http.ResponseWriter, r *http.Request) {

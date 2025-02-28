@@ -4,6 +4,19 @@
 
 ## Usage
 
+### Env
+
+```
+PORT=3000
+APP_ENV=local
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=dbwebstore
+DB_USERNAME=kaare
+DB_PASSWORD=password
+DB_SCHEMA=public
+```
+
 Here are A FEW handy commands for using the API
 
 Add product:

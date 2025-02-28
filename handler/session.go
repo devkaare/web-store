@@ -87,7 +87,7 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
-	c, err := r.Cookie("session_token")
+	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -97,7 +97,7 @@ func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	sessionID := c.Value
+	sessionID := cookie.Value
 
 	session, err := s.Repo.GetSessionBySessionID(sessionID)
 	if err != nil {
@@ -120,11 +120,12 @@ func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("User is authorized"))
+	// w.Write([]byte("User is authorized"))
+	http.Redirect(w, r, "/listings", http.StatusSeeOther)
 }
 
 func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
-	c, err := r.Cookie("session_token")
+	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -134,7 +135,7 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	sessionID := c.Value
+	sessionID := cookie.Value
 
 	session, err := s.Repo.GetSessionBySessionID(sessionID)
 	if err != nil {
@@ -186,7 +187,7 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Session) LogOut(w http.ResponseWriter, r *http.Request) {
-	c, err := r.Cookie("session_token")
+	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -196,7 +197,7 @@ func (s *Session) LogOut(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	sessionID := c.Value
+	sessionID := cookie.Value
 
 	if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
 		log.Println(err)

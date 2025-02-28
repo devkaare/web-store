@@ -41,6 +41,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	return r
 }
 
+func UserMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	})
+}
+
 func (s *Server) registerUtilsRoutes(r chi.Router) {
 	utilsHandler := &handler.Utils{
 		Repo: &query.PostgresRepo{
@@ -86,6 +92,8 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 			Client: s.db,
 		},
 	}
+
+	r.Use(cartHandler.CartMiddleware)
 
 	r.Post("/", cartHandler.CreateCartItem)
 	r.Get("/", cartHandler.GetCartItems)
