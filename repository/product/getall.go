@@ -6,7 +6,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *ProductRepo) GetProducts() ([]model.Product, error) {
+func (r *ProductRepo) GetAllProducts() ([]model.Product, error) {
 	var products []model.Product
 
 	rows, err := r.Client.Query("SELECT * FROM products")
@@ -18,12 +18,12 @@ func (r *ProductRepo) GetProducts() ([]model.Product, error) {
 	for rows.Next() {
 		var product model.Product
 		if err := rows.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
-			return products, fmt.Errorf("GetProducts %d: %v", product.ProductID, err)
+			return products, fmt.Errorf("GetAllProducts %d: %v", product.ProductID, err)
 		}
 		products = append(products, product)
 	}
 	if err := rows.Err(); err != nil {
-		return products, fmt.Errorf("GetProducts %v:", err)
+		return products, fmt.Errorf("GetAllProducts %v:", err)
 	}
 	return products, nil
 }

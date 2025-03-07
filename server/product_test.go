@@ -108,26 +108,26 @@ func TestUpdateProduct(t *testing.T) {
 	}
 }
 
-func TestGetProducts(t *testing.T) {
+func TestGetAllProducts(t *testing.T) {
 	setup()
 
 	urlStr := fmt.Sprintf("http://localhost:%d/products", port)
 
 	req, err = http.NewRequest("GET", urlStr, nil)
 	if err != nil {
-		t.Fatalf("TestGetProducts: %v", err)
+		t.Fatalf("TestGetAllProducts: %v", err)
 	}
 
 	r.ServeHTTP(respRec, req)
 
 	if respRec.Result().StatusCode != http.StatusOK {
-		t.Fatalf("TestGetProducts: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
+		t.Fatalf("TestGetAllProducts: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
 	}
 
 	result := respRec.Result().Body
 	data, err := io.ReadAll(result)
 	if err != nil {
-		t.Fatalf("TestGetProducts: %v", err)
+		t.Fatalf("TestGetAllProducts: %v", err)
 	}
 
 	fmt.Printf("[+] Successfully got products: %v\n", string(data))

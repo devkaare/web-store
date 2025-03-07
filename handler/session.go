@@ -1,4 +1,4 @@
-package handler
+package handler // session
 
 import (
 	"database/sql"
@@ -9,12 +9,14 @@ import (
 
 	"github.com/devkaare/web-store/hash"
 	"github.com/devkaare/web-store/model"
-	"github.com/devkaare/web-store/repository/query"
+	"github.com/devkaare/web-store/repository/session"
+	"github.com/devkaare/web-store/repository/user"
 	"github.com/google/uuid"
 )
 
 type Session struct {
-	Repo *query.PostgresRepo
+	SessionRepo *session.SessionRepo
+	UserRepo    *user.UserRepo
 }
 
 func isExpired(s *model.Session) bool {
@@ -25,7 +27,7 @@ func (s *Session) SignUp(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	_, err := s.Repo.GetUserByEmail(email)
+	_, err := s.UserRepo.GetUserByEmail(email)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -37,7 +39,7 @@ func (s *Session) SignUp(w http.ResponseWriter, r *http.Request) {
 		Password: password,
 	}
 
-	if _, err := s.Repo.CreateUser(user); err != nil {
+	if _, err := s.UserRepo.CreateUser(user); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -48,7 +50,7 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	expectedPassword := r.FormValue("password")
 
-	existingUser, err := s.Repo.GetUserByEmail(email)
+	existingUser, err := s.UserRepo.GetUserByEmail(email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -73,7 +75,7 @@ func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
 		Expiry:    expiresAt,
 	}
 
-	if err := s.Repo.CreateSession(session); err != nil {
+	if err := s.SessionRepo.CreateSession(session); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -99,7 +101,7 @@ func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionID := cookie.Value
 
-	session, err := s.Repo.GetSessionBySessionID(sessionID)
+	session, err := s.SessionRepo.GetSessionBySessionID(sessionID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -111,7 +113,7 @@ func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isExpired(session) {
-		if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+		if err := s.SessionRepo.DeleteSessionBySessionID(sessionID); err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -137,7 +139,7 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionID := cookie.Value
 
-	session, err := s.Repo.GetSessionBySessionID(sessionID)
+	session, err := s.SessionRepo.GetSessionBySessionID(sessionID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -149,7 +151,7 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isExpired(session) {
-		if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+		if err := s.SessionRepo.DeleteSessionBySessionID(sessionID); err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -167,13 +169,13 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 		Expiry:    expiresAt,
 	}
 
-	if err := s.Repo.CreateSession(newSession); err != nil {
+	if err := s.SessionRepo.CreateSession(newSession); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+	if err := s.SessionRepo.DeleteSessionBySessionID(sessionID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -199,15 +201,15 @@ func (s *Session) LogOut(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionID := cookie.Value
 
-	if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
+	if err := s.SessionRepo.DeleteSessionBySessionID(sessionID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 }
 
-func (s *Session) GetSessions(w http.ResponseWriter, r *http.Request) {
-	sessions, err := s.Repo.GetSessions()
+func (s *Session) GetAllSessions(w http.ResponseWriter, r *http.Request) {
+	sessions, err := s.SessionRepo.GetAllSessions()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

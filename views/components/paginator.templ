@@ -7,7 +7,10 @@ templ Paginator(currentPage int) {
 		<nav>
 			<ul>
 				<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage-1)) } rel="prev">Previous</a></li>
+				<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage-1)) }>{ fmt.Sprintf("%d", currentPage-1) }</a></li>
 				<li class="active"><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage)) }>{ fmt.Sprintf("%d", currentPage) }</a></li>
+				<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage+1)) }>{ fmt.Sprintf("%d", currentPage+1) }</a></li>
+				<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage+2)) }>{ fmt.Sprintf("%d", currentPage+2) }</a></li>
 				<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage+1)) } rel="next">Next</a></li>
 			</ul>
 		</nav>

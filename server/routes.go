@@ -4,7 +4,11 @@ import (
 	"net/http"
 
 	"github.com/devkaare/web-store/handler"
-	"github.com/devkaare/web-store/repository/query"
+	"github.com/devkaare/web-store/repository/cart"
+	"github.com/devkaare/web-store/repository/product"
+	"github.com/devkaare/web-store/repository/session"
+	"github.com/devkaare/web-store/repository/user"
+	"github.com/devkaare/web-store/repository/utils"
 	"github.com/devkaare/web-store/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -49,7 +53,7 @@ func UserMiddleware(next http.Handler) http.Handler {
 
 func (s *Server) registerUtilsRoutes(r chi.Router) {
 	utilsHandler := &handler.Utils{
-		Repo: &query.PostgresRepo{
+		UtilsRepo: &utils.UtilsRepo{
 			Client: s.db,
 		},
 	}
@@ -59,13 +63,13 @@ func (s *Server) registerUtilsRoutes(r chi.Router) {
 
 func (s *Server) registerUserRoutes(r chi.Router) {
 	userHandler := &handler.User{
-		Repo: &query.PostgresRepo{
+		UserRepo: &user.UserRepo{
 			Client: s.db,
 		},
 	}
 
 	r.Post("/", userHandler.CreateUser)
-	r.Get("/", userHandler.GetUsers)
+	r.Get("/", userHandler.GetAllUsers)
 	r.Get("/{id}", userHandler.GetUserByUserID)
 	r.Put("/{id}", userHandler.UpdateUserByUserID)
 	r.Delete("/{id}", userHandler.DeleteUserByUserID)
@@ -73,13 +77,13 @@ func (s *Server) registerUserRoutes(r chi.Router) {
 
 func (s *Server) registerProductRoutes(r chi.Router) {
 	productHandler := &handler.Product{
-		Repo: &query.PostgresRepo{
+		ProductRepo: &product.ProductRepo{
 			Client: s.db,
 		},
 	}
 
 	r.Post("/", productHandler.CreateProduct)
-	r.Get("/", productHandler.GetProducts)
+	r.Get("/", productHandler.GetAllProducts)
 	r.Get("/listings", productHandler.GetProductsByPage)
 	r.Get("/{id}", productHandler.GetProductsByProductID)
 	r.Put("/{id}", productHandler.UpdateProductByProductID)
@@ -88,7 +92,7 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 
 func (s *Server) registerCartRoutes(r chi.Router) {
 	cartHandler := &handler.CartItem{
-		Repo: &query.PostgresRepo{
+		CartRepo: &cart.CartRepo{
 			Client: s.db,
 		},
 	}
@@ -96,7 +100,7 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 	r.Use(cartHandler.CartMiddleware)
 
 	r.Post("/", cartHandler.CreateCartItem)
-	r.Get("/", cartHandler.GetCartItems)
+	r.Get("/", cartHandler.GetAllCartItems)
 	r.Get("/{user_id}", cartHandler.GetCartItemsByUserID)
 	r.Put("/{user_id}/{product_id}", cartHandler.UpdateCartItemQuantity)
 	r.Delete("/{user_id}/{product_id}", cartHandler.DeleteCartItem)
@@ -104,7 +108,7 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 
 func (s *Server) registerSessionRoutes(r chi.Router) {
 	sessionHandler := &handler.Session{
-		Repo: &query.PostgresRepo{
+		SessionRepo: &session.SessionRepo{
 			Client: s.db,
 		},
 	}
@@ -114,5 +118,5 @@ func (s *Server) registerSessionRoutes(r chi.Router) {
 	r.Get("/refresh", sessionHandler.Refresh)
 	r.Get("/welcome", sessionHandler.Welcome)
 	r.Get("/logout", sessionHandler.LogOut)
-	r.Get("/", sessionHandler.GetSessions)
+	r.Get("/", sessionHandler.GetAllSessions)
 }

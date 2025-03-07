@@ -6,7 +6,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *SessionRepo) GetSessions() ([]model.Session, error) {
+func (r *SessionRepo) GetAllSessions() ([]model.Session, error) {
 	var sessions []model.Session
 
 	rows, err := r.Client.Query("SELECT * FROM sessions")
@@ -18,12 +18,12 @@ func (r *SessionRepo) GetSessions() ([]model.Session, error) {
 	for rows.Next() {
 		var session model.Session
 		if err := rows.Scan(&session.SessionID, &session.UserID, &session.Expiry); err != nil {
-			return sessions, fmt.Errorf("GetSessions %s: %v", session.SessionID, err)
+			return sessions, fmt.Errorf("GetAllSessions %s: %v", session.SessionID, err)
 		}
 		sessions = append(sessions, session)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("GetSessions %v:", err)
+		return nil, fmt.Errorf("GetAllSessions %v:", err)
 	}
 
 	return sessions, nil
