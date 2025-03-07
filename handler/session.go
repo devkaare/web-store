@@ -3,6 +3,7 @@ package handler // session
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -28,8 +29,13 @@ func (s *Session) SignUp(w http.ResponseWriter, r *http.Request) {
 	lastName := r.FormValue("last_name")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
+	fmt.Println(firstName, lastName, email, password)
 
 	_, err := s.UserRepo.GetUserByEmail(email)
+	if err == sql.ErrNoRows {
+		w.Write([]byte("User already exists"))
+		w.WriteHeader(http.StatusConflict)
+	}
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
