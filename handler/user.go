@@ -69,7 +69,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	user, err := u.Repo.GetUserByUserID(uint32(userID))
+	user, err := u.Repo.GetUserByUserID(userID)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -90,13 +90,13 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := u.Repo.GetUserByUserID(uint32(userID)); err != nil && err != sql.ErrNoRows {
+	if _, err := u.Repo.GetUserByUserID(userID); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err := u.Repo.DeleteUserByUserID(uint32(userID)); err != nil {
+	if err := u.Repo.DeleteUserByUserID(userID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -112,7 +112,7 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := u.Repo.GetUserByUserID(uint32(userID)); err != nil && err != sql.ErrNoRows {
+	if _, err := u.Repo.GetUserByUserID(userID); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -129,7 +129,7 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := &model.User{
-		UserID:   uint32(userID),
+		UserID:   userID,
 		Email:    email,
 		Password: passwordHash,
 	}

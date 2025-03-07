@@ -7,7 +7,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *UserRepo) GetUserByUserID(userID uint32) (*model.User, error) {
+func (r *UserRepo) GetUserByUserID(userID int) (*model.User, error) {
 	user := &model.User{}
 
 	row := r.Client.QueryRow("SELECT * FROM users WHERE user_id = $1", userID)

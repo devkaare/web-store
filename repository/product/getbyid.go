@@ -7,7 +7,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *ProductRepo) GetProductByProductID(productID uint32) (*model.Product, error) {
+func (r *ProductRepo) GetProductByProductID(productID int) (*model.Product, error) {
 	product := &model.Product{}
 
 	row := r.Client.QueryRow("SELECT * FROM products WHERE product_id = $1", productID)

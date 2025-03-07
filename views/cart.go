@@ -7,12 +7,12 @@ import (
 )
 
 type cartProp struct {
-	UserID    uint32
-	ProductID uint32
+	UserID    int
+	ProductID int
 	Size      string
-	Quantity  uint32
+	Quantity  int
 	Name      string
-	Price     uint32
+	Price     int
 	ImagePath string
 }
 

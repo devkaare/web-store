@@ -78,10 +78,10 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 	size := r.FormValue("size")
 
 	product := &model.CartItem{
-		UserID:    uint32(userID),
-		ProductID: uint32(productID),
+		UserID:    userID,
+		ProductID: productID,
 		Size:      size,
-		Quantity:  uint32(quantity),
+		Quantity:  quantity,
 	}
 
 	if err := c.Repo.CreateCartItem(product); err != nil {
@@ -94,7 +94,7 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "user_id"))
 
-	cartItems, err := c.Repo.GetCartItemsByUserID(uint32(userID))
+	cartItems, err := c.Repo.GetCartItemsByUserID(userID)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -112,8 +112,8 @@ func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 	size := r.URL.Query().Get("size")
 
 	cartItem := &model.CartItem{
-		UserID:    uint32(userID),
-		ProductID: uint32(productID),
+		UserID:    userID,
+		ProductID: productID,
 		Size:      size,
 	}
 
@@ -131,10 +131,10 @@ func (c *CartItem) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request
 	size := r.FormValue("size")
 
 	cartItem := &model.CartItem{
-		UserID:    uint32(userID),
-		ProductID: uint32(productID),
+		UserID:    userID,
+		ProductID: productID,
 		Size:      size,
-		Quantity:  uint32(quantity),
+		Quantity:  quantity,
 	}
 
 	if err := c.Repo.UpdateCartItemQuantity(cartItem); err != nil {

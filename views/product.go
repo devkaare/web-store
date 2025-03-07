@@ -13,9 +13,9 @@ import (
 )
 
 type productProp struct {
-	ProductID uint32
+	ProductID int
 	Name      string
-	Price     uint32
+	Price     int
 	Sizes     []string
 	ImagePath string
 }

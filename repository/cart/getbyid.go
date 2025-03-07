@@ -6,7 +6,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *CartRepo) GetCartItemsByUserID(userID uint32) ([]model.CartItem, error) {
+func (r *CartRepo) GetCartItemsByUserID(userID int) ([]model.CartItem, error) {
 	var cartItems []model.CartItem
 
 	rows, err := r.Client.Query("SELECT * FROM cart_items WHERE user_id = $1", userID)

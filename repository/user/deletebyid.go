@@ -2,7 +2,7 @@ package user
 
 import "fmt"
 
-func (r *UserRepo) DeleteUserByUserID(userID uint32) error {
+func (r *UserRepo) DeleteUserByUserID(userID int) error {
 	result, err := r.Client.Exec("DELETE FROM users WHERE user_id = $1", userID)
 	if err != nil {
 		return fmt.Errorf("DeleteUserByUserID %d, %v", userID, err)

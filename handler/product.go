@@ -43,7 +43,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	product := &model.Product{
 		Name:      name,
-		Price:     uint32(price),
+		Price:     price,
 		Sizes:     sizes,
 		ImagePath: imagePath,
 	}
@@ -65,7 +65,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request) {
 	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	product, err := p.Repo.GetProductByProductID(uint32(productID))
+	product, err := p.Repo.GetProductByProductID(productID)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -104,13 +104,13 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 
 	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := p.Repo.GetProductByProductID(uint32(productID)); err != nil && err != sql.ErrNoRows {
+	if _, err := p.Repo.GetProductByProductID(productID); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err := p.Repo.DeleteProductByProductID(uint32(productID)); err != nil {
+	if err := p.Repo.DeleteProductByProductID(productID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -126,7 +126,7 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 
 	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := p.Repo.GetProductByProductID(uint32(productID)); err != nil && err != sql.ErrNoRows {
+	if _, err := p.Repo.GetProductByProductID(productID); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -138,9 +138,9 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 	price, _ := strconv.Atoi(r.FormValue("price"))
 
 	product := &model.Product{
-		ProductID: uint32(productID),
+		ProductID: productID,
 		Name:      name,
-		Price:     uint32(price),
+		Price:     price,
 		Sizes:     sizes,
 		ImagePath: imagePath,
 	}
