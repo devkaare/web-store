@@ -25,13 +25,7 @@ var (
 	schema   = os.Getenv("DB_SCHEMA")
 )
 
-func New() *sql.DB {
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&TimeZone=UTC&search_path=%s", username, password, host, port, database, schema)
-	db, err := sql.Open("pgx", connStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func createTables(db *sql.DB) {
 	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, email TEXT NOT NULL, password TEXT NOT NULL)"); err != nil {
 		log.Fatal(err)
 	}
@@ -47,6 +41,15 @@ func New() *sql.DB {
 	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS sessions (session_id TEXT NOT NULL, user_id INT NOT NULL, expiry TIMESTAMP WITH TIME ZONE NOT NULL)"); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func New() *sql.DB {
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable&TimeZone=UTC&search_path=%s", username, password, host, port, database, schema)
+	db, err := sql.Open("pgx", connStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	createTables(db)
 
 	return db
 }

@@ -1,4 +1,4 @@
-package query
+package utils
 
 import (
 	"context"
@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-type PostgresRepo struct {
+type UtilsRepo struct {
 	Client *sql.DB
 }
 
-func (r *PostgresRepo) Health() map[string]string {
+func (r *UtilsRepo) Health() map[string]string {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
@@ -32,7 +32,7 @@ func (r *PostgresRepo) Health() map[string]string {
 	return stats
 }
 
-func (r *PostgresRepo) Close() error {
+func (r *UtilsRepo) Close() error {
 	log.Println("Disconnected from database")
 	return r.Client.Close()
 }
