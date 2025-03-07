@@ -1,4 +1,3 @@
-// TODO: Add `user_id := r.Context().Value("user_id").(uint32)` and use that instead
 package handler
 
 import (
