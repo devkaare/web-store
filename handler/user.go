@@ -67,7 +67,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
+	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	user, err := u.Repo.GetUserByUserID(uint32(userID))
 	if err != nil && err != sql.ErrNoRows {
@@ -88,7 +88,7 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
+	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	if _, err := u.Repo.GetUserByUserID(uint32(userID)); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
@@ -110,7 +110,7 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
+	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	if _, err := u.Repo.GetUserByUserID(uint32(userID)); err != nil && err != sql.ErrNoRows {
 		log.Println(err)

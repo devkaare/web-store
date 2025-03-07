@@ -63,7 +63,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request) {
-	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	product, err := p.Repo.GetProductByProductID(uint32(productID))
 	if err != nil && err != sql.ErrNoRows {
@@ -102,7 +102,7 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	if _, err := p.Repo.GetProductByProductID(uint32(productID)); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
@@ -124,7 +124,7 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	if _, err := p.Repo.GetProductByProductID(uint32(productID)); err != nil && err != sql.ErrNoRows {
 		log.Println(err)

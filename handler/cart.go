@@ -93,7 +93,7 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
+	userID, _ := strconv.Atoi(chi.URLParam(r, "user_id"))
 
 	cartItems, err := c.Repo.GetCartItemsByUserID(uint32(userID))
 	if err != nil {
@@ -108,8 +108,8 @@ func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) 
 }
 
 func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
-	productID, _ := strconv.Atoi(chi.URLParam(r, "productID"))
+	userID, _ := strconv.Atoi(chi.URLParam(r, "user_id"))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	size := r.URL.Query().Get("size")
 
 	cartItem := &model.CartItem{
@@ -126,8 +126,8 @@ func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *CartItem) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(chi.URLParam(r, "userID"))
-	productID, _ := strconv.Atoi(chi.URLParam(r, "productID"))
+	userID, _ := strconv.Atoi(chi.URLParam(r, "user_id"))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
 	size := r.FormValue("size")
 

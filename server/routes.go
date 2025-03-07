@@ -36,7 +36,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/signin", views.SignInHandler)
 	r.Get("/cart", views.CartHandler)
 	r.Get("/listings", views.IndexPageHandler)
-	r.Get("/listings/{ID}", views.ProductHandler)
+	r.Get("/listings/{id}", views.ProductHandler)
 
 	return r
 }
@@ -66,9 +66,9 @@ func (s *Server) registerUserRoutes(r chi.Router) {
 
 	r.Post("/", userHandler.CreateUser)
 	r.Get("/", userHandler.GetUsers)
-	r.Get("/{ID}", userHandler.GetUserByUserID)
-	r.Put("/{ID}", userHandler.UpdateUserByUserID)
-	r.Delete("/{ID}", userHandler.DeleteUserByUserID)
+	r.Get("/{id}", userHandler.GetUserByUserID)
+	r.Put("/{id}", userHandler.UpdateUserByUserID)
+	r.Delete("/{id}", userHandler.DeleteUserByUserID)
 }
 
 func (s *Server) registerProductRoutes(r chi.Router) {
@@ -81,9 +81,9 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 	r.Post("/", productHandler.CreateProduct)
 	r.Get("/", productHandler.GetProducts)
 	r.Get("/listings", productHandler.GetProductsByPage)
-	r.Get("/{ID}", productHandler.GetProductsByProductID)
-	r.Put("/{ID}", productHandler.UpdateProductByProductID)
-	r.Delete("/{ID}", productHandler.DeleteProductByProductID)
+	r.Get("/{id}", productHandler.GetProductsByProductID)
+	r.Put("/{id}", productHandler.UpdateProductByProductID)
+	r.Delete("/{id}", productHandler.DeleteProductByProductID)
 }
 
 func (s *Server) registerCartRoutes(r chi.Router) {
@@ -97,9 +97,9 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 
 	r.Post("/", cartHandler.CreateCartItem)
 	r.Get("/", cartHandler.GetCartItems)
-	r.Get("/{userID}", cartHandler.GetCartItemsByUserID)
-	r.Put("/{userID}/{productID}", cartHandler.UpdateCartItemQuantity)
-	r.Delete("/{userID}/{productID}", cartHandler.DeleteCartItem)
+	r.Get("/{user_id}", cartHandler.GetCartItemsByUserID)
+	r.Put("/{user_id}/{product_id}", cartHandler.UpdateCartItemQuantity)
+	r.Delete("/{user_id}/{product_id}", cartHandler.DeleteCartItem)
 }
 
 func (s *Server) registerSessionRoutes(r chi.Router) {

@@ -2,6 +2,6 @@ package session
 
 import "database/sql"
 
-type PostgresRepo struct {
+type SessionRepo struct {
 	Client *sql.DB
 }
