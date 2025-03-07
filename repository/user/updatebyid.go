@@ -7,7 +7,7 @@ import (
 )
 
 func (r *UserRepo) UpdateUserByUserID(user *model.User) error {
-	_, err := r.Client.Exec("UPDATE users SET email = $2, password = $3 WHERE user_id = $1", user.UserID, user.Email, user.Password)
+	_, err := r.Client.Exec("UPDATE users SET first_name = $2, last_name = $3 email = $4, password = $5 WHERE user_id = $1", user.UserID, user.FirstName, user.LastName, user.Email, user.Password)
 	if err != nil {
 		return fmt.Errorf("UpdateUserByUserID: %v", err)
 	}

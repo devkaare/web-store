@@ -24,6 +24,8 @@ func isExpired(s *model.Session) bool {
 }
 
 func (s *Session) SignUp(w http.ResponseWriter, r *http.Request) {
+	firstName := r.FormValue("first_name")
+	lastName := r.FormValue("last_name")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
@@ -35,8 +37,10 @@ func (s *Session) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := &model.User{
-		Email:    email,
-		Password: password,
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Password:  password,
 	}
 
 	if _, err := s.UserRepo.CreateUser(user); err != nil {

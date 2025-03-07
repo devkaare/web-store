@@ -37,6 +37,8 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	firstName := r.FormValue("first_name")
+	lastName := r.FormValue("last_name")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
@@ -48,8 +50,10 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := &model.User{
-		Email:    email,
-		Password: passwordHash,
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Password:  passwordHash,
 	}
 
 	userID, err := u.UserRepo.CreateUser(user)

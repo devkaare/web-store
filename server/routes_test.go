@@ -78,8 +78,8 @@ func TestHealth(t *testing.T) {
 
 	r.ServeHTTP(respRec, req)
 
-	if respRec.Code != http.StatusOK {
-		t.Fatalf("TestHealth: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
+	if respRec.Result().StatusCode != http.StatusOK {
+		t.Fatalf("TestUpdateProduct: \"expected: %v, received: %v\"", http.StatusOK, respRec.Code)
 	}
 
 	result := respRec.Result().Body

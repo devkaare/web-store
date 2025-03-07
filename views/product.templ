@@ -12,7 +12,7 @@ templ product(p *productProp) {
 		<div>
 			<h2>{ p.Name }</h2>
 			<p><strong>${ fmt.Sprintf("%d", p.Price) }</strong></p>
-			<form>
+			<form action="/cart" method="post">
 				<label for="sizes">Choose a size:</label>
 				<select id="sizes" name="sizes" size="1">
 					for _, s := range p.Sizes {
