@@ -48,13 +48,13 @@ func UserMiddleware(next http.Handler) http.Handler {
 }
 
 func (s *Server) registerUtilsRoutes(r chi.Router) {
-	utilsHandler := &handler.Utils{}
+	utilsHandler := handler.NewUtilsHandler(s.db)
 
 	r.Get("/health", utilsHandler.Health)
 }
 
 func (s *Server) registerUserRoutes(r chi.Router) {
-	userHandler := &handler.User{}
+	userHandler := handler.NewUserHandler(s.db)
 
 	r.Post("/", userHandler.CreateUser)
 	r.Get("/", userHandler.GetAllUsers)
@@ -64,7 +64,7 @@ func (s *Server) registerUserRoutes(r chi.Router) {
 }
 
 func (s *Server) registerProductRoutes(r chi.Router) {
-	productHandler := &handler.Product{}
+	productHandler := handler.NewProductHandler(s.db)
 
 	r.Post("/", productHandler.CreateProduct)
 	r.Get("/", productHandler.GetAllProducts)
@@ -78,7 +78,7 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 	authHandler := &handler.Authentication{}
 	r.Use(authHandler.SetUserID)
 
-	cartHandler := &handler.Cart{}
+	cartHandler := handler.NewCartHandler(s.db)
 
 	r.Post("/", cartHandler.CreateCartItem)
 	r.Get("/", cartHandler.GetAllCartItems)
@@ -88,7 +88,7 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 }
 
 func (s *Server) registerSessionRoutes(r chi.Router) {
-	sessionHandler := &handler.Session{}
+	sessionHandler := handler.NewSessionHandler(s.db)
 
 	r.Get("/", sessionHandler.GetAllSessions)
 	r.Get("/refresh", sessionHandler.Refresh)

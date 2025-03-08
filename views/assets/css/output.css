@@ -6,8 +6,8 @@
     'Noto Color Emoji';
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace;
-    --color-blue-700: oklch(0.488 0.243 264.376);
     --color-indigo-500: oklch(0.585 0.233 277.117);
+    --color-indigo-700: oklch(0.457 0.24 277.023);
     --color-gray-600: oklch(0.446 0.03 256.802);
     --color-gray-950: oklch(0.13 0.028 261.692);
     --color-white: #fff;
@@ -203,7 +203,7 @@
   }
 }
 @layer components {
-  .btn-blue {
+  .btn-primary {
     border-radius: 0.25rem;
     background-color: var(--color-indigo-500);
     padding-inline: calc(var(--spacing) * 4);
@@ -212,8 +212,8 @@
     font-weight: var(--font-weight-bold);
     color: var(--color-white);
   }
-  .btn-blue:hover {
-    background-color: var(--color-blue-700);
+  .btn-primary:hover {
+    background-color: var(--color-indigo-700);
   }
 }
 @property --tw-border-style {
