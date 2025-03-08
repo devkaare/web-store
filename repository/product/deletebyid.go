@@ -2,7 +2,7 @@ package product
 
 import "fmt"
 
-func (r *ProductRepo) DeleteProductByProductID(productID int) error {
+func (r *Repo) DeleteProductByProductID(productID int) error {
 	result, err := r.Client.Exec("DELETE FROM products WHERE product_id = $1", productID)
 	if err != nil {
 		return fmt.Errorf("DeleteProductByProductID %d, %v", productID, err)

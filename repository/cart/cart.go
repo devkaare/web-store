@@ -2,6 +2,6 @@ package cart
 
 import "database/sql"
 
-type CartRepo struct {
+type Repo struct {
 	Client *sql.DB
 }

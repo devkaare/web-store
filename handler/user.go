@@ -9,16 +9,28 @@ import (
 
 	"github.com/devkaare/web-store/hash"
 	"github.com/devkaare/web-store/model"
+	"github.com/devkaare/web-store/repository"
 	"github.com/devkaare/web-store/repository/user"
 	"github.com/go-chi/chi/v5"
 )
 
 type User struct {
-	UserRepo *user.UserRepo
+	Repo *user.Repo
+}
+
+var userHandler = &User{
+	Repo: &user.Repo{},
+}
+
+func NewUserHandler(db *sql.DB) *User {
+	userHandler.Repo = repository.GetUser(func() *sql.DB {
+		return db
+	})
+	return userHandler
 }
 
 func (u *User) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := u.UserRepo.GetAllUsers()
+	users, err := u.Repo.GetAllUsers()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -56,7 +68,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Password:  passwordHash,
 	}
 
-	userID, err := u.UserRepo.CreateUser(user)
+	userID, err := u.Repo.CreateUser(user)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -73,7 +85,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	user, err := u.UserRepo.GetUserByUserID(userID)
+	user, err := u.Repo.GetUserByUserID(userID)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -94,13 +106,13 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := u.UserRepo.GetUserByUserID(userID); err != nil && err != sql.ErrNoRows {
+	if _, err := u.Repo.GetUserByUserID(userID); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err := u.UserRepo.DeleteUserByUserID(userID); err != nil {
+	if err := u.Repo.DeleteUserByUserID(userID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -116,7 +128,7 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := u.UserRepo.GetUserByUserID(userID); err != nil && err != sql.ErrNoRows {
+	if _, err := u.Repo.GetUserByUserID(userID); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -138,7 +150,7 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 		Password: passwordHash,
 	}
 
-	if err := u.UserRepo.UpdateUserByUserID(user); err != nil {
+	if err := u.Repo.UpdateUserByUserID(user); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

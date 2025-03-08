@@ -2,7 +2,7 @@ package session
 
 import "fmt"
 
-func (r *SessionRepo) DeleteSessionBySessionID(sessionID string) error {
+func (r *Repo) DeleteSessionBySessionID(sessionID string) error {
 	result, err := r.Client.Exec("DELETE FROM sessions WHERE session_id = $1", sessionID)
 	if err != nil {
 		return fmt.Errorf("DeleteSessionBySessionID %s, %v", sessionID, err)

@@ -26,7 +26,7 @@ var (
 )
 
 func createTables(db *sql.DB) {
-	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL)"); err != nil {
+	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS users (user_id SERIAL PRIMARY KEY, first_name TEXT NOT NULL, last_name TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL)"); err != nil {
 		log.Fatal(err)
 	}
 
@@ -38,7 +38,7 @@ func createTables(db *sql.DB) {
 		log.Fatal(err)
 	}
 
-	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS sessions (session_id TEXT UNIQUE NOT NULL, user_id INT NOT NULL, expiry TIMESTAMP WITH TIME ZONE NOT NULL)"); err != nil {
+	if _, err := db.Exec("CREATE TABLE IF NOT EXISTS sessions (session_id TEXT NOT NULL, user_id INT NOT NULL, expiry TIMESTAMP WITH TIME ZONE NOT NULL)"); err != nil {
 		log.Fatal(err)
 	}
 }

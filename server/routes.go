@@ -4,11 +4,6 @@ import (
 	"net/http"
 
 	"github.com/devkaare/web-store/handler"
-	"github.com/devkaare/web-store/repository/cart"
-	"github.com/devkaare/web-store/repository/product"
-	"github.com/devkaare/web-store/repository/session"
-	"github.com/devkaare/web-store/repository/user"
-	"github.com/devkaare/web-store/repository/utils"
 	"github.com/devkaare/web-store/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -35,6 +30,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Route("/products", s.registerProductRoutes)
 	r.Route("/carts", s.registerCartRoutes)
 	r.Route("/sessions", s.registerSessionRoutes)
+	r.Route("/auth", s.registerAuthRoutes)
 
 	r.Get("/signup", views.SignUpHandler)
 	r.Get("/signin", views.SignInHandler)
@@ -52,21 +48,13 @@ func UserMiddleware(next http.Handler) http.Handler {
 }
 
 func (s *Server) registerUtilsRoutes(r chi.Router) {
-	utilsHandler := &handler.Utils{
-		UtilsRepo: &utils.UtilsRepo{
-			Client: s.db,
-		},
-	}
+	utilsHandler := &handler.Utils{}
 
 	r.Get("/health", utilsHandler.Health)
 }
 
 func (s *Server) registerUserRoutes(r chi.Router) {
-	userHandler := &handler.User{
-		UserRepo: &user.UserRepo{
-			Client: s.db,
-		},
-	}
+	userHandler := &handler.User{}
 
 	r.Post("/", userHandler.CreateUser)
 	r.Get("/", userHandler.GetAllUsers)
@@ -76,11 +64,7 @@ func (s *Server) registerUserRoutes(r chi.Router) {
 }
 
 func (s *Server) registerProductRoutes(r chi.Router) {
-	productHandler := &handler.Product{
-		ProductRepo: &product.ProductRepo{
-			Client: s.db,
-		},
-	}
+	productHandler := &handler.Product{}
 
 	r.Post("/", productHandler.CreateProduct)
 	r.Get("/", productHandler.GetAllProducts)
@@ -91,13 +75,10 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 }
 
 func (s *Server) registerCartRoutes(r chi.Router) {
-	cartHandler := &handler.CartItem{
-		CartRepo: &cart.CartRepo{
-			Client: s.db,
-		},
-	}
+	authHandler := &handler.Authentication{}
+	r.Use(authHandler.SetUserID)
 
-	r.Use(cartHandler.CartMiddleware)
+	cartHandler := &handler.Cart{}
 
 	r.Post("/", cartHandler.CreateCartItem)
 	r.Get("/", cartHandler.GetAllCartItems)
@@ -107,16 +88,17 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 }
 
 func (s *Server) registerSessionRoutes(r chi.Router) {
-	sessionHandler := &handler.Session{
-		SessionRepo: &session.SessionRepo{
-			Client: s.db,
-		},
-	}
+	sessionHandler := &handler.Session{}
 
-	r.Post("/signup", sessionHandler.SignUp)
-	r.Post("/signin", sessionHandler.SignIn)
+	r.Get("/", sessionHandler.GetAllSessions)
 	r.Get("/refresh", sessionHandler.Refresh)
 	r.Get("/welcome", sessionHandler.Welcome)
 	r.Get("/logout", sessionHandler.LogOut)
-	r.Get("/", sessionHandler.GetAllSessions)
+}
+
+func (s *Server) registerAuthRoutes(r chi.Router) {
+	authHandler := &handler.Authentication{}
+
+	r.Post("/signup", authHandler.SignUp)
+	r.Post("/signin", authHandler.SignIn)
 }

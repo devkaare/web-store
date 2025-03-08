@@ -1,101 +1,35 @@
-package handler // session
+package handler
 
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/devkaare/web-store/hash"
 	"github.com/devkaare/web-store/model"
+	"github.com/devkaare/web-store/repository"
 	"github.com/devkaare/web-store/repository/session"
-	"github.com/devkaare/web-store/repository/user"
 	"github.com/google/uuid"
 )
 
 type Session struct {
-	SessionRepo *session.SessionRepo
-	UserRepo    *user.UserRepo
+	Repo *session.Repo
+}
+
+var sessionHandler = &Session{
+	Repo: &session.Repo{},
+}
+
+func NewSessionHandler(db *sql.DB) *Session {
+	sessionHandler.Repo = repository.GetSession(func() *sql.DB {
+		return db
+	})
+	return sessionHandler
 }
 
 func isExpired(s *model.Session) bool {
 	return s.Expiry.Before(time.Now())
-}
-
-func (s *Session) SignUp(w http.ResponseWriter, r *http.Request) {
-	firstName := r.FormValue("first_name")
-	lastName := r.FormValue("last_name")
-	email := r.FormValue("email")
-	password := r.FormValue("password")
-	fmt.Println(firstName, lastName, email, password)
-
-	_, err := s.UserRepo.GetUserByEmail(email)
-	if err == sql.ErrNoRows {
-		w.Write([]byte("User already exists"))
-		w.WriteHeader(http.StatusConflict)
-	}
-	if err != nil && err != sql.ErrNoRows {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	user := &model.User{
-		FirstName: firstName,
-		LastName:  lastName,
-		Email:     email,
-		Password:  password,
-	}
-
-	if _, err := s.UserRepo.CreateUser(user); err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-}
-
-func (s *Session) SignIn(w http.ResponseWriter, r *http.Request) {
-	email := r.FormValue("email")
-	expectedPassword := r.FormValue("password")
-
-	existingUser, err := s.UserRepo.GetUserByEmail(email)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	if hash.CheckPasswordHash(expectedPassword, existingUser.Password) {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	sessionID := uuid.NewString()
-	expiresAt := time.Now().Add(120 * time.Second)
-
-	session := &model.Session{
-		SessionID: sessionID,
-		UserID:    existingUser.UserID,
-		Expiry:    expiresAt,
-	}
-
-	if err := s.SessionRepo.CreateSession(session); err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	http.SetCookie(w, &http.Cookie{
-		Name:    "session_token",
-		Value:   sessionID,
-		Expires: expiresAt,
-	})
 }
 
 func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
@@ -111,7 +45,7 @@ func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionID := cookie.Value
 
-	session, err := s.SessionRepo.GetSessionBySessionID(sessionID)
+	session, err := s.Repo.GetSessionBySessionID(sessionID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -123,7 +57,7 @@ func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isExpired(session) {
-		if err := s.SessionRepo.DeleteSessionBySessionID(sessionID); err != nil {
+		if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -149,7 +83,7 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionID := cookie.Value
 
-	session, err := s.SessionRepo.GetSessionBySessionID(sessionID)
+	session, err := s.Repo.GetSessionBySessionID(sessionID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -161,7 +95,7 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isExpired(session) {
-		if err := s.SessionRepo.DeleteSessionBySessionID(sessionID); err != nil {
+		if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -179,13 +113,13 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 		Expiry:    expiresAt,
 	}
 
-	if err := s.SessionRepo.CreateSession(newSession); err != nil {
+	if err := s.Repo.CreateSession(newSession); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err := s.SessionRepo.DeleteSessionBySessionID(sessionID); err != nil {
+	if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -211,7 +145,7 @@ func (s *Session) LogOut(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionID := cookie.Value
 
-	if err := s.SessionRepo.DeleteSessionBySessionID(sessionID); err != nil {
+	if err := s.Repo.DeleteSessionBySessionID(sessionID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -219,7 +153,7 @@ func (s *Session) LogOut(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Session) GetAllSessions(w http.ResponseWriter, r *http.Request) {
-	sessions, err := s.SessionRepo.GetAllSessions()
+	sessions, err := s.Repo.GetAllSessions()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

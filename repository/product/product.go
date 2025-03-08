@@ -2,6 +2,6 @@ package product
 
 import "database/sql"
 
-type ProductRepo struct {
+type Repo struct {
 	Client *sql.DB
 }

@@ -6,19 +6,19 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *SessionRepo) GetAllSessions() ([]model.Session, error) {
+func (r *Repo) GetAllSessions() ([]model.Session, error) {
 	var sessions []model.Session
 
 	rows, err := r.Client.Query("SELECT * FROM sessions")
 	if err != nil {
-		return sessions, err
+		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var session model.Session
 		if err := rows.Scan(&session.SessionID, &session.UserID, &session.Expiry); err != nil {
-			return sessions, fmt.Errorf("GetAllSessions %s: %v", session.SessionID, err)
+			return nil, fmt.Errorf("GetAllSessions %s: %v", session.SessionID, err)
 		}
 		sessions = append(sessions, session)
 	}

@@ -6,7 +6,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *UserRepo) CreateUser(user *model.User) (int, error) {
+func (r *Repo) CreateUser(user *model.User) (int, error) {
 	lastInsertedID := 0
 	err := r.Client.QueryRow(
 		"INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING user_id",

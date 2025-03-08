@@ -6,7 +6,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *SessionRepo) CreateSession(session *model.Session) error {
+func (r *Repo) CreateSession(session *model.Session) error {
 	_, err := r.Client.Exec(
 		"INSERT INTO sessions (session_id, user_id, expiry) VALUES ($1, $2, $3)",
 		session.SessionID, session.UserID, session.Expiry,

@@ -34,9 +34,9 @@ func IndexPageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(products) < 1 {
-		templ.Handler(response("No more products")).ServeHTTP(w, r)
+		w.Write([]byte("No more products available!"))
 		return
 	}
 
-	templ.Handler(index(page, products)).ServeHTTP(w, r)
+	templ.Handler(index(page, len(products), products)).ServeHTTP(w, r)
 }

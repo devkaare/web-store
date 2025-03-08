@@ -8,16 +8,28 @@ import (
 	"strconv"
 
 	"github.com/devkaare/web-store/model"
+	"github.com/devkaare/web-store/repository"
 	"github.com/devkaare/web-store/repository/product"
 	"github.com/go-chi/chi/v5"
 )
 
 type Product struct {
-	ProductRepo *product.ProductRepo
+	Repo *product.Repo
+}
+
+var productHandler = &Product{
+	Repo: &product.Repo{},
+}
+
+func NewProductHandler(db *sql.DB) *Product {
+	productHandler.Repo = repository.GetProduct(func() *sql.DB {
+		return db
+	})
+	return productHandler
 }
 
 func (p *Product) GetAllProducts(w http.ResponseWriter, r *http.Request) {
-	products, err := p.ProductRepo.GetAllProducts()
+	products, err := p.Repo.GetAllProducts()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -48,7 +60,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		ImagePath: imagePath,
 	}
 
-	productID, err := p.ProductRepo.CreateProduct(product)
+	productID, err := p.Repo.CreateProduct(product)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -65,7 +77,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request) {
 	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	product, err := p.ProductRepo.GetProductByProductID(productID)
+	product, err := p.Repo.GetProductByProductID(productID)
 	if err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -83,7 +95,7 @@ func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 
-	products, err := p.ProductRepo.GetProductsByPage(page)
+	products, err := p.Repo.GetProductsByPage(page)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -104,13 +116,13 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 
 	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := p.ProductRepo.GetProductByProductID(productID); err != nil && err != sql.ErrNoRows {
+	if _, err := p.Repo.GetProductByProductID(productID); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err := p.ProductRepo.DeleteProductByProductID(productID); err != nil {
+	if err := p.Repo.DeleteProductByProductID(productID); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -126,7 +138,7 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 
 	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := p.ProductRepo.GetProductByProductID(productID); err != nil && err != sql.ErrNoRows {
+	if _, err := p.Repo.GetProductByProductID(productID); err != nil && err != sql.ErrNoRows {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -145,7 +157,7 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 		ImagePath: imagePath,
 	}
 
-	if err := p.ProductRepo.UpdateProductByProductID(product); err != nil {
+	if err := p.Repo.UpdateProductByProductID(product); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

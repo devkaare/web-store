@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"context"
 	"database/sql"
 	"encoding/json"
 	"log"
@@ -9,59 +8,28 @@ import (
 	"strconv"
 
 	"github.com/devkaare/web-store/model"
+	"github.com/devkaare/web-store/repository"
 	"github.com/devkaare/web-store/repository/cart"
-	"github.com/devkaare/web-store/repository/session"
 	"github.com/go-chi/chi/v5"
 )
 
-type CartItem struct {
-	CartRepo    *cart.CartRepo
-	SessionRepo *session.SessionRepo
+type Cart struct {
+	Repo *cart.Repo
 }
 
-func (c *CartItem) CartMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("session_token")
-		if err != nil {
-			if err == http.ErrNoCookie {
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			}
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		sessionID := cookie.Value
+var cartHandler = &Cart{
+	Repo: &cart.Repo{},
+}
 
-		session, err := c.SessionRepo.GetSessionBySessionID(sessionID)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			}
-			log.Println(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		if isExpired(session) {
-			if err := c.SessionRepo.DeleteSessionBySessionID(sessionID); err != nil {
-				log.Println(err)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
-		ctx := context.WithValue(r.Context(), "user_id", session.UserID)
-
-		next.ServeHTTP(w, r.WithContext(ctx))
+func NewCartHandler(db *sql.DB) *Cart {
+	cartHandler.Repo = repository.GetCart(func() *sql.DB {
+		return db
 	})
+	return cartHandler
 }
 
-func (c *CartItem) GetAllCartItems(w http.ResponseWriter, r *http.Request) {
-	cartItems, err := c.CartRepo.GetAllCartItems()
+func (c *Cart) GetAllCartItems(w http.ResponseWriter, r *http.Request) {
+	cartItems, err := c.Repo.GetAllCartItems()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -73,7 +41,7 @@ func (c *CartItem) GetAllCartItems(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
+func (c *Cart) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(r.FormValue("userID"))
 	productID, _ := strconv.Atoi(r.FormValue("productID"))
 	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
@@ -86,17 +54,17 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 		Quantity:  quantity,
 	}
 
-	if err := c.CartRepo.CreateCartItem(product); err != nil {
+	if err := c.Repo.CreateCartItem(product); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 }
 
-func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
+func (c *Cart) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "user_id"))
 
-	cartItems, err := c.CartRepo.GetCartItemsByUserID(userID)
+	cartItems, err := c.Repo.GetCartItemsByUserID(userID)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -108,7 +76,7 @@ func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) 
 	_, _ = w.Write(jsonResp)
 }
 
-func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
+func (c *Cart) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "user_id"))
 	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	size := r.URL.Query().Get("size")
@@ -119,14 +87,14 @@ func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 		Size:      size,
 	}
 
-	if err := c.CartRepo.DeleteCartItem(cartItem); err != nil {
+	if err := c.Repo.DeleteCartItem(cartItem); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 }
 
-func (c *CartItem) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
+func (c *Cart) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "user_id"))
 	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
@@ -139,7 +107,7 @@ func (c *CartItem) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request
 		Quantity:  quantity,
 	}
 
-	if err := c.CartRepo.UpdateCartItemQuantity(cartItem); err != nil {
+	if err := c.Repo.UpdateCartItemQuantity(cartItem); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
