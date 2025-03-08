@@ -1,0 +1,24 @@
+package components
+
+import (
+	"fmt"
+
+	"github.com/devkaare/web-store/model"
+)
+
+templ SearchResults(searchResults []model.Product) {
+	<div>
+		<ul id="search_results">
+			for _, p := range searchResults {
+				<li><a href={ templ.URL(fmt.Sprintf("/listings/%d", p.ProductID)) }>{ p.Name }</a></li>
+			}
+		</ul>
+	</div>
+}
+
+templ SearchBar() {
+	<div>
+		<input name="search" id="search" hx-post="/search" hx-target="search_results" type="text"/>
+	</div>
+	@SearchResults(nil)
+}

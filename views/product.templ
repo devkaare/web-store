@@ -12,7 +12,7 @@ templ product(p *productProp) {
 		<div>
 			<h2>{ p.Name }</h2>
 			<p><strong>${ fmt.Sprintf("%d", p.Price) }</strong></p>
-			<form action="/cart" method="post">
+			<form hx-post="/cart" hx-target="this" hx-swap="outerHTML">
 				<label for="sizes">Choose a size:</label>
 				<select id="sizes" name="sizes" size="1">
 					for _, s := range p.Sizes {
@@ -21,7 +21,7 @@ templ product(p *productProp) {
 				</select>
 				<label for="quantity">Quantity:</label>
 				<input id="quantity" name="quantity" type="number" min="1"/>
-				<input class="bg-indigo-500 border-solid border-4 border-gray-600" type="submit" value="Submit"/>
+				<input class="btn-primary" type="submit" value="Submit"/>
 			</form>
 		</div>
 	}

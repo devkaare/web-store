@@ -27,7 +27,7 @@ func getProductSizes(p *model.Product) []string {
 }
 
 func ProductHandler(w http.ResponseWriter, r *http.Request) {
-	productID, _ := strconv.Atoi(chi.URLParam(r, "ID"))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 	resp, err := http.Get(fmt.Sprintf("http://localhost:3000/products/%d", productID))
 	if err != nil {
 		log.Fatal(err)

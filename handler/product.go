@@ -107,6 +107,24 @@ func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
+func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
+	search := r.FormValue("search")
+	if search == "" {
+		return
+	}
+
+	products, err := p.Repo.GetProductsBySearch(search)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	jsonResp, _ := json.Marshal(products)
+	_, _ = w.Write(jsonResp)
+}
+
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
 	reqApiKey := r.URL.Query().Get("api_key")
 	if reqApiKey != apiKey {

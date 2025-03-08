@@ -1,21 +1,29 @@
 package product
 
 import (
-	"database/sql"
 	"fmt"
 
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *Repo) GetProductByName(productName string) (*model.Product, error) {
-	product := &model.Product{}
+func (r *Repo) GetProductsBySearch(search string) ([]model.Product, error) {
+	var products []model.Product
 
-	row := r.Client.QueryRow("SELECT * FROM products WHERE name = $1", productName)
-	if err := row.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
-		if err == sql.ErrNoRows {
-			return nil, err
-		}
-		return nil, fmt.Errorf("GetProductByName %s: %v", productName, err)
+	rows, err := r.Client.Query("SELECT product_id, name, price, sizes, image_path FROM products WHERE name ~* '\\b$1\\b'", search)
+	if err != nil {
+		return nil, err
 	}
-	return product, nil
+	defer rows.Close()
+
+	for rows.Next() {
+		var product model.Product
+		if err := rows.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
+			return nil, fmt.Errorf("GetProductsBySearch %d: %v", product.ProductID, err)
+		}
+		products = append(products, product)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("GetProductsBySearch %v:", err)
+	}
+	return products, nil
 }

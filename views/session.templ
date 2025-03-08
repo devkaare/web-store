@@ -6,13 +6,13 @@ templ signIn() {
 	@components.Base() {
 		<div>
 			<h1>Sign In</h1>
-			<form action="/auth/signin" method="post">
+			<form hx-post="/auth/signin" hx-target="this" hx-swap="outerHTML">
 				<label for="email">Email:</label>
-				<input type="text" id="email" name="email"/>
+				<input type="text" id="email" name="email" required/>
 				<br/>
 				<br/>
 				<label for="password">Password:</label>
-				<input type="text" id="password" name="password"/>
+				<input type="text" id="password" name="password" required/>
 				<br/>
 				<br/>
 				<input type="submit" value="Submit"/>
@@ -26,25 +26,25 @@ templ signUp() {
 	@components.Base() {
 		<div>
 			<h1>Sign Up</h1>
-			<form action="/auth/signup" method="post">
+			<form hx-post="/auth/signup" hx-target="this" hx-swap="outerHTML">
 				<label for="first_name">First Name:</label>
-				<input type="text" id="first_name" name="first_name"/>
+				<input type="text" id="first_name" name="first_name" required/>
 				<br/>
 				<br/>
 				<label for="last_name">Last Name:</label>
-				<input type="text" id="last_name" name="last_name"/>
+				<input type="text" id="last_name" name="last_name" required/>
 				<br/>
 				<br/>
 				<label for="email">Email:</label>
-				<input type="text" id="email" name="email"/>
+				<input type="text" id="email" name="email" required/>
 				<br/>
 				<br/>
 				<label for="password">Password:</label>
-				<input type="text" id="password" name="password"/>
+				<input type="text" id="password" name="password" required/>
 				<br/>
 				<br/>
 				<label for="verif_password">Verify Password:</label>
-				<input type="text" id="verif_password" name="verif_password"/>
+				<input type="text" id="verif_password" name="verif_password" required/>
 				<br/>
 				<br/>
 				<input type="submit" value="Submit"/>
