@@ -79,5 +79,4 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 
 	searchResults := components.SearchResults(products)
 	searchResults.Render(context.Background(), w)
-	return
 }

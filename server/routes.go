@@ -46,12 +46,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 	return r
 }
 
-func UserMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-	})
-}
-
 func (s *Server) registerUtilsRoutes(r chi.Router) {
 	utilsHandler := handler.NewUtilsHandler(s.db)
 
