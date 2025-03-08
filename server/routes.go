@@ -36,8 +36,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 		http.Redirect(w, r, "/listings", http.StatusSeeOther)
 	})
 
-	r.Get("/signup", views.SignUpHandler)
-	r.Get("/signin", views.SignInHandler)
+	r.Post("/signup", views.SignUpHandler)
+	r.Post("/signin", views.SignInHandler)
+	r.Post("/search", views.SearchHandler)
 	r.Get("/cart", views.CartHandler)
 	r.Get("/listings", views.IndexPageHandler)
 	r.Get("/listings/{id}", views.ProductHandler)

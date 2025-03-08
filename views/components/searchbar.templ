@@ -18,7 +18,7 @@ templ SearchResults(searchResults []model.Product) {
 
 templ SearchBar() {
 	<div>
-		<input name="search" id="search" hx-post="/search" hx-target="search_results" type="text"/>
+		<input name="search" id="search" hx-post="/search" hx-target="search_results" hx-swap="outerHTML" type="text"/>
 	</div>
 	@SearchResults(nil)
 }
