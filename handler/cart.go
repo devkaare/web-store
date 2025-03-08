@@ -21,6 +21,8 @@ var cartHandler = &Cart{
 	Repo: &cart.Repo{},
 }
 
+type userID int
+
 func NewCartHandler(db *sql.DB) *Cart {
 	cartHandler.Repo = repository.GetCart(func() *sql.DB {
 		return db
@@ -42,10 +44,10 @@ func (c *Cart) GetAllCartItems(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Cart) CreateCartItem(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(r.FormValue("userID"))
+	userID := r.Context().Value("user_id").(int)
 	productID, _ := strconv.Atoi(r.FormValue("productID"))
 	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
-	size := r.FormValue("size")
+	size := r.Form["sizes"][0]
 
 	product := &model.CartItem{
 		UserID:    userID,
@@ -62,7 +64,7 @@ func (c *Cart) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Cart) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(chi.URLParam(r, "user_id"))
+	userID := r.Context().Value("user_id").(int)
 
 	cartItems, err := c.Repo.GetCartItemsByUserID(userID)
 	if err != nil {
@@ -77,7 +79,7 @@ func (c *Cart) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Cart) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(chi.URLParam(r, "user_id"))
+	userID := r.Context().Value("user_id").(int)
 	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	size := r.URL.Query().Get("size")
 
@@ -95,7 +97,7 @@ func (c *Cart) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Cart) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
-	userID, _ := strconv.Atoi(chi.URLParam(r, "user_id"))
+	userID := r.Context().Value("user_id").(int)
 	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
 	size := r.FormValue("size")
