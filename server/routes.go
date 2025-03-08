@@ -32,6 +32,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Route("/sessions", s.registerSessionRoutes)
 	r.Route("/auth", s.registerAuthRoutes)
 
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		http.Redirect(w, r, "/listings", http.StatusSeeOther)
+	})
+
 	r.Get("/signup", views.SignUpHandler)
 	r.Get("/signin", views.SignInHandler)
 	r.Get("/cart", views.CartHandler)
