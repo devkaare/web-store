@@ -34,15 +34,18 @@ func (u *Utils) Health(w http.ResponseWriter, r *http.Request) {
 
 func check(err error) bool {
 	if err != nil {
-		log.Println(err)
+		log.Printf("check: %v", err)
 		return true
 	}
 	return false
 }
 
 func checkIfErrNoRows(err error) bool {
-	if err != nil && err == sql.ErrNoRows {
-		log.Println(err)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return true
+		}
+		log.Printf("check: %v", err)
 		return true
 	}
 	return false
@@ -50,7 +53,7 @@ func checkIfErrNoRows(err error) bool {
 
 func checkIfNotErrNoRows(err error) bool {
 	if err != nil && err != sql.ErrNoRows {
-		log.Println(err)
+		log.Printf("check: %v", err)
 		return true
 	}
 	return false

@@ -18,7 +18,7 @@ func (a *Authentication) SetUserID(next http.Handler) http.Handler {
 
 		session, err := sessionHandler.Repo.GetSessionBySessionID(sessionID)
 		if checkIfErrNoRows(err) {
-			http.Redirect(w, r, "/signup", http.StatusSeeOther)
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
