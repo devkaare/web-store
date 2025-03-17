@@ -5,9 +5,24 @@ import (
 
 	"github.com/devkaare/web-store/views/components"
 	"github.com/devkaare/web-store/model"
+	"encoding/json"
 )
 
-templ index(currentPage, lastPage int, products []model.Product) {
+type ProductProp struct {
+	ProductID int
+	Name      string
+	Price     int
+	Sizes     []string
+	ImagePath string
+}
+
+func getProductSizes(p *model.Product) []string {
+	var sizes []string
+	_ = json.Unmarshal([]byte(p.Sizes), &sizes)
+	return sizes
+}
+
+templ IndexPage(currentPage, lastPage int, products []model.Product) {
 	@components.Base() {
 		for _, p := range products {
 			<div>

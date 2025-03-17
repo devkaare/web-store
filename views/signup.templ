@@ -1,28 +1,10 @@
 package views
 
-import "github.com/devkaare/web-store/views/components"
+import (
+	"github.com/devkaare/web-store/views/components"
+)
 
-templ signIn() {
-	@components.Base() {
-		<div>
-			<h1>Sign In</h1>
-			<form hx-post="/auth/signin" hx-target="this" hx-swap="outerHTML">
-				<label for="email">Email:</label>
-				<input type="text" id="email" name="email" required/>
-				<br/>
-				<br/>
-				<label for="password">Password:</label>
-				<input type="text" id="password" name="password" required/>
-				<br/>
-				<br/>
-				<input type="submit" value="Submit"/>
-			</form>
-			<a href="/signup">Sign Up</a>
-		</div>
-	}
-}
-
-templ signUp() {
+templ SignUpPage() {
 	@components.Base() {
 		<div>
 			<h1>Sign Up</h1>
