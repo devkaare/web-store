@@ -14,7 +14,7 @@ package views
 // 	"github.com/devkaare/web-store/views/components"
 // )
 //
-// func IndexPageHandler(w http.ResponseWriter, r *http.Request) {
+// func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 // 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 // 	if page < 1 {
 // 		page = 1

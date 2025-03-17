@@ -61,3 +61,13 @@ func (s *Server) registerAuthRoutes(r chi.Router) {
 	r.Post("/signup", authHandler.SignUp)
 	r.Post("/signin", authHandler.SignIn)
 }
+
+func (s *Server) registerStoreRoutes(r chi.Router) {
+	storeHandler := &handler.Store{}
+
+	r.Get("/signin", storeHandler.SignInPageHandler)
+	r.Get("/signup", storeHandler.SignUpPageHandler)
+	r.Get("/cart", storeHandler.CartPageHandler)
+	r.Get("/listings", storeHandler.HomePageHandler)
+	r.Get("/listings/{id}", storeHandler.ProductPageHandler)
+}

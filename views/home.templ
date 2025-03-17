@@ -22,7 +22,7 @@ func getProductSizes(p *model.Product) []string {
 	return sizes
 }
 
-templ IndexPage(currentPage, lastPage int, products []model.Product) {
+templ HomePage(currentPage, lastPage int, products []model.Product) {
 	@components.Base() {
 		for _, p := range products {
 			<div>
