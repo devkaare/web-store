@@ -3,7 +3,6 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -31,8 +30,7 @@ func NewUserHandler(db *sql.DB) *User {
 
 func (u *User) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := u.Repo.GetAllUsers()
-	if err != nil {
-		log.Println(err)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -46,11 +44,15 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	firstName := r.FormValue("first_name")
 	lastName := r.FormValue("last_name")
 	email := r.FormValue("email")
-	password := r.FormValue("password")
+	pass := r.FormValue("password")
 
-	passwordHash, err := hash.HashPassword(password)
-	if err != nil {
-		log.Println(err)
+	if checkForm(w, []string{firstName, lastName, email, pass}) {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	passHash, err := hash.HashPass(pass)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -59,12 +61,11 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 		FirstName: firstName,
 		LastName:  lastName,
 		Email:     email,
-		Password:  passwordHash,
+		Password:  passHash,
 	}
 
 	userID, err := u.Repo.CreateUser(user)
-	if err != nil {
-		log.Println(err)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -80,8 +81,7 @@ func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	user, err := u.Repo.GetUserByUserID(userID)
-	if err != nil && err != sql.ErrNoRows {
-		log.Println(err)
+	if checkIfNotErrNoRows(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -94,14 +94,14 @@ func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := u.Repo.GetUserByUserID(userID); err != nil && err != sql.ErrNoRows {
-		log.Println(err)
+	_, err := u.Repo.GetUserByUserID(userID)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err := u.Repo.DeleteUserByUserID(userID); err != nil {
-		log.Println(err)
+	err = u.Repo.DeleteUserByUserID(userID)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -110,18 +110,17 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := u.Repo.GetUserByUserID(userID); err != nil && err != sql.ErrNoRows {
-		log.Println(err)
+	_, err := u.Repo.GetUserByUserID(userID)
+	if checkIfNotErrNoRows(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	email := r.FormValue("email")
-	password := r.FormValue("password")
+	pass := r.FormValue("password")
 
-	passwordHash, err := hash.HashPassword(password)
-	if err != nil {
-		log.Println(err)
+	passHash, err := hash.HashPass(pass)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -129,11 +128,11 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	user := &model.User{
 		UserID:   userID,
 		Email:    email,
-		Password: passwordHash,
+		Password: passHash,
 	}
 
-	if err := u.Repo.UpdateUserByUserID(user); err != nil {
-		log.Println(err)
+	err = u.Repo.UpdateUserByUserID(user)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

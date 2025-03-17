@@ -30,8 +30,7 @@ func NewProductHandler(db *sql.DB) *Product {
 
 func (p *Product) GetAllProducts(w http.ResponseWriter, r *http.Request) {
 	products, err := p.Repo.GetAllProducts()
-	if err != nil {
-		log.Println(err)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -72,8 +71,7 @@ func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request)
 	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	product, err := p.Repo.GetProductByProductID(productID)
-	if err != nil && err != sql.ErrNoRows {
-		log.Println(err)
+	if checkIfNotErrNoRows(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -90,8 +88,7 @@ func (p *Product) GetProductsByPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	products, err := p.Repo.GetProductsByPage(page)
-	if err != nil {
-		log.Println(err)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -108,8 +105,7 @@ func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	products, err := p.Repo.GetProductsBySearch(search)
-	if err != nil {
-		log.Println(err)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -122,14 +118,14 @@ func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
 	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := p.Repo.GetProductByProductID(productID); err != nil && err != sql.ErrNoRows {
-		log.Println(err)
+	_, err := p.Repo.GetProductByProductID(productID)
+	if checkIfNotErrNoRows(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if err := p.Repo.DeleteProductByProductID(productID); err != nil {
-		log.Println(err)
+	err = p.Repo.DeleteProductByProductID(productID)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -138,8 +134,8 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Request) {
 	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
-	if _, err := p.Repo.GetProductByProductID(productID); err != nil && err != sql.ErrNoRows {
-		log.Println(err)
+	_, err := p.Repo.GetProductByProductID(productID)
+	if checkIfNotErrNoRows(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -157,8 +153,8 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 		ImagePath: imagePath,
 	}
 
-	if err := p.Repo.UpdateProductByProductID(product); err != nil {
-		log.Println(err)
+	err = p.Repo.UpdateProductByProductID(product)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

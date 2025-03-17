@@ -3,7 +3,6 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -32,8 +31,7 @@ func NewCartHandler(db *sql.DB) *Cart {
 
 func (c *Cart) GetAllCartItems(w http.ResponseWriter, r *http.Request) {
 	cartItems, err := c.Repo.GetAllCartItems()
-	if err != nil {
-		log.Println(err)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -56,8 +54,8 @@ func (c *Cart) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 		Quantity:  quantity,
 	}
 
-	if err := c.Repo.CreateCartItem(product); err != nil {
-		log.Println(err)
+	err := c.Repo.CreateCartItem(product)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -67,8 +65,7 @@ func (c *Cart) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value("user_id").(int)
 
 	cartItems, err := c.Repo.GetCartItemsByUserID(userID)
-	if err != nil {
-		log.Println(err)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -89,8 +86,8 @@ func (c *Cart) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 		Size:      size,
 	}
 
-	if err := c.Repo.DeleteCartItem(cartItem); err != nil {
-		log.Println(err)
+	err := c.Repo.DeleteCartItem(cartItem)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -109,8 +106,8 @@ func (c *Cart) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
 		Quantity:  quantity,
 	}
 
-	if err := c.Repo.UpdateCartItemQuantity(cartItem); err != nil {
-		log.Println(err)
+	err := c.Repo.UpdateCartItemQuantity(cartItem)
+	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
