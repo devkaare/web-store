@@ -43,12 +43,6 @@ func (u *User) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
-	reqApiKey := r.URL.Query().Get("api_key")
-	if reqApiKey != apiKey {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
 	firstName := r.FormValue("first_name")
 	lastName := r.FormValue("last_name")
 	email := r.FormValue("email")
@@ -98,12 +92,6 @@ func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
-	reqApiKey := r.URL.Query().Get("api_key")
-	if reqApiKey != apiKey {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	if _, err := u.Repo.GetUserByUserID(userID); err != nil && err != sql.ErrNoRows {
@@ -120,12 +108,6 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
-	reqApiKey := r.URL.Query().Get("api_key")
-	if reqApiKey != apiKey {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	if _, err := u.Repo.GetUserByUserID(userID); err != nil && err != sql.ErrNoRows {

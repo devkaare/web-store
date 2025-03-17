@@ -40,6 +40,11 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hashedPassword, err := hash.HashPassword(password)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	user := &model.User{
 		FirstName: firstName,

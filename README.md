@@ -16,6 +16,7 @@ DB_USERNAME=kaare
 DB_PASSWORD=password
 DB_SCHEMA=public
 API_KEY=81566e986cf8cc685a05ac5b634af7f8
+STRIPE_KEY=sk_test_4S68v29DeKcE4RxJcrJnUn5s
 ```
 
 Here are A FEW handy commands for using the API

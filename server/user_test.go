@@ -24,8 +24,6 @@ func TestCreateUser(t *testing.T) {
 	rawData.Add("email", testUser.Email)
 	rawData.Add("password", testUser.Password)
 
-	rawData.Add("api_key", testApiKey)
-
 	urlStr := fmt.Sprintf("http://localhost:%d/users?%v", port, rawData.Encode())
 
 	req, err := http.NewRequest("POST", urlStr, nil)
@@ -84,8 +82,6 @@ func TestUpdateUser(t *testing.T) {
 	rawData.Add("email", testUser.Email)
 	rawData.Add("password", testUser.Password)
 
-	rawData.Add("api_key", testApiKey)
-
 	urlStr := fmt.Sprintf("http://localhost:%d/users/%d?%v", port, testUser.UserID, rawData.Encode())
 
 	req, err := http.NewRequest("PUT", urlStr, nil)
@@ -132,8 +128,6 @@ func TestDeleteUser(t *testing.T) {
 	setup()
 
 	rawData := url.Values{}
-
-	rawData.Add("api_key", testApiKey)
 
 	urlStr := fmt.Sprintf("http://localhost:%d/users/%d?%v", port, testUser.UserID, rawData.Encode())
 

@@ -42,7 +42,6 @@ func setup() {
 	testDBPort = os.Getenv("DB_PORT")
 	testHost = os.Getenv("DB_HOST")
 	testSchema = os.Getenv("DB_SCHEMA")
-	testApiKey = os.Getenv("API_KEY")
 
 	testServer := &Server{
 		port: port,

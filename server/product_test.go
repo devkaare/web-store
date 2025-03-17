@@ -27,7 +27,6 @@ func TestCreateProduct(t *testing.T) {
 	rawData.Add("price", fmt.Sprintf("%d", testProduct.Price))
 	rawData.Add("sizes", testProduct.Sizes)
 	rawData.Add("image_path", testProduct.ImagePath)
-	rawData.Add("api_key", testApiKey)
 
 	urlStr := fmt.Sprintf("http://localhost:%d/products?%v", port, rawData.Encode())
 
@@ -89,8 +88,6 @@ func TestUpdateProduct(t *testing.T) {
 	rawData.Add("sizes", testProduct.Sizes)
 	rawData.Add("image_path", testProduct.ImagePath)
 
-	rawData.Add("api_key", testApiKey)
-
 	urlStr := fmt.Sprintf("http://localhost:%d/products/%d?%v", port, testProduct.ProductID, rawData.Encode())
 
 	req, err := http.NewRequest("PUT", urlStr, nil)
@@ -137,8 +134,6 @@ func TestDeleteProduct(t *testing.T) {
 	setup()
 
 	rawData := url.Values{}
-
-	rawData.Add("api_key", testApiKey)
 
 	urlStr := fmt.Sprintf("http://localhost:%d/products/%d?%v", port, testProduct.ProductID, rawData.Encode())
 

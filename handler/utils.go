@@ -10,9 +10,6 @@ import (
 	_ "github.com/joho/godotenv"
 )
 
-// var apiKey = os.Getenv("API_KEY")
-var apiKey = "81566e986cf8cc685a05ac5b634af7f8"
-
 type Utils struct {
 	Repo *utils.Repo
 }
