@@ -17,7 +17,7 @@ func (r *Repo) GetAllProducts() ([]model.Product, error) {
 
 	for rows.Next() {
 		var product model.Product
-		if err := rows.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
+		if err := rows.Scan(&product.ProductID, &product.CategoryID, &product.Name, &product.Description, &product.Price, &product.Size, &product.Color, &product.ImagePath); err != nil {
 			return products, fmt.Errorf("GetAllProducts %d: %v", product.ProductID, err)
 		}
 		products = append(products, product)
