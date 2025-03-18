@@ -30,7 +30,7 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 	r.Get("/listings", productHandler.GetProductsByPage)
 	r.Get("/{id}", productHandler.GetProductsByProductID)
 	r.Put("/{id}", productHandler.UpdateProductByProductID)
-	r.Delete("/{id}", productHandler.DeleteProductByProductID)
+	r.Delete("/", productHandler.DeleteProductByProductID)
 }
 
 func (s *Server) registerCartRoutes(r chi.Router) {
