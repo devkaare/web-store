@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
-	"github.com/devkaare/web-store/model"
+	// "github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/views"
 )
 
@@ -23,11 +23,11 @@ func (s *Store) CartPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Store) HomePageHandler(w http.ResponseWriter, r *http.Request) {
-	templ.Handler(views.HomePage(0, 0, []model.Product{})).ServeHTTP(w, r)
+	// templ.Handler(views.HomePage(0, 0, []model.Product{})).ServeHTTP(w, r)
 }
 
 func (s *Store) ProductPageHandler(w http.ResponseWriter, r *http.Request) {
-	templ.Handler(views.ProductPage(&views.ProductProp{})).ServeHTTP(w, r)
+	// templ.Handler(views.ProductPage(&views.ProductProp{})).ServeHTTP(w, r)
 }
 
 func (s *Store) SuccessPageHandler(w http.ResponseWriter, r *http.Request) {
