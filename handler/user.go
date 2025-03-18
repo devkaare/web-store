@@ -44,14 +44,14 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	firstName := r.FormValue("first_name")
 	lastName := r.FormValue("last_name")
 	email := r.FormValue("email")
-	pass := r.FormValue("password")
+	password := r.FormValue("password")
 
-	if checkForm(w, []string{firstName, lastName, email, pass}) {
+	if checkValues([]string{firstName, lastName, email, password}) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	passHash, err := hash.HashPass(pass)
+	hashedPassword, err := hash.HashPassword(password)
 	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -61,7 +61,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 		FirstName: firstName,
 		LastName:  lastName,
 		Email:     email,
-		Password:  passHash,
+		Password:  hashedPassword,
 	}
 
 	userID, err := u.Repo.CreateUser(user)
@@ -117,9 +117,9 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	email := r.FormValue("email")
-	pass := r.FormValue("password")
+	password := r.FormValue("password")
 
-	passHash, err := hash.HashPass(pass)
+	hashedPassword, err := hash.HashPassword(password)
 	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -128,7 +128,7 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	user := &model.User{
 		UserID:   userID,
 		Email:    email,
-		Password: passHash,
+		Password: hashedPassword,
 	}
 
 	err = u.Repo.UpdateUserByUserID(user)

@@ -11,19 +11,19 @@ func (r *Repo) GetProductsBySearch(search string) ([]model.Product, error) {
 
 	rows, err := r.Client.Query("SELECT product_id, name, price, sizes, image_path FROM products WHERE name ~* '\\b$1\\b'", search)
 	if err != nil {
-		return nil, err
+		return products, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var product model.Product
 		if err := rows.Scan(&product.ProductID, &product.Name, &product.Price, &product.Sizes, &product.ImagePath); err != nil {
-			return nil, fmt.Errorf("GetProductsBySearch %d: %v", product.ProductID, err)
+			return products, fmt.Errorf("GetProductsBySearch %d: %v", product.ProductID, err)
 		}
 		products = append(products, product)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("GetProductsBySearch %v:", err)
+		return products, fmt.Errorf("GetProductsBySearch %v:", err)
 	}
 	return products, nil
 }

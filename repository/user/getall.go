@@ -11,19 +11,19 @@ func (r *Repo) GetAllUsers() ([]model.User, error) {
 
 	rows, err := r.Client.Query("SELECT * FROM users")
 	if err != nil {
-		return nil, err
+		return users, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var user model.User
 		if err := rows.Scan(&user.UserID, &user.FirstName, &user.LastName, &user.Email, &user.Password); err != nil {
-			return nil, fmt.Errorf("GetAllUsers %d: %v", user.UserID, err)
+			return users, fmt.Errorf("GetAllUsers %d: %v", user.UserID, err)
 		}
 		users = append(users, user)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("GetAllUsers %v:", err)
+		return users, fmt.Errorf("GetAllUsers %v:", err)
 	}
 	return users, nil
 }

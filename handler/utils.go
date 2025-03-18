@@ -34,7 +34,7 @@ func (u *Utils) Health(w http.ResponseWriter, r *http.Request) {
 
 func check(err error) bool {
 	if err != nil {
-		log.Printf("check: %v", err)
+		log.Printf("check :%v", err)
 		return true
 	}
 	return false
@@ -45,15 +45,18 @@ func checkIfErrNoRows(err error) bool {
 		if err == sql.ErrNoRows {
 			return true
 		}
-		log.Printf("check: %v", err)
+		log.Printf("check :%v", err)
 		return true
 	}
 	return false
 }
 
 func checkIfNotErrNoRows(err error) bool {
-	if err != nil && err != sql.ErrNoRows {
-		log.Printf("check: %v", err)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return false
+		}
+		log.Printf("check :%v", err)
 		return true
 	}
 	return false
@@ -64,16 +67,15 @@ func checkIfErrNoCookie(err error) bool {
 		if err == http.ErrNoCookie {
 			return true
 		}
-		log.Printf("check: %v", err)
+		log.Printf("check :%v", err)
 		return true
 	}
 	return false
 }
 
-func checkForm(w http.ResponseWriter, fields []string) bool {
-	for _, v := range fields {
+func checkValues(values []string) bool {
+	for _, v := range values {
 		if v == "" {
-			w.WriteHeader(http.StatusBadRequest)
 			return true
 		}
 	}

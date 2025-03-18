@@ -29,3 +29,9 @@ func (s *Store) HomePageHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Store) ProductPageHandler(w http.ResponseWriter, r *http.Request) {
 	templ.Handler(views.ProductPage(&views.ProductProp{})).ServeHTTP(w, r)
 }
+
+func (s *Store) SuccessPageHandler(w http.ResponseWriter, r *http.Request) {
+}
+
+func (s *Store) CancelPageHandler(w http.ResponseWriter, r *http.Request) {
+}

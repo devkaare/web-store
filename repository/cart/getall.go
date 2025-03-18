@@ -11,19 +11,19 @@ func (r *Repo) GetAllCartItems() ([]model.CartItem, error) {
 
 	rows, err := r.Client.Query("SELECT * FROM cart_items")
 	if err != nil {
-		return nil, err
+		return cartItems, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		var cartItem model.CartItem
 		if err := rows.Scan(&cartItem.UserID, &cartItem.ProductID, &cartItem.Size, &cartItem.Quantity); err != nil {
-			return nil, fmt.Errorf("GetAllCartItems %d: %v", cartItem.UserID, err)
+			return cartItems, fmt.Errorf("GetAllCartItems %d: %v", cartItem.UserID, err)
 		}
 		cartItems = append(cartItems, cartItem)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("GetAllCartItems %v:", err)
+		return cartItems, fmt.Errorf("GetAllCartItems %v:", err)
 	}
 	return cartItems, nil
 }

@@ -15,27 +15,32 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 	firstName := r.FormValue("first_name")
 	lastName := r.FormValue("last_name")
 	email := r.FormValue("email")
-	pass := r.FormValue("password")
+	password := r.FormValue("password")
 	verifPass := r.FormValue("verif_password")
 
-	if checkForm(w, []string{firstName, lastName, email, pass, verifPass}) {
+	if checkValues([]string{firstName, lastName, email, password, verifPass}) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	if pass != verifPass {
-		w.Write([]byte("Please make sure that both passwords match!"))
+	if password != verifPass {
+		w.Write([]byte("Please make sure that both passwords match!\n"))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	_, err := userHandler.Repo.GetUserByEmail(email)
+	existingUser, err := userHandler.Repo.GetUserByEmail(email)
 	if checkIfNotErrNoRows(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	hashedPass, err := hash.HashPass(pass)
+	if !checkValues([]string{existingUser.FirstName, existingUser.LastName, existingUser.Email, existingUser.Password}) {
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
+
+	hashedPassword, err := hash.HashPassword(password)
 	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -45,7 +50,7 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 		FirstName: firstName,
 		LastName:  lastName,
 		Email:     email,
-		Password:  hashedPass,
+		Password:  hashedPassword,
 	}
 
 	_, err = userHandler.Repo.CreateUser(user)
@@ -53,24 +58,26 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
-	expectedPass := r.FormValue("password")
+	expectedPassword := r.FormValue("password")
 
-	if checkForm(w, []string{email, expectedPass}) {
+	if checkValues([]string{email, expectedPassword}) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	existingUser, err := userHandler.Repo.GetUserByEmail(email)
-	if checkIfErrNoRows(err) {
+	if checkIfNotErrNoRows(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if hash.CheckPassHash(expectedPass, existingUser.Password) {
+	if !hash.CheckPasswordHash(expectedPassword, existingUser.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -95,4 +102,6 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 		Value:   sessionID,
 		Expires: expiresAt,
 	})
+
+	w.WriteHeader(http.StatusOK)
 }
