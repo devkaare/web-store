@@ -44,7 +44,7 @@ func (p *Product) GetAllProducts(w http.ResponseWriter, r *http.Request) {
 
 func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
-	sizes := r.FormValue("sizes")
+	size := r.FormValue("sizes")
 	price, _ := strconv.Atoi(r.FormValue("price"))
 
 	file, _, _ := r.FormFile("image")
@@ -63,7 +63,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	product := &model.Product{
 		Name:      name,
 		Price:     price,
-		Sizes:     sizes,
+		Size:      size,
 		ImagePath: imagePath,
 	}
 
@@ -154,7 +154,7 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 	}
 
 	name := r.FormValue("name")
-	sizes := r.FormValue("sizes")
+	size := r.FormValue("sizes")
 	imagePath := r.FormValue("image_path")
 	price, _ := strconv.Atoi(r.FormValue("price"))
 
@@ -162,7 +162,7 @@ func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Reques
 		ProductID: productID,
 		Name:      name,
 		Price:     price,
-		Sizes:     sizes,
+		Size:      size,
 		ImagePath: imagePath,
 	}
 

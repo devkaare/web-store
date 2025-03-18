@@ -86,7 +86,7 @@ func (c *Cart) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 		Size:      size,
 	}
 
-	err := c.Repo.DeleteCartItem(cartItem)
+	err := c.Repo.DeleteCartItemByCartItemID(cartItem)
 	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
