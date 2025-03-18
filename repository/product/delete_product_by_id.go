@@ -1,6 +1,8 @@
 package product
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func (r *Repo) DeleteProductByProductID(productID int) error {
 	result, err := r.Client.Exec("DELETE FROM products WHERE product_id = $1", productID)

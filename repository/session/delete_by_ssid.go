@@ -1,6 +1,8 @@
 package session
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func (r *Repo) DeleteSessionBySessionID(sessionID string) error {
 	result, err := r.Client.Exec("DELETE FROM sessions WHERE session_id = $1", sessionID)

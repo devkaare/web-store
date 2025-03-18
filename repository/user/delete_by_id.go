@@ -1,6 +1,8 @@
 package user
 
-import "fmt"
+import (
+	"fmt"
+)
 
 func (r *Repo) DeleteUserByUserID(userID int) error {
 	result, err := r.Client.Exec("DELETE FROM users WHERE user_id = $1", userID)
