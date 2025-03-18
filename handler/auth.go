@@ -24,7 +24,7 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if password != verifPass {
-		w.Write([]byte("Please make sure that both passwords match!\n"))
+		w.Write([]byte("<p>Please make sure that both passwords match!</p>"))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}

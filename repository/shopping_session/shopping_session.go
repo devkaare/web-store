@@ -1,4 +1,4 @@
-package product
+package shoppingsession
 
 import (
 	"database/sql"

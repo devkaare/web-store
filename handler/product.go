@@ -3,8 +3,10 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
-	"log"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/devkaare/web-store/model"
@@ -43,8 +45,20 @@ func (p *Product) GetAllProducts(w http.ResponseWriter, r *http.Request) {
 func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	name := r.FormValue("name")
 	sizes := r.FormValue("sizes")
-	imagePath := r.FormValue("image_path")
 	price, _ := strconv.Atoi(r.FormValue("price"))
+
+	file, _, _ := r.FormFile("image")
+	defer file.Close()
+
+	imagePath := filepath.Join("../views/assets/product-imgs/", name, ".png")
+
+	dst, err := os.Create(imagePath)
+	check(err)
+
+	defer dst.Close()
+
+	_, err = io.Copy(dst, file)
+	check(err)
 
 	product := &model.Product{
 		Name:      name,
@@ -53,18 +67,16 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		ImagePath: imagePath,
 	}
 
-	productID, err := p.Repo.CreateProduct(product)
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	_, err = p.Repo.CreateProduct(product)
+	check(err)
 
-	product.ProductID = productID
+	/* product.ProductID = productID
 
 	w.Header().Set("Content-Type", "application/json")
 	jsonResp, _ := json.Marshal(product)
-	_, _ = w.Write(jsonResp)
+	_, _ = w.Write(jsonResp) */
+
+	w.Write([]byte("<p>Successfully created product!</p>"))
 }
 
 func (p *Product) GetProductsByProductID(w http.ResponseWriter, r *http.Request) {
@@ -116,7 +128,8 @@ func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
-	productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
+	productID, _ := strconv.Atoi(r.URL.Query().Get("id"))
+	// productID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	_, err := p.Repo.GetProductByProductID(productID)
 	if checkIfNotErrNoRows(err) {

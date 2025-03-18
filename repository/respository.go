@@ -4,8 +4,10 @@ import (
 	"database/sql"
 
 	"github.com/devkaare/web-store/repository/cart"
+	"github.com/devkaare/web-store/repository/order"
 	"github.com/devkaare/web-store/repository/product"
 	"github.com/devkaare/web-store/repository/session"
+	"github.com/devkaare/web-store/repository/shopping_session"
 	"github.com/devkaare/web-store/repository/user"
 	"github.com/devkaare/web-store/repository/utils"
 )
@@ -34,7 +36,17 @@ func GetProduct(productGetter func() *sql.DB) *product.Repo {
 	return &product.Repo{Client: db}
 }
 
+func GetShoppingSession(shoppingSessionGetter func() *sql.DB) *shoppingsession.Repo {
+	db := shoppingSessionGetter()
+	return &shoppingsession.Repo{Client: db}
+}
+
 func GetCart(cartGetter func() *sql.DB) *cart.Repo {
 	db := cartGetter()
 	return &cart.Repo{Client: db}
+}
+
+func GetOrder(getOrderGetter func() *sql.DB) *order.Repo {
+	db := getOrderGetter()
+	return &order.Repo{Client: db}
 }
