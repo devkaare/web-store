@@ -6,14 +6,15 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *Repo) CreateCartItem(cartItem *model.CartItem) error {
-	_, err := r.Client.Exec(
-		"INSERT INTO cart_items (user_id, product_id, sizes, quantity) VALUES ($1, $2, $3, $4)",
-		cartItem.UserID, cartItem.ProductID, cartItem.Size, cartItem.Quantity,
-	)
+func (r *Repo) CreateCartItem(cartItem *model.CartItem) (int, error) {
+	lastInsertedID := 0
+	err := r.Client.QueryRow(
+		"INSERT INTO cart_items (shopping_session_id, product_id, quantity) VALUES ($1, $2, $3) RETURNING shopping_session_id",
+		cartItem.ShoppingSessionID, cartItem.ProductID, cartItem.Quantity,
+	).Scan(&lastInsertedID)
 	if err != nil {
-		return fmt.Errorf("CreateCartItem: %v", err)
+		return lastInsertedID, fmt.Errorf("CreateCartItem: %v", err)
 	}
 
-	return nil
+	return lastInsertedID, nil
 }

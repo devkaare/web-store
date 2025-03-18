@@ -17,8 +17,8 @@ func (r *Repo) GetAllCartItems() ([]model.CartItem, error) {
 
 	for rows.Next() {
 		var cartItem model.CartItem
-		if err := rows.Scan(&cartItem.UserID, &cartItem.ProductID, &cartItem.Size, &cartItem.Quantity); err != nil {
-			return cartItems, fmt.Errorf("GetAllCartItems %d: %v", cartItem.UserID, err)
+		if err := rows.Scan(&cartItem.CartItemID, &cartItem.ShoppingSessionID, &cartItem.ProductID, &cartItem.Quantity); err != nil {
+			return cartItems, fmt.Errorf("GetAllCartItems %d: %v", cartItem.CartItemID, err)
 		}
 		cartItems = append(cartItems, cartItem)
 	}
