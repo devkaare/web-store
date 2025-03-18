@@ -8,8 +8,10 @@ templ Paginator(currentPage, lastPage int) {
 	<div>
 		<nav>
 			<ul>
-				<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage-1)) } rel="prev">Previous</a></li>
-				<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage-1)) }>{ fmt.Sprintf("%d", currentPage-1) }</a></li>
+				if currentPage <= 0 {
+					<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage-1)) } rel="prev">Previous</a></li>
+					<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage-1)) }>{ fmt.Sprintf("%d", currentPage-1) }</a></li>
+				}
 				<li class="active"><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage)) }>{ fmt.Sprintf("%d", currentPage) }</a></li>
 				if currentPage <= lastPage {
 					<li><a href={ templ.URL(fmt.Sprintf("?page=%d", currentPage+1)) }>{ fmt.Sprintf("%d", currentPage+1) }</a></li>
