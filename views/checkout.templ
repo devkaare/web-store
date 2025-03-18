@@ -1,0 +1,23 @@
+package views
+
+import (
+	"github.com/devkaare/web-store/views/components"
+)
+
+templ SuccessPage() {
+	@components.Base() {
+		<div>
+			<h1>Thank you for your purchase!</h1>
+			<p>You're purchase was successfull, feel free to contact us regarding any questions about your order <a href="mailto:johndoe@gmail.com">here</a></p>
+		</div>
+	}
+}
+
+templ CancelPage() {
+	@components.Base() {
+		<div>
+			<h1>Whoops! Something went wrong</h1>
+			<p>Your order was canceled, if this was a mistake or you have any other questions, feel free to contact us <a href="mailto:johndoe@gmail.com">here</a></p>
+		</div>
+	}
+}
