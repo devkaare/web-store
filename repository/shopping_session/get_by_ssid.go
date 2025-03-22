@@ -11,7 +11,7 @@ func (r *Repo) GetShoppingSessionBySessionID(shoppingSessionID int) (*model.Shop
 	shoppingSession := &model.ShoppingSession{}
 
 	row := r.Client.QueryRow("SELECT * FROM shopping_sessions WHERE shopping_session_id = $1", shoppingSessionID)
-	if err := row.Scan(&shoppingSession.ShoppingSessionID, &shoppingSession.UserID, &shoppingSession.Total); err != nil {
+	if err := row.Scan(&shoppingSession.ShoppingSessionID, &shoppingSession.SessionID, &shoppingSession.Total); err != nil {
 		if err == sql.ErrNoRows {
 			return shoppingSession, err
 		}

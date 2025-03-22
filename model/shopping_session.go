@@ -2,6 +2,6 @@ package model
 
 type ShoppingSession struct {
 	ShoppingSessionID int
-	UserID            int
+	SessionID         int
 	Total             int
 }
