@@ -64,8 +64,6 @@ func createTables(db *sql.DB) {
 			name TEXT NOT NULL,
 			description TEXT NOT NULL,
 			price INT NOT NULL,
-			color TEXT NOT NULL,
-			size TEXT NOT NULL,
 			image_path TEXT NOT NULL
 		)
 	`); err != nil {

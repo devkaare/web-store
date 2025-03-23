@@ -8,7 +8,7 @@ import (
 
 func (r *Repo) CreateSession(session *model.Session) error {
 	_, err := r.Client.Exec(
-		"INSERT INTO sessions (session_id) VALUES $1",
+		"INSERT INTO sessions (session_id) VALUES ($1)",
 		session.SessionID,
 	)
 	if err != nil {

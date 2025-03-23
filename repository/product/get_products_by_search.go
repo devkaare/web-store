@@ -9,7 +9,7 @@ import (
 func (r *Repo) GetProductsBySearch(search string) ([]model.Product, error) {
 	var products []model.Product
 
-	rows, err := r.Client.Query("SELECT product_id, category_id, name, description, price, size, color, image_path FROM products WHERE name ~* '\\b$1\\b'", search)
+	rows, err := r.Client.Query("SELECT product_id, category_id, name, description, price, image_path FROM products WHERE name ~* '\\b$1\\b'", search)
 	if err != nil {
 		return products, err
 	}
@@ -17,7 +17,7 @@ func (r *Repo) GetProductsBySearch(search string) ([]model.Product, error) {
 
 	for rows.Next() {
 		var product model.Product
-		if err := rows.Scan(&product.ProductID, &product.CategoryID, &product.Name, &product.Description, &product.Price, &product.Size, &product.Color, &product.ImagePath); err != nil {
+		if err := rows.Scan(&product.ProductID, &product.CategoryID, &product.Name, &product.Description, &product.Price, &product.ImagePath); err != nil {
 			return products, fmt.Errorf("GetProductsBySearch %d: %v", product.ProductID, err)
 		}
 		products = append(products, product)
