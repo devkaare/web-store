@@ -2,14 +2,16 @@ package handler
 
 import (
 	"database/sql"
-	"encoding/json"
+	"log"
 	"net/http"
-	// "strconv"
+	"strconv"
 
-	// "github.com/devkaare/web-store/model"
+	"github.com/a-h/templ"
+	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository"
 	"github.com/devkaare/web-store/repository/cart_item"
-	// "github.com/go-chi/chi/v5"
+	"github.com/devkaare/web-store/views"
+	"github.com/go-chi/chi/v5"
 )
 
 type CartItem struct {
@@ -29,68 +31,79 @@ func NewCartItemHandler(db *sql.DB) *CartItem {
 	return cartItemHandler
 }
 
-func (c *CartItem) GetAllCartItems(w http.ResponseWriter, r *http.Request) {
-	cartItems, err := c.Repo.GetAllCartItems()
-	if check(err) {
+// func (c *CartItem) GetAllCartItems(w http.ResponseWriter, r *http.Request) {
+// 	cartItems, err := c.Repo.GetAllCartItems()
+// 	if err != nil {
+// 		log.Printf("GetAllCartItems: error fetching cart items: %v", err)
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		return
+// 	}
+//
+// 	// templ.Handler(views.CartPage(cartItems)).ServeHTTP(w, r)
+// }
+
+func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
+	shoppingSessionID := r.Context().Value("shopping_session_id").(int)
+	productID, _ := strconv.Atoi(r.FormValue("productID"))
+	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
+
+	product := &model.CartItem{
+		ShoppingSessionID: shoppingSessionID,
+		ProductID:         productID,
+		Quantity:          quantity,
+	}
+
+	_, err := cartItemHandler.Repo.CreateCartItem(product)
+	if err != nil {
+		log.Printf("CreateCartItemByShoppingSessionID: error fetching cart items by shopping session ID: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func (c *CartItem) GetCartItemsByShoppingSessionID(w http.ResponseWriter, r *http.Request) {
+	shoppingSessionID := r.Context().Value("shopping_session_id").(int)
+
+	cartItems, err := c.Repo.GetCartItemsByShoppingSessionID(shoppingSessionID)
+	if err != nil {
+		log.Printf("GetCartItemsByShoppingSessionID: error fetching cart items by shopping session ID: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	jsonResp, _ := json.Marshal(cartItems)
-	_, _ = w.Write(jsonResp)
+	var cartProps []views.CartItemProp
+	for _, ci := range cartItems {
+		product, err := productHandler.Repo.GetProductByProductID(ci.ProductID)
+		if err != nil {
+			log.Printf("GetCartItemsByShoppingSessionID: error fetching product by product ID: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		var cartProp views.CartItemProp
+
+		cartProp.CartItemID = ci.CartItemID
+		cartProp.ShoppingSessionID = ci.ShoppingSessionID
+		cartProp.ProductID = ci.ProductID
+		cartProp.Quantity = ci.Quantity
+		cartProp.Name = product.Name
+		cartProp.Price = product.Price
+		cartProp.ImagePath = product.ImagePath
+
+		cartProps = append(cartProps, cartProp)
+	}
+
+	templ.Handler(views.CartPage(cartProps)).ServeHTTP(w, r)
 }
 
-func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
-	// userID := r.Context().Value("user_id").(int)
-	// productID, _ := strconv.Atoi(r.FormValue("productID"))
-	// quantity, _ := strconv.Atoi(r.FormValue("quantity"))
-	// size := r.Form["sizes"][0]
-	//
-	// product := &model.CartItem{
-	// 	UserID:    userID,
-	// 	ProductID: productID,
-	// 	Size:      size,
-	// 	Quantity:  quantity,
-	// }
-	//
-	// err := c.Repo.CreateCartItem(product)
-	// if check(err) {
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
-}
+func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Request) {
+	cartItemID, _ := strconv.Atoi(chi.URLParam(r, "cart_item_id"))
 
-func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
-	// userID := r.Context().Value("user_id").(int)
-	//
-	// cartItems, err := c.Repo.GetCartItemsByUserID(userID)
-	// if check(err) {
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
-	//
-	// w.Header().Set("Content-Type", "application/json")
-	// jsonResp, _ := json.Marshal(cartItems)
-	// _, _ = w.Write(jsonResp)
-}
-
-func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
-	// userID := r.Context().Value("user_id").(int)
-	// productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
-	// size := r.URL.Query().Get("size")
-	//
-	// cartItem := &model.CartItem{
-	// 	UserID:    userID,
-	// 	ProductID: productID,
-	// 	Size:      size,
-	// }
-	//
-	// err := c.Repo.DeleteCartItemByCartItemID(cartItem)
-	// if check(err) {
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
+	err := c.Repo.DeleteCartItemByCartItemID(cartItemID)
+	if check(err) {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (c *CartItem) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
