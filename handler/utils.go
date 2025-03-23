@@ -45,7 +45,7 @@ func checkIfErrNoRows(err error) bool {
 		if err == sql.ErrNoRows {
 			return true
 		}
-		log.Printf("check :%v", err)
+		log.Printf("checkIfErrNoRows :%v", err)
 		return true
 	}
 	return false
@@ -56,7 +56,7 @@ func checkIfNotErrNoRows(err error) bool {
 		if err == sql.ErrNoRows {
 			return false
 		}
-		log.Printf("check :%v", err)
+		log.Printf("checkIfNotErrNoRows :%v", err)
 		return true
 	}
 	return false
@@ -67,7 +67,7 @@ func checkIfErrNoCookie(err error) bool {
 		if err == http.ErrNoCookie {
 			return true
 		}
-		log.Printf("check :%v", err)
+		log.Printf("checkIfErrNoCookie :%v", err)
 		return true
 	}
 	return false

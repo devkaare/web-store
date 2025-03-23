@@ -35,7 +35,7 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 
 func (s *Server) registerCartRoutes(r chi.Router) {
 	authHandler := &handler.Authentication{}
-	r.Use(authHandler.SetUserID)
+	r.Use(authHandler.SessionMiddleware)
 
 	cartHandler := handler.NewCartItemHandler(s.db)
 
