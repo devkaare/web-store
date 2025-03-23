@@ -68,13 +68,13 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-		}
 
-		http.SetCookie(w, &http.Cookie{
-			Name:  "session_token",
-			Value: session.SessionID,
-			// Path:  "/",
-		})
+			http.SetCookie(w, &http.Cookie{
+				Name:  "session_token",
+				Value: session.SessionID,
+				// Path:  "/",
+			})
+		}
 
 		shoppingSession, err = shoppingSessionHandler.Repo.GetShoppingSessionBySessionID(session.SessionID)
 		if err == nil {
@@ -88,11 +88,9 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 			}
 			shoppingSession.ShoppingSessionID = shoppingSessionID
 		} else if err != nil {
-			if err != nil {
-				log.Printf("ShoppingSessionMiddleware: %v")
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
+			log.Printf("ShoppingSessionMiddleware: %v")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
 
 		ctx := context.WithValue(r.Context(), "shopping_session_id", shoppingSession.ShoppingSessionID)
