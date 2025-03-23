@@ -1,7 +1,9 @@
 package server
 
 import (
+	"github.com/a-h/templ"
 	"github.com/devkaare/web-store/handler"
+	"github.com/devkaare/web-store/views"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -9,13 +11,6 @@ func (s *Server) registerUtilsRoutes(r chi.Router) {
 	utilsHandler := handler.NewUtilsHandler(s.db)
 
 	r.Get("/health", utilsHandler.Health)
-}
-
-func (s *Server) registerAuthRoutes(r chi.Router) {
-	authHandler := &handler.Authentication{}
-
-	r.Post("/signup", authHandler.SignUp)
-	r.Post("/signin", authHandler.SignIn)
 }
 
 func (s *Server) registerUserRoutes(r chi.Router) {
@@ -40,6 +35,13 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 	r.Delete("/", productHandler.DeleteProductByProductID)
 }
 
+func (s *Server) registerAuthRoutes(r chi.Router) {
+	authHandler := &handler.Authentication{}
+
+	r.Post("/signup", authHandler.SignUp)
+	r.Post("/signin", authHandler.SignIn)
+}
+
 func (s *Server) registerCartRoutes(r chi.Router) {
 	authHandler := &handler.Authentication{}
 	r.Use(authHandler.SessionMiddleware)
@@ -62,12 +64,8 @@ func (s *Server) registerSessionRoutes(r chi.Router) {
 	r.Get("/logout", sessionHandler.LogOut)
 }
 
-func (s *Server) registerStoreRoutes(r chi.Router) {
-	storeHandler := &handler.Store{}
-
-	r.Get("/signin", storeHandler.SignInPageHandler)
-	r.Get("/signup", storeHandler.SignUpPageHandler)
-	r.Get("/cart", storeHandler.CartPageHandler)
-	r.Get("/listings", storeHandler.HomePageHandler)
-	r.Get("/listings/{id}", storeHandler.ProductPageHandler)
+func (s *Server) registerRoutes(r chi.Router) {
+	r.Handle("/", templ.Handler(views.IndexPage()))
+	r.Handle("/signup", templ.Handler(views.SignUpPage()))
+	r.Handle("/signin", templ.Handler(views.SignInPage()))
 }
