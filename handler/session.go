@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
-	"time"
 
 	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository"
@@ -18,23 +17,6 @@ type Session struct {
 
 var sessionHandler = &Session{
 	Repo: &session.Repo{},
-}
-
-func isExpired(s *model.Session) bool {
-	return s.Expiry.Before(time.Now())
-}
-
-func (s Session) checkExpiryAndDelete(w http.ResponseWriter, session *model.Session, sessionID string) {
-	if isExpired(session) {
-		err := s.Repo.DeleteSessionBySessionID(sessionID)
-		if check(err) {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
 }
 
 func NewSessionHandler(db *sql.DB) *Session {
@@ -78,15 +60,11 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	s.checkExpiryAndDelete(w, session, sessionID)
-
 	newSessionID := uuid.NewString()
-	expiresAt := time.Now().Add(120 * time.Second)
 
 	newSession := &model.Session{
 		SessionID: newSessionID,
 		UserID:    session.UserID,
-		Expiry:    expiresAt,
 	}
 
 	err = s.Repo.CreateSession(newSession)
@@ -102,9 +80,8 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:    "session_token",
-		Value:   newSessionID,
-		Expires: time.Now().Add(120 * time.Second),
+		Name:  "session_token",
+		Value: newSessionID,
 	})
 }
 

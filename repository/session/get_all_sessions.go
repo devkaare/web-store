@@ -17,7 +17,7 @@ func (r *Repo) GetAllSessions() ([]model.Session, error) {
 
 	for rows.Next() {
 		var session model.Session
-		if err := rows.Scan(&session.SessionID, &session.UserID, &session.Expiry); err != nil {
+		if err := rows.Scan(&session.SessionID, &session.UserID); err != nil {
 			return sessions, fmt.Errorf("GetAllSessions %s: %v", session.SessionID, err)
 		}
 		sessions = append(sessions, session)

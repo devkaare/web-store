@@ -2,7 +2,6 @@ package handler
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/devkaare/web-store/hash"
 	"github.com/devkaare/web-store/model"
@@ -83,12 +82,10 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sessionID := uuid.NewString()
-	expiresAt := time.Now().Add(120 * time.Second)
 
 	session := &model.Session{
 		SessionID: sessionID,
 		UserID:    existingUser.UserID,
-		Expiry:    expiresAt,
 	}
 
 	err = sessionHandler.Repo.CreateSession(session)
@@ -98,9 +95,8 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:    "session_token",
-		Value:   sessionID,
-		Expires: expiresAt,
+		Name:  "session_token",
+		Value: sessionID,
 	})
 
 	w.WriteHeader(http.StatusOK)

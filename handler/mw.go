@@ -26,16 +26,6 @@ func (a *Authentication) SessionMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		if isExpired(session) {
-			if err := sessionHandler.Repo.DeleteSessionBySessionID(sessionID); err != nil {
-				log.Println(err)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
-
 		ctx := context.WithValue(r.Context(), "user_id", session.UserID)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
