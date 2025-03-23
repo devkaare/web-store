@@ -1,4 +1,4 @@
-package cart
+package cartitem
 
 import (
 	"database/sql"

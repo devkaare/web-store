@@ -23,7 +23,7 @@ var cartHandler = &Cart{
 type userID int
 
 func NewCartHandler(db *sql.DB) *Cart {
-	cartHandler.Repo = repository.GetCart(func() *sql.DB {
+	cartHandler.Repo = repository.GetCartItem(func() *sql.DB {
 		return db
 	})
 	return cartHandler
