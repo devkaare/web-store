@@ -53,7 +53,7 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 
 	_, err := cartItemHandler.Repo.CreateCartItem(product)
 	if err != nil {
-		log.Printf("CreateCartItemByShoppingSessionID: error fetching cart items by shopping session ID: %v", err)
+		log.Printf("CreateCartItemByShoppingSessionID: error creating cart item: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
