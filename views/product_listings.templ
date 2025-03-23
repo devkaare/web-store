@@ -1,0 +1,24 @@
+package views
+
+import (
+	"github.com/devkaare/web-store/views/components"
+)
+
+type ListingProp struct {
+	CategoryID int
+	Name       string
+	Price      int
+	ImagePath  string
+}
+
+templ ProductListingsPage(listingProps []ListingProp) {
+	@components.Base() {
+		for _, lp := range listingProps {
+			<div>
+				<img href={ lp.ImagePath }/>
+				<a href={ templ.URL(string(lp.CategoryID)) }>{ lp.Name }</a>
+				<p>{ string(lp.Price) }</p>
+			</div>
+		}
+	}
+}

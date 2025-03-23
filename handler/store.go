@@ -19,7 +19,7 @@ func (s *Store) SignUpPageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Store) CartPageHandler(w http.ResponseWriter, r *http.Request) {
-	templ.Handler(views.CartPage([]views.CartProp{})).ServeHTTP(w, r)
+	// templ.Handler(views.CartPage([]views.CartProp{})).ServeHTTP(w, r)
 }
 
 func (s *Store) HomePageHandler(w http.ResponseWriter, r *http.Request) {
