@@ -100,10 +100,15 @@ func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Req
 	cartItemID, _ := strconv.Atoi(chi.URLParam(r, "cart_item_id"))
 
 	err := c.Repo.DeleteCartItemByCartItemID(cartItemID)
-	if check(err) {
+	if err != nil {
+		log.Printf("DeleteCartItemByCartItemID: error fetching product by product ID: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+}
+
+func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
+	cartItemID, _ := strconv.Atoi(chi.URLParam(r, "cart_item_id"))
 }
 
 func (c *CartItem) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
