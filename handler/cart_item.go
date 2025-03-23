@@ -8,28 +8,28 @@ import (
 
 	// "github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository"
-	"github.com/devkaare/web-store/repository/cart"
+	"github.com/devkaare/web-store/repository/cart_item"
 	// "github.com/go-chi/chi/v5"
 )
 
-type Cart struct {
-	Repo *cart.Repo
+type CartItem struct {
+	Repo *cartitem.Repo
 }
 
-var cartHandler = &Cart{
-	Repo: &cart.Repo{},
+var cartItemHandler = &CartItem{
+	Repo: &cartitem.Repo{},
 }
 
 type userID int
 
-func NewCartHandler(db *sql.DB) *Cart {
-	cartHandler.Repo = repository.GetCartItem(func() *sql.DB {
+func NewCartItemHandler(db *sql.DB) *CartItem {
+	cartItemHandler.Repo = repository.GetCartItem(func() *sql.DB {
 		return db
 	})
-	return cartHandler
+	return cartItemHandler
 }
 
-func (c *Cart) GetAllCartItems(w http.ResponseWriter, r *http.Request) {
+func (c *CartItem) GetAllCartItems(w http.ResponseWriter, r *http.Request) {
 	cartItems, err := c.Repo.GetAllCartItems()
 	if check(err) {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -41,7 +41,7 @@ func (c *Cart) GetAllCartItems(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-func (c *Cart) CreateCartItem(w http.ResponseWriter, r *http.Request) {
+func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 	// userID := r.Context().Value("user_id").(int)
 	// productID, _ := strconv.Atoi(r.FormValue("productID"))
 	// quantity, _ := strconv.Atoi(r.FormValue("quantity"))
@@ -61,7 +61,7 @@ func (c *Cart) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 	// }
 }
 
-func (c *Cart) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
+func (c *CartItem) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
 	// userID := r.Context().Value("user_id").(int)
 	//
 	// cartItems, err := c.Repo.GetCartItemsByUserID(userID)
@@ -75,7 +75,7 @@ func (c *Cart) GetCartItemsByUserID(w http.ResponseWriter, r *http.Request) {
 	// _, _ = w.Write(jsonResp)
 }
 
-func (c *Cart) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
+func (c *CartItem) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 	// userID := r.Context().Value("user_id").(int)
 	// productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	// size := r.URL.Query().Get("size")
@@ -93,7 +93,7 @@ func (c *Cart) DeleteCartItem(w http.ResponseWriter, r *http.Request) {
 	// }
 }
 
-func (c *Cart) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
+func (c *CartItem) UpdateCartItemQuantity(w http.ResponseWriter, r *http.Request) {
 	// userID := r.Context().Value("user_id").(int)
 	// productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	// quantity, _ := strconv.Atoi(r.FormValue("quantity"))
