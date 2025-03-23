@@ -1,0 +1,39 @@
+package views
+
+import (
+	"github.com/devkaare/web-store/views/components"
+)
+
+templ AdminPanelPage() {
+	@components.Base() {
+		<div>
+			<h1>Create A New Product</h1>
+			<form hx-post="/products" hx-target="this" hx-swap="outerHTML" enctype="multipart/form-data">
+				<label for="category_name">Category Name:</label>
+				<input type="text" id="category_name" name="category_name" required/>
+				<br/>
+				<br/>
+				<label for="product_name">Product Name:</label>
+				<input type="text" id="product_name" name="product_name" required/>
+				<br/>
+				<br/>
+				<label for="price">Price:</label>
+				<input id="price" name="price" type="number"/>
+				<br/>
+				<br/>
+				<label for="description">Description:</label>
+				<textarea id="description" name="description" rows="4" cols="50" required></textarea>
+				<br/>
+				<br/>
+				<input type="file" name="image" id="image" accept="image/png, image/jpeg"/>
+				<input type="submit" value="CREATE"/>
+			</form>
+			<form hx-delete="/products" hx-params="product_id" hx-target="this" hx-swap="outerHTML">
+				<label for="product_id">Product ID:</label>
+				<input id="product_id" name="product_id" type="number"/>
+				<input type="submit" value="DELETE"/>
+			</form>
+			<a href="/products">RAW PRODUCTS</a>
+		</div>
+	}
+}

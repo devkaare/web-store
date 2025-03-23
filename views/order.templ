@@ -18,6 +18,7 @@ type OrderItemProp struct {
 
 templ OrderPage(orderItems []OrderItemProp) {
 	@components.Base() {
+		<h1>{ fmt.Sprintf("Order ID: %d", orderItems[0].OrderDetailsID) }</h1>
 		for _, p := range orderItems {
 			<div>
 				<img src={ fmt.Sprintf("%s", templ.URL(p.ImagePath)) }/>
@@ -27,7 +28,6 @@ templ OrderPage(orderItems []OrderItemProp) {
 				</div>
 				<p>{ fmt.Sprintf("%d", p.Quantity) }</p>
 			</div>
-			<p>{ fmt.Sprintf("OrderDetailsID: %d", p.OrderDetailsID) }</p>
 		}
 	}
 }
