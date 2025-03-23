@@ -31,11 +31,7 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	existingUser, err := userHandler.Repo.GetUserByEmail(email)
-	if err != nil {
-		if err != sql.ErrNoRows {
-			w.WriteHeader(http.StatusConflict)
-			return
-		}
+	if err != nil && err != sql.ErrNoRows {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
