@@ -1,24 +1,21 @@
 package views
 
 import (
+	"fmt"
+
 	"github.com/devkaare/web-store/views/components"
+	"github.com/devkaare/web-store/model"
 )
 
-type ListingProp struct {
-	CategoryID int
-	Name       string
-	Price      int
-	ImagePath  string
-}
-
-templ ProductListingsPage(listingProps []ListingProp) {
+templ ProductListingsPage(products []model.Product, currentPage, lastPage int) {
 	@components.Base() {
-		for _, lp := range listingProps {
+		for _, p := range products {
 			<div>
-				<img href={ lp.ImagePath }/>
-				<a href={ templ.URL(string(lp.CategoryID)) }>{ lp.Name }</a>
-				<p>{ string(lp.Price) }</p>
+				<img src={ fmt.Sprintf("%s", templ.URL(p.ImagePath)) }/>
+				<a href={ templ.URL(fmt.Sprintf("/listings/%d", p.ProductID)) }>{ p.Name }</a>
+				<p>{ fmt.Sprintf("%d", p.Price) }</p>
 			</div>
 		}
+		@components.Paginator(currentPage, lastPage)
 	}
 }

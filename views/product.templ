@@ -1,0 +1,21 @@
+package views
+
+import (
+	"fmt"
+
+	"github.com/devkaare/web-store/views/components"
+	"github.com/devkaare/web-store/model"
+)
+
+templ ProductPage(p *model.Product) {
+	@components.Base() {
+		<div>
+			<img src={ fmt.Sprintf("%s", templ.URL(p.ImagePath)) }/>
+			<div>
+				<h2>{ p.Name }</h2>
+				<p>{ fmt.Sprintf("%d", p.Price) }</p>
+			</div>
+			<p>{ p.Description }</p>
+		</div>
+	}
+}

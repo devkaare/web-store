@@ -1,0 +1,15 @@
+package views
+
+import (
+	"github.com/devkaare/web-store/views/components"
+)
+
+templ IndexPage() {
+	@components.Base() {
+		<div>
+			<h1>Welcome!</h1>
+			<p>Something about the webstore!</p>
+			<a href="/listings">SHOP NOW</a>
+		</div>
+	}
+}

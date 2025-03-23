@@ -1,0 +1,33 @@
+package views
+
+import (
+	"fmt"
+
+	"github.com/devkaare/web-store/views/components"
+)
+
+type OrderItemProp struct {
+	OrderItemID    int
+	OrderDetailsID int
+	ProductID      int
+	Quantity       int
+	Name           string
+	Price          int
+	ImagePath      string
+}
+
+templ OrderPage(orderItems []OrderItemProp) {
+	@components.Base() {
+		for _, p := range orderItems {
+			<div>
+				<img src={ fmt.Sprintf("%s", templ.URL(p.ImagePath)) }/>
+				<div>
+					<a href={ templ.URL(fmt.Sprintf("/listings/%d", p.ProductID)) }>{ p.Name }</a>
+					<p>{ fmt.Sprintf("%d", p.Price) }</p>
+				</div>
+				<p>{ fmt.Sprintf("%d", p.Quantity) }</p>
+			</div>
+			<p>{ fmt.Sprintf("OrderDetailsID: %d", p.OrderDetailsID) }</p>
+		}
+	}
+}

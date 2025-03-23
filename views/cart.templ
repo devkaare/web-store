@@ -1,0 +1,37 @@
+package views
+
+import (
+	"fmt"
+
+	"github.com/devkaare/web-store/views/components"
+)
+
+type CartItemProp struct {
+	CartItemID        int
+	ShoppingSessionID int
+	ProductID         int
+	Quantity          int
+	Name              string
+	Price             int
+	ImagePath         string
+}
+
+templ CartPage(cartItems []CartItemProp) {
+	@components.Base() {
+		for _, p := range cartItems {
+			<div>
+				<img src={ fmt.Sprintf("%s", templ.URL(p.ImagePath)) }/>
+				<div>
+					<a href={ templ.URL(fmt.Sprintf("/listings/%d", p.ProductID)) }>{ p.Name }</a>
+					<p>{ fmt.Sprintf("%d", p.Price) }</p>
+				</div>
+				<p>{ fmt.Sprintf("%d", p.Quantity) }</p>
+				<div>
+					<a href="#">INCREMENT</a>
+					<a href="#">DECREMENT</a>
+					<a href="#">REMOVE</a>
+				</div>
+			</div>
+		}
+	}
+}
