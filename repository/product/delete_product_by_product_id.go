@@ -7,7 +7,7 @@ import (
 func (r *Repo) DeleteProductByProductID(productID int) error {
 	result, err := r.Client.Exec("DELETE FROM products WHERE product_id = $1", productID)
 	if err != nil {
-		return fmt.Errorf("DeleteProductByProductID %d, %v", productID, err)
+		return fmt.Errorf("DeleteProductByProductID %d: %v", productID, err)
 	}
 	count, err := result.RowsAffected()
 	if err != nil {
