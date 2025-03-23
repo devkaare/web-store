@@ -27,9 +27,10 @@ templ CartPage(cartItems []CartItemProp) {
 				</div>
 				<p>{ fmt.Sprintf("%d", p.Quantity) }</p>
 				<div>
-					<a href="#">INCREMENT</a>
-					<a href="#">DECREMENT</a>
-					<a href="#">REMOVE</a>
+					<input hx-post={ string(templ.URL(fmt.Sprintf("/cart/update/%d", p.ProductID))) } hx-trigger="keyup changed delay:1s" type="number" id="quantity" name="quantity" min="1" max="5"/>
+					<a hx-post={ string(templ.URL(fmt.Sprintf("/cart/increment/%d", p.ProductID))) }>INCREMENT</a>
+					<a hx-post={ string(templ.URL(fmt.Sprintf("/cart/decrement/%d", p.ProductID))) }>DECREMENT</a>
+					<a hx-post={ string(templ.URL(fmt.Sprintf("/cart/remove/%d", p.ProductID))) }>REMOVE</a>
 				</div>
 			</div>
 		}

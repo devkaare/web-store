@@ -105,6 +105,8 @@ func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Req
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	http.Redirect(w, r, "/cart", http.StatusSeeOther)
 }
 
 func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
@@ -125,6 +127,8 @@ func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	http.Redirect(w, r, "/cart", http.StatusSeeOther)
 }
 
 func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
@@ -145,11 +149,14 @@ func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	http.Redirect(w, r, "/cart", http.StatusSeeOther)
 }
 
 func (c *CartItem) UpdateCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
 	cartItemID, _ := strconv.Atoi(chi.URLParam(r, "cart_item_id"))
-	quantity, _ := strconv.Atoi(r.URL.Query().Get("quantity"))
+	// quantity, _ := strconv.Atoi(r.URL.Query().Get("quantity"))
+	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
 
 	cartItem, err := cartItemHandler.Repo.GetCartItemByCartItemID(cartItemID)
 	if err != nil {
@@ -166,4 +173,6 @@ func (c *CartItem) UpdateCartItemQuantityByCartItemID(w http.ResponseWriter, r *
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	http.Redirect(w, r, "/cart", http.StatusSeeOther)
 }

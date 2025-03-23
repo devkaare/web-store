@@ -40,10 +40,10 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 	cartHandler := handler.NewCartItemHandler(s.db)
 
 	r.Post("/", cartHandler.CreateCartItem)
-	r.Get("/", cartHandler.GetAllCartItems)
-	r.Get("/{user_id}", cartHandler.GetCartItemsByUserID)
-	r.Put("/{user_id}/{product_id}", cartHandler.UpdateCartItemQuantity)
-	r.Delete("/{user_id}/{product_id}", cartHandler.DeleteCartItem)
+	// r.Get("/", cartHandler.GetAllCartItems)
+	// r.Get("/{user_id}", cartHandler.GetCartItemsByUserID)
+	// r.Put("/{user_id}/{product_id}", cartHandler.UpdateCartItemQuantity)
+	// r.Delete("/{user_id}/{product_id}", cartHandler.DeleteCartItem)
 }
 
 func (s *Server) registerSessionRoutes(r chi.Router) {
