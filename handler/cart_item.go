@@ -22,8 +22,6 @@ var cartItemHandler = &CartItem{
 	Repo: &cartitem.Repo{},
 }
 
-type userID int
-
 func NewCartItemHandler(db *sql.DB) *CartItem {
 	cartItemHandler.Repo = repository.GetCartItem(func() *sql.DB {
 		return db
