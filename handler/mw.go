@@ -53,7 +53,7 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 			if err == sql.ErrNoRows {
 				session = nil
 			} else if err != nil {
-				log.Printf("ShoppingSessionMiddleware: %v")
+				log.Printf("ShoppingSessionMiddleware: %v", err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
@@ -64,7 +64,7 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 			session := &model.Session{SessionID: sessionID}
 
 			if err := sessionHandler.Repo.CreateSession(session); err != nil {
-				log.Printf("ShoppingSessionMiddleware: %v")
+				log.Printf("ShoppingSessionMiddleware: %v", err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
@@ -76,21 +76,21 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 		}
 
 		shoppingSession, err = shoppingSessionHandler.Repo.GetShoppingSessionBySessionID(session.SessionID)
-		if err == nil {
-			shoppingSession = &model.ShoppingSession{SessionID: session.SessionID, Total: 0}
-
-			shoppingSessionID, err := shoppingSessionHandler.Repo.CreateShoppingSession(shoppingSession)
-			if err != nil {
-				log.Printf("ShoppingSessionMiddleware: %v")
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			shoppingSession.ShoppingSessionID = shoppingSessionID
-		} else if err != nil {
-			log.Printf("ShoppingSessionMiddleware: %v")
+		if err != nil {
+			log.Printf("ShoppingSessionMiddleware: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+
+		shoppingSession = &model.ShoppingSession{SessionID: session.SessionID, Total: 0}
+
+		shoppingSessionID, err := shoppingSessionHandler.Repo.CreateShoppingSession(shoppingSession)
+		if err != nil {
+			log.Printf("ShoppingSessionMiddleware: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		shoppingSession.ShoppingSessionID = shoppingSessionID
 
 		ctx := context.WithValue(r.Context(), "shopping_session_id", shoppingSession.ShoppingSessionID)
 
