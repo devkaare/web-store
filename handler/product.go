@@ -70,6 +70,7 @@ func (p *Product) GetAllProducts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// FIXME: This doesn't even use the categoryID from above
 	listingProps, err := getListingProps()
 	if err != nil {
 		log.Printf("GetAllProducts: error fetching listingProps: %v", err)

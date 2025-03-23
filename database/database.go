@@ -57,6 +57,7 @@ func createTables(db *sql.DB) {
 		log.Fatal(err)
 	}
 
+	// TODO: Remove size and color from products
 	if _, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS products (
 			product_id SERIAL PRIMARY KEY,
