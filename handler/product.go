@@ -112,7 +112,7 @@ func (p *Product) GetProductByProductID(w http.ResponseWriter, r *http.Request) 
 
 	product, err := p.Repo.GetProductByProductID(productID)
 	if err != nil {
-		log.Printf("GetProductsByProductID: error fetching product by productID: %v", err)
+		log.Printf("GetProductsByProductID: error fetching product by product ID: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -145,7 +145,8 @@ func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	products, err := p.Repo.GetProductsBySearch(search)
-	if check(err) {
+	if err != nil {
+		log.Printf("GetProductsBySearch: error searching for products: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -159,16 +160,20 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 	// productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 
 	_, err := p.Repo.GetProductByProductID(productID)
-	if checkIfNotErrNoRows(err) {
+	if err != nil && err != sql.ErrNoRows {
 		w.WriteHeader(http.StatusInternalServerError)
+		log.Printf("DeleteProductByProductID: error fetching product by product ID: %v", err)
 		return
 	}
 
 	err = p.Repo.DeleteProductByProductID(productID)
-	if check(err) {
+	if err != nil {
+		log.Printf("DeleteProductByProductID: error deleting product by product ID: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	w.Write([]byte("<p>Successfully deleted product!</p>"))
 }
 
 // func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Request) {

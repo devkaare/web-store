@@ -51,39 +51,40 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 
 		if session == nil {
 			sessionID := uuid.New().String()
-			session := &model.Session{SessionID: sessionID}
+			session = &model.Session{SessionID: sessionID}
 
 			if err := sessionHandler.Repo.CreateSession(session); err != nil {
-				log.Printf("ShoppingSessionMiddleware: %v", err)
+				log.Printf("ShoppingSessionMiddleware: error creating session: %v", err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
 
 			http.SetCookie(w, &http.Cookie{
-				Name:  "session_token",
-				Value: session.SessionID,
+				Name:     "session_token",
+				Value:    session.SessionID,
+				Path:     "/",
+				HttpOnly: true,
 			})
 		}
 
 		shoppingSession, err = shoppingSessionHandler.Repo.GetShoppingSessionBySessionID(session.SessionID)
-		if err != nil {
-			log.Printf("ShoppingSessionMiddleware: %v", err)
+		if err == sql.ErrNoRows {
+			shoppingSession = &model.ShoppingSession{SessionID: session.SessionID, Total: 0}
+
+			shoppingSessionID, err := shoppingSessionHandler.Repo.CreateShoppingSession(shoppingSession)
+			if err != nil {
+				log.Printf("ShoppingSessionMiddleware: error creating shopping session: %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			shoppingSession.ShoppingSessionID = shoppingSessionID
+		} else if err != nil {
+			log.Printf("ShoppingSessionMiddleware: error fetching shopping session by shopping session ID: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-
-		shoppingSession = &model.ShoppingSession{SessionID: session.SessionID, Total: 0}
-
-		shoppingSessionID, err := shoppingSessionHandler.Repo.CreateShoppingSession(shoppingSession)
-		if err != nil {
-			log.Printf("ShoppingSessionMiddleware: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		shoppingSession.ShoppingSessionID = shoppingSessionID
 
 		ctx := context.WithValue(r.Context(), "shopping_session_id", shoppingSession.ShoppingSessionID)
-
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
