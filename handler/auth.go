@@ -11,6 +11,7 @@ import (
 type Authentication struct{}
 
 func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
+	// TODO: Add `var user *model.User` and check if it's nil
 	firstName := r.FormValue("first_name")
 	lastName := r.FormValue("last_name")
 	email := r.FormValue("email")

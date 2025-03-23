@@ -12,7 +12,7 @@ RUN go install github.com/a-h/templ/cmd/templ@latest && \
     chmod +x tailwindcss && \
     ./tailwindcss -i views/assets/css/input.css -o views/assets/css/output.css
 
-RUN go build -o main cmd/api/main.go
+RUN go build -o /main cmd/api/main.go
 
 FROM base AS dev 
 RUN go install github.com/air-verse/air@latest
