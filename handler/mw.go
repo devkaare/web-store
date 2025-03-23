@@ -4,8 +4,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	// "github.com/devkaare/web-store/model"
-	// "github.com/devkaare/web-store/repository/shopping_session"
 )
 
 func (a *Authentication) SetUserID(next http.Handler) http.Handler {
@@ -39,16 +37,3 @@ func (a *Authentication) SetUserID(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
-
-// func (a *Authentication) CreateShoppingSessionID(next http.Handler) http.Handler {
-// 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-// 		shoppingSession := &model.ShoppingSession{}
-//
-// 		shoppingSessionID, err := shoppingSessionHandler.Repo.CreateShoppingSession(shoppingSession)
-// 		check(err)
-//
-// 		ctx := context.WithValue(r.Context(), "shopping_session_id", shoppingSessionID)
-//
-// 		next.ServeHTTP(w, r.WithContext(ctx))
-// 	})
-// }

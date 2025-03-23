@@ -41,7 +41,7 @@ func createTables(db *sql.DB) {
 	if _, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS sessions (
 			session_id TEXT PRIMARY KEY,
-			user_id INT NOT NULL,
+			user_id INT,
 			expiry TIMESTAMP WITH TIME ZONE NOT NULL
 		)
 	`); err != nil {
@@ -75,7 +75,7 @@ func createTables(db *sql.DB) {
 	if _, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS shopping_sessions (
 			shopping_session_id SERIAL PRIMARY KEY,
-			user_id INT NOT NULL,
+			session_id TEXT NOT NULL,
 			total INT NOT NULL
 		)
 	`); err != nil {
