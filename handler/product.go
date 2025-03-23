@@ -156,8 +156,8 @@ func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
-	productID, _ := strconv.Atoi(r.URL.Query().Get("product_id"))
-	// productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
+	// productID, _ := strconv.Atoi(r.URL.Query().Get("product_id"))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 
 	_, err := p.Repo.GetProductByProductID(productID)
 	if err != nil && err != sql.ErrNoRows {

@@ -1,29 +1,21 @@
 package cartitem
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *Repo) GetCartItemsByCartItemID(cartItemID int) ([]model.CartItem, error) {
-	var cartItems []model.CartItem
+func (r *Repo) GetCartItemByCartItemID(cartItemID int) (*model.CartItem, error) {
+	cartItem := &model.CartItem{}
 
-	rows, err := r.Client.Query("SELECT * FROM cart_items WHERE cart_item_id = $1", cartItemID)
-	if err != nil {
-		return cartItems, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var cartItem model.CartItem
-		if err := rows.Scan(&cartItem.CartItemID, &cartItem.ShoppingSessionID, &cartItem.ProductID, &cartItem.Quantity); err != nil {
-			return cartItems, fmt.Errorf("GetCartItemsByCartItemID %d: %v", cartItem.CartItemID, err)
+	row := r.Client.QueryRow("SELECT * FROM cart_items WHERE cart_item_id = $1", cartItemID)
+	if err := row.Scan(&cartItem.CartItemID, &cartItem.ShoppingSessionID, &cartItem.ProductID, &cartItem.Quantity); err != nil {
+		if err == sql.ErrNoRows {
+			return cartItem, err
 		}
-		cartItems = append(cartItems, cartItem)
+		return cartItem, fmt.Errorf("GetCartItemByCartItemID %d: %v", cartItemID, err)
 	}
-	if err := rows.Err(); err != nil {
-		return cartItems, fmt.Errorf("GetCartItemsByCartItemID %v:", err)
-	}
-	return cartItems, nil
+	return cartItem, nil
 }
