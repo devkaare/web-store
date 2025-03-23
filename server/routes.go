@@ -29,18 +29,17 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// 	http.Redirect(w, r, "/listings", http.StatusSeeOther)
 	// })
 
-	// r.Route("/", s.registerStoreRoutes)
-	// r.Route("/utils", s.registerUtilsRoutes)
-	// r.Route("/users", s.registerUserRoutes)
-	// r.Route("/products", s.registerProductRoutes)
-	// r.Route("/carts", s.registerCartRoutes)
-	// r.Route("/sessions", s.registerSessionRoutes)
+	r.Route("/", s.registerStoreRoutes)
+	r.Route("/utils", s.registerUtilsRoutes)
+	r.Route("/users", s.registerUserRoutes)
+	r.Route("/products", s.registerProductRoutes)
+	r.Route("/carts", s.registerCartRoutes)
+	r.Route("/sessions", s.registerSessionRoutes)
+	r.Route("/auth", s.registerAuthRoutes)
 
 	r.Handle("/", templ.Handler(views.IndexPage()))
 	r.Handle("/signup", templ.Handler(views.SignUpPage()))
 	r.Handle("/signin", templ.Handler(views.SignInPage()))
-
-	r.Route("/auth", s.registerAuthRoutes)
 
 	return r
 }

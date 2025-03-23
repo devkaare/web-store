@@ -46,8 +46,9 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 
-	if checkValues([]string{firstName, lastName, email, password}) {
+	if firstName == "" || lastName == "" || email == "" || password == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("<p>Missing required fields</p>"))
 		return
 	}
 

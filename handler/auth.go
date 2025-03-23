@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"net/http"
 
 	"github.com/devkaare/web-store/hash"
@@ -11,37 +12,42 @@ import (
 type Authentication struct{}
 
 func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
-	// TODO: Add `var user *model.User` and check if it's nil
 	firstName := r.FormValue("first_name")
 	lastName := r.FormValue("last_name")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 	verifPass := r.FormValue("verif_password")
 
-	if checkValues([]string{firstName, lastName, email, password, verifPass}) {
+	if firstName == "" || lastName == "" || email == "" || password == "" || verifPass == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("<p>Missing required fields</p>"))
 		return
 	}
 
 	if password != verifPass {
-		w.Write([]byte("<p>Please make sure that both passwords match!</p>"))
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("<p>Please make sure that both passwords match!</p>"))
 		return
 	}
 
 	existingUser, err := userHandler.Repo.GetUserByEmail(email)
-	if checkIfNotErrNoRows(err) {
+	if err != nil {
+		if err != sql.ErrNoRows {
+			w.WriteHeader(http.StatusConflict)
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	if !checkValues([]string{existingUser.FirstName, existingUser.LastName, existingUser.Email, existingUser.Password}) {
+	if !(existingUser.FirstName == "" || existingUser.LastName == "" || existingUser.Email == "" || existingUser.Password == "") {
 		w.WriteHeader(http.StatusConflict)
+		w.Write([]byte("<p>User with email already exists</p>"))
 		return
 	}
 
 	hashedPassword, err := hash.HashPassword(password)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -54,7 +60,7 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = userHandler.Repo.CreateUser(user)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -66,19 +72,26 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue("email")
 	expectedPassword := r.FormValue("password")
 
-	if checkValues([]string{email, expectedPassword}) {
+	if email == "" || expectedPassword == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("<p>Missing required fields</p>"))
 		return
 	}
 
 	existingUser, err := userHandler.Repo.GetUserByEmail(email)
-	if checkIfNotErrNoRows(err) {
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte("Invalid email or password"))
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	if !hash.CheckPasswordHash(expectedPassword, existingUser.Password) {
 		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Invalid email or password"))
 		return
 	}
 
@@ -90,7 +103,7 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = sessionHandler.Repo.CreateSession(session)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
