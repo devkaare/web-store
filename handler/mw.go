@@ -72,7 +72,6 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 			http.SetCookie(w, &http.Cookie{
 				Name:  "session_token",
 				Value: session.SessionID,
-				// Path:  "/",
 			})
 		}
 
