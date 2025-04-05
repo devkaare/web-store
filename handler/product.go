@@ -107,7 +107,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("<p>Successfully created product!</p>"))
+	w.Write([]byte("<p>Successfully created product! <a href=\"/admin\">Refresh</a></p>"))
 }
 
 func (p *Product) GetProductByProductID(w http.ResponseWriter, r *http.Request) {
@@ -198,7 +198,7 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	w.Write([]byte("<p>Successfully deleted product!</p>"))
+	w.Write([]byte("<p>Successfully deleted product! <a href=\"/admin\">Refresh</a></p></p>"))
 }
 
 // func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Request) {

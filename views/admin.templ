@@ -6,9 +6,9 @@ import (
 
 templ AdminPanelPage() {
 	@components.Base() {
-		<div>
+		<div id="panel">
 			<h1>Create A New Product</h1>
-			<form hx-post="/products" hx-target="this" hx-swap="outerHTML" enctype="multipart/form-data">
+			<form hx-post="/products" hx-target="#panel" hx-swap="outerHTML" enctype="multipart/form-data">
 				<label for="category_name">Category Name:</label>
 				<input type="text" id="category_name" name="category_name" required/>
 				<br/>
@@ -28,7 +28,7 @@ templ AdminPanelPage() {
 				<input type="file" name="image" id="image" accept="image/png, image/jpeg"/>
 				<input type="submit" value="CREATE"/>
 			</form>
-			<form hx-delete="/products" hx-params="product_id" hx-target="this" hx-swap="outerHTML">
+			<form hx-delete="/products" hx-params="product_id" hx-target="#panel" hx-swap="outerHTML">
 				<label for="product_id">Product ID:</label>
 				<input id="product_id" name="product_id" type="number"/>
 				<input type="submit" value="DELETE"/>
