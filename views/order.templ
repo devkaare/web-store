@@ -1,9 +1,11 @@
 package views
 
 import (
+	"path/filepath"
 	"fmt"
 
 	"github.com/devkaare/web-store/views/components"
+	"github.com/devkaare/web-store/slug"
 )
 
 type OrderItemProp struct {
@@ -21,7 +23,7 @@ templ OrderPage(orderItems []OrderItemProp) {
 		<h1>{ fmt.Sprintf("Order ID: %d", orderItems[0].OrderDetailsID) }</h1>
 		for _, p := range orderItems {
 			<div>
-				<img src={ fmt.Sprintf("%s", templ.URL(p.ImagePath)) }/>
+				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product-imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
 				<div>
 					<a href={ templ.URL(fmt.Sprintf("/listings/%d", p.ProductID)) }>{ p.Name }</a>
 					<p>{ fmt.Sprintf("%d", p.Price) }</p>

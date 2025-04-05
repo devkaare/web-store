@@ -28,10 +28,11 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 
 	r.Post("/", productHandler.CreateProduct)
 	r.Post("/search", productHandler.GetProductsBySearch)
+	r.Get("/categories/{category_id}", productHandler.GetProductsByCategoryID)
 	r.Get("/", productHandler.GetAllProducts)
 	r.Get("/{product_id}", productHandler.GetProductByProductID)
-	// r.Put("/{id}", productHandler.UpdateProductByProductID)
-	r.Delete("/", productHandler.DeleteProductByProductID)
+	// r.Put("/{product_id}", productHandler.UpdateProductByProductID)
+	r.Delete("/{product_id}", productHandler.DeleteProductByProductID)
 }
 
 func (s *Server) registerAuthRoutes(r chi.Router) {
@@ -70,4 +71,5 @@ func (s *Server) registerRoutes(r chi.Router) {
 	r.Handle("/", templ.Handler(views.IndexPage()))
 	r.Handle("/signup", templ.Handler(views.SignUpPage()))
 	r.Handle("/signin", templ.Handler(views.SignInPage()))
+	r.Handle("/admin", templ.Handler(views.AdminPanelPage()))
 }

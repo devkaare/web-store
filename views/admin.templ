@@ -18,7 +18,7 @@ templ AdminPanelPage() {
 				<br/>
 				<br/>
 				<label for="price">Price:</label>
-				<input id="price" name="price" type="number"/>
+				<input id="price" name="price" type="number" min="1" value="1"/>
 				<br/>
 				<br/>
 				<label for="description">Description:</label>
@@ -33,7 +33,7 @@ templ AdminPanelPage() {
 				<input id="product_id" name="product_id" type="number"/>
 				<input type="submit" value="DELETE"/>
 			</form>
-			<a href="/products">RAW PRODUCTS</a>
+			<a href="/products">Products</a>
 		</div>
 	}
 }

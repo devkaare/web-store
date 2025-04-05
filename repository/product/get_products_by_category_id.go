@@ -6,10 +6,10 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *Repo) GetProductsByCategoryID(categoryID int) ([]model.Product, error) {
+func (r *Repo) GetProductsByCategoryID(categoryID, page int) ([]model.Product, error) {
 	var products []model.Product
 
-	rows, err := r.Client.Query("SELECT product_id, category_id, name, description, price, image_path FROM products WHERE category_id = $1", categoryID)
+	rows, err := r.Client.Query("SELECT product_id, category_id, name, description, price, image_path FROM products WHERE category_id = $1 LIMIT $2 OFFSET $3", categoryID, limit, getOffset(page))
 	if err != nil {
 		return products, err
 	}

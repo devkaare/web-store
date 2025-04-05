@@ -15,6 +15,7 @@ import (
 	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository"
 	"github.com/devkaare/web-store/repository/product"
+	"github.com/devkaare/web-store/slug"
 	"github.com/devkaare/web-store/views"
 	"github.com/devkaare/web-store/views/components"
 	"github.com/go-chi/chi/v5"
@@ -36,18 +37,12 @@ func NewProductHandler(db *sql.DB) *Product {
 }
 
 func (p *Product) GetAllProducts(w http.ResponseWriter, r *http.Request) {
-	// categoryID, _ := strconv.Atoi(chi.URLParam(r, "category_id"))
-	// if categoryID < 1 {
-	// 	w.WriteHeader(http.StatusBadRequest)
-	// 	return
-	// }
-
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	if page < 1 {
 		page = 1
 	}
 
-	products, err := p.Repo.GetAllProducts()
+	products, err := p.Repo.GetAllProducts(page)
 	if err != nil {
 		log.Printf("GetAllProducts: error fetching listingProps: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -56,8 +51,6 @@ func (p *Product) GetAllProducts(w http.ResponseWriter, r *http.Request) {
 
 	templ.Handler(views.ProductListingsPage(products, page, len(products))).ServeHTTP(w, r)
 }
-
-// TODO: Create `GetProductsByCategory` func
 
 func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	productName := r.FormValue("product_name")
@@ -68,10 +61,10 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	file, _, _ := r.FormFile("image")
 	defer file.Close()
 
-	wd := getwd()
-	imagePath := filepath.Join(wd, "/views/assets/product-imgs/", fmt.Sprintf("%s.png", productName))
+	imagePath := fmt.Sprintf("%s.png", slug.CreateSlug(productName))
 
-	dst, err := os.Create(imagePath)
+	workDir, _ := os.Getwd()
+	dst, err := os.Create(filepath.Join(workDir, "/views/assets/product-imgs/", imagePath))
 	if err != nil {
 		log.Printf("CreateProduct: error creating file: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -120,31 +113,18 @@ func (p *Product) GetProductByProductID(w http.ResponseWriter, r *http.Request) 
 	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 
 	product, err := p.Repo.GetProductByProductID(productID)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("<p>Product doesn't exist</p>"))
+		return
+	}
+	if err != nil && err != sql.ErrNoRows {
 		log.Printf("GetProductsByProductID: error fetching product by product ID: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	templ.Handler(views.ProductPage(product)).ServeHTTP(w, r)
-}
-
-func (p *Product) GetProductListingsByPage(w http.ResponseWriter, r *http.Request) {
-	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
-	if page < 1 {
-		page = 1
-	}
-
-	products, err := p.Repo.GetProductsByPage(page)
-	if err != nil {
-		log.Printf("GetProductListingsByPage: error fetching product by page: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	lastPage := len(products)
-
-	templ.Handler(views.ProductListingsPage(products, page, lastPage)).ServeHTTP(w, r)
 }
 
 func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
@@ -154,7 +134,12 @@ func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	products, err := p.Repo.GetProductsBySearch(search)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("<p>Couldn't find the product you were looking for</p>"))
+		return
+	}
+	if err != nil && err != sql.ErrNoRows {
 		log.Printf("GetProductsBySearch: error searching for products: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -164,11 +149,41 @@ func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
 	searchResults.Render(context.Background(), w)
 }
 
+func (p *Product) GetProductsByCategoryID(w http.ResponseWriter, r *http.Request) {
+	categoryID, _ := strconv.Atoi(chi.URLParam(r, "category_id"))
+	if categoryID < 1 {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("<p>Category doesn't exist</p>"))
+		return
+	}
+
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	if page < 1 {
+		page = 1
+	}
+
+	products, err := p.Repo.GetProductsByCategoryID(categoryID, page)
+	if err == sql.ErrNoRows {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if err != nil && err != sql.ErrNoRows {
+		log.Printf("GetProductsByCategoryID: error fetching products: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	templ.Handler(views.ProductListingsPage(products, page, len(products))).ServeHTTP(w, r)
+}
+
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
-	// productID, _ := strconv.Atoi(r.URL.Query().Get("product_id"))
 	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 
 	_, err := p.Repo.GetProductByProductID(productID)
+	if err == sql.ErrNoRows {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 	if err != nil && err != sql.ErrNoRows {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Printf("DeleteProductByProductID: error fetching product by product ID: %v", err)
@@ -206,13 +221,13 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 // 	}
 //
 // 	err = p.Repo.UpdateProductByProductID(product)
-// 	if check(err) {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
+//      if err == sql.ErrNoRows {
+//      	w.WriteHeader(http.StatusBadRequest)
+//		return
+//      }
+//      if err != nil && err != sql.ErrNoRows {
+//      	log.Printf("UpdateProductByProductID: error updating product: %v", err)
+//      	w.WriteHeader(http.StatusInternalServerError)
+//      	return
+//      }
 // }
-
-func getwd() string {
-	wd, _ := os.Getwd()
-	return wd
-}
