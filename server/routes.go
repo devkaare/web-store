@@ -3,7 +3,6 @@ package server
 import (
 	"net/http"
 
-	"github.com/devkaare/web-store/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -21,7 +20,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	fileServer := http.FileServer(http.FS(views.Files))
+	// fileServer := http.FileServer(http.FS(views.Files))
+	// r.Handle("/assets/*", fileServer)
+	fileServer := http.StripPrefix("/assets/", http.FileServer(http.Dir("./views/assets")))
 	r.Handle("/assets/*", fileServer)
 
 	r.Route("/", s.registerRoutes)

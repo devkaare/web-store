@@ -63,8 +63,9 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	imagePath := fmt.Sprintf("%s.png", slug.CreateSlug(productName))
 
-	workDir, _ := os.Getwd()
-	dst, err := os.Create(filepath.Join(workDir, "/views/assets/product-imgs/", imagePath))
+	workingDir, _ := os.Getwd()
+
+	dst, err := os.Create(filepath.Join(workingDir, "views/assets/product-imgs", imagePath))
 	if err != nil {
 		log.Printf("CreateProduct: error creating file: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
