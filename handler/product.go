@@ -180,7 +180,7 @@ func (p *Product) GetProductsByCategoryID(w http.ResponseWriter, r *http.Request
 func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Request) {
 	productID, _ := strconv.Atoi(r.URL.Query().Get("product_id"))
 
-	_, err := p.Repo.GetProductByProductID(productID)
+	product, err := p.Repo.GetProductByProductID(productID)
 	if err == sql.ErrNoRows {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -194,6 +194,17 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 	err = p.Repo.DeleteProductByProductID(productID)
 	if err != nil {
 		log.Printf("DeleteProductByProductID: error deleting product by product ID: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	imagePath := fmt.Sprintf("%s.png", slug.CreateSlug(product.Name))
+
+	workingDir, _ := os.Getwd()
+
+	err = os.Remove(filepath.Join(workingDir, "views/assets/product-imgs", imagePath))
+	if err != nil {
+		log.Printf("DeleteProductByProductID: error deleting file: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
