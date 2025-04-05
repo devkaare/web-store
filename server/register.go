@@ -32,7 +32,7 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 	r.Get("/", productHandler.GetAllProducts)
 	r.Get("/{product_id}", productHandler.GetProductByProductID)
 	// r.Put("/{product_id}", productHandler.UpdateProductByProductID)
-	r.Delete("/{product_id}", productHandler.DeleteProductByProductID)
+	r.Delete("/", productHandler.DeleteProductByProductID)
 }
 
 func (s *Server) registerAuthRoutes(r chi.Router) {
