@@ -12,7 +12,7 @@ templ ProductListingsPage(products []model.Product, currentPage, lastPage int) {
 		for _, p := range products {
 			<div>
 				<img src={ fmt.Sprintf("%s", templ.URL(p.ImagePath)) }/>
-				<a href={ templ.URL(fmt.Sprintf("/listings/%d", p.ProductID)) }>{ p.Name }</a>
+				<a href={ templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) }>{ p.Name }</a>
 				<p>{ fmt.Sprintf("%d", p.Price) }</p>
 			</div>
 		}

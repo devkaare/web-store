@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -34,22 +35,29 @@ func NewProductHandler(db *sql.DB) *Product {
 	return productHandler
 }
 
-// func (p *Product) GetAllProducts(w http.ResponseWriter, r *http.Request) {
-// 	// categoryID, _ := strconv.Atoi(chi.URLParam(r, "category_id"))
-// 	// if categoryID < 1 {
-// 	// 	w.WriteHeader(http.StatusBadRequest)
-// 	// 	return
-// 	// }
-//
-// 	products, err := p.Repo.GetAllProducts()
-// 	if err != nil {
-// 		log.Printf("GetAllProducts: error fetching listingProps: %v", err)
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-//
-// 	templ.Handler(views.ProductListingsPage(products)).ServeHTTP(w, r)
-// }
+func (p *Product) GetAllProducts(w http.ResponseWriter, r *http.Request) {
+	// categoryID, _ := strconv.Atoi(chi.URLParam(r, "category_id"))
+	// if categoryID < 1 {
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	return
+	// }
+
+	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+	if page < 1 {
+		page = 1
+	}
+
+	products, err := p.Repo.GetAllProducts()
+	if err != nil {
+		log.Printf("GetAllProducts: error fetching listingProps: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	templ.Handler(views.ProductListingsPage(products, page, len(products))).ServeHTTP(w, r)
+}
+
+// TODO: Create `GetProductsByCategory` func
 
 func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	productName := r.FormValue("product_name")
@@ -60,7 +68,8 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	file, _, _ := r.FormFile("image")
 	defer file.Close()
 
-	imagePath := filepath.Join("../views/assets/product-imgs/", productName, ".png")
+	wd := getwd()
+	imagePath := filepath.Join(wd, "/views/assets/product-imgs/", fmt.Sprintf("%s.png", productName))
 
 	dst, err := os.Create(imagePath)
 	if err != nil {
@@ -202,3 +211,8 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 // 		return
 // 	}
 // }
+
+func getwd() string {
+	wd, _ := os.Getwd()
+	return wd
+}

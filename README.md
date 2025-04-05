@@ -32,3 +32,18 @@ View products:
 ```
 curl localhost:3000/products
 ```
+
+```
+curl "localhost:3000/products/?page=1"
+```
+
+```
+curl -X POST http://localhost:3000/products/ \
+                                                    -F "product_name=test" \
+                                                    -F "category_name=testCategory" \
+
+                                                    -F "description=this is a test product." \
+                                                    -F "price=99" \
+                                                    -F "image=@test.png"
+
+```
