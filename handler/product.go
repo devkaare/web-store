@@ -41,7 +41,7 @@ func NewProductHandler(db *sql.DB) *Product {
 // 	// 	return
 // 	// }
 //
-// 	products, err := productHandler.Repo.GetAllProducts()
+// 	products, err := p.Repo.GetAllProducts()
 // 	if err != nil {
 // 		log.Printf("GetAllProducts: error fetching listingProps: %v", err)
 // 		w.WriteHeader(http.StatusInternalServerError)
@@ -82,7 +82,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		Name: categoryName,
 	}
 
-	categoryID, err := productHandler.Repo.CreateCategory(category)
+	categoryID, err := p.Repo.CreateCategory(category)
 	if err != nil {
 		log.Printf("CreateProduct: error creating category: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -120,13 +120,13 @@ func (p *Product) GetProductByProductID(w http.ResponseWriter, r *http.Request) 
 	templ.Handler(views.ProductPage(product)).ServeHTTP(w, r)
 }
 
-func GetProductListingsByPage(w http.ResponseWriter, r *http.Request) {
+func (p *Product) GetProductListingsByPage(w http.ResponseWriter, r *http.Request) {
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	if page < 1 {
 		page = 1
 	}
 
-	products, err := productHandler.Repo.GetProductsByPage(page)
+	products, err := p.Repo.GetProductsByPage(page)
 	if err != nil {
 		log.Printf("GetProductListingsByPage: error fetching product by page: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)

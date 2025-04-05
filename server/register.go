@@ -36,7 +36,10 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 }
 
 func (s *Server) registerAuthRoutes(r chi.Router) {
-	authHandler := &handler.Authentication{}
+	authHandler := &handler.Authentication{
+		UserRepo:    handler.NewUserHandler(s.db).Repo,
+		SessionRepo: handler.NewSessionHandler(s.db).Repo,
+	}
 
 	r.Post("/signup", authHandler.SignUp)
 	r.Post("/signin", authHandler.SignIn)

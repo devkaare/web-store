@@ -6,10 +6,15 @@ import (
 
 	"github.com/devkaare/web-store/hash"
 	"github.com/devkaare/web-store/model"
+	"github.com/devkaare/web-store/repository/session"
+	"github.com/devkaare/web-store/repository/user"
 	"github.com/google/uuid"
 )
 
-type Authentication struct{}
+type Authentication struct {
+	UserRepo    *user.Repo
+	SessionRepo *session.Repo
+}
 
 func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 	firstName := r.FormValue("first_name")
@@ -30,7 +35,7 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingUser, err := userHandler.Repo.GetUserByEmail(email)
+	existingUser, err := a.UserRepo.GetUserByEmail(email)
 	if err != nil && err != sql.ErrNoRows {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -55,7 +60,7 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 		Password:  hashedPassword,
 	}
 
-	_, err = userHandler.Repo.CreateUser(user)
+	_, err = a.UserRepo.CreateUser(user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -74,7 +79,7 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	existingUser, err := userHandler.Repo.GetUserByEmail(email)
+	existingUser, err := a.UserRepo.GetUserByEmail(email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -98,7 +103,7 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 		UserID:    existingUser.UserID,
 	}
 
-	err = sessionHandler.Repo.CreateSession(session)
+	err = a.SessionRepo.CreateSession(session)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
