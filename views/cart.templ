@@ -25,7 +25,7 @@ templ CartPage(cartItems []CartItemProp) {
 			<div>
 				<form hx-patch="/cart/update" hx-params="cart_item_id" hx-target="#quantity" hx-swap="outerHTML">
 					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
-					<input id="quantity" name="quantity" type="number" min="1" value={ fmt.Sprintf("%d", p.Quantity) }/>
+					<input id="quantity" name="quantity" type="number" value={ fmt.Sprintf("%d", p.Quantity) }/>
 					<input type="submit" value="UPDATE"/>
 				</form>
 				<form hx-delete="/cart/delete" hx-params="cart_item_id" hx-target="#quantity" hx-swap="outerHTML">
@@ -43,7 +43,7 @@ templ CartPage(cartItems []CartItemProp) {
 				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product-imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
 				<div>
 					<a href={ templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) }>{ p.Name }</a>
-					<p>{ fmt.Sprintf("%d", p.Price) }</p>
+					<p>{ fmt.Sprintf("$%d", p.Price) }</p>
 				</div>
 			</div>
 		}

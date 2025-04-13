@@ -15,7 +15,7 @@ templ ProductPage(p *model.Product) {
 			<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product-imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
 			<div>
 				<h2>{ p.Name }</h2>
-				<p>{ fmt.Sprintf("%d", p.Price) }</p>
+				<p>{ fmt.Sprintf("$%d", p.Price) }</p>
 			</div>
 			<p>{ p.Description }</p>
 			<form hx-post={ string(templ.URL(fmt.Sprintf("/cart/%d", p.ProductID))) }>
