@@ -157,7 +157,6 @@ func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 		return
 	}
 
-	// w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "<input id=\"quantity\" name=\"quantity\" type=\"number\" min=\"1\" value=\"%d\"/>", cartItem.Quantity)
 }
 

@@ -13,7 +13,7 @@ func (r *Repo) GetCartItemByCartItemID(cartItemID int) (*model.CartItem, error) 
 	row := r.Client.QueryRow("SELECT * FROM cart_items WHERE cart_item_id = $1", cartItemID)
 	if err := row.Scan(&cartItem.CartItemID, &cartItem.ShoppingSessionID, &cartItem.ProductID, &cartItem.Quantity); err != nil {
 		if err == sql.ErrNoRows {
-			return cartItem, err
+			return cartItem, nil
 		}
 		return cartItem, fmt.Errorf("GetCartItemByCartItemID %d: %v", cartItemID, err)
 	}
