@@ -135,7 +135,7 @@ func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 		return
 	}
 
-	fmt.Fprintf(w, "<p id=\"quantity\">%d</p>", cartItem.Quantity)
+	fmt.Fprintf(w, "<input id=\"quantity\" name=\"quantity\" type=\"number\" min=\"1\" value=\"%d\"/>", cartItem.Quantity)
 }
 
 func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
@@ -157,8 +157,8 @@ func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "<p id=\"quantity\">%d</p>", cartItem.Quantity)
+	// w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "<input id=\"quantity\" name=\"quantity\" type=\"number\" min=\"1\" value=\"%d\"/>", cartItem.Quantity)
 }
 
 func (c *CartItem) UpdateCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
@@ -181,6 +181,6 @@ func (c *CartItem) UpdateCartItemQuantityByCartItemID(w http.ResponseWriter, r *
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "<p id=\"quantity\">%d</p>", cartItem.Quantity)
+	// w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "<input id=\"quantity\" name=\"quantity\" type=\"number\" min=\"1\" value=\"%d\"/>", cartItem.Quantity)
 }

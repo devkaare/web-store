@@ -7,6 +7,7 @@ import (
 
 	"github.com/devkaare/web-store/hash"
 	"github.com/devkaare/web-store/model"
+	"github.com/devkaare/web-store/repository"
 	"github.com/devkaare/web-store/repository/session"
 	"github.com/devkaare/web-store/repository/shopping_session"
 	"github.com/devkaare/web-store/repository/user"
@@ -17,6 +18,25 @@ type Authentication struct {
 	UserRepo            *user.Repo
 	SessionRepo         *session.Repo
 	ShoppingSessionRepo *shoppingsession.Repo
+}
+
+var authenticationHandler = &Authentication{
+	UserRepo:            &user.Repo{},
+	SessionRepo:         &session.Repo{},
+	ShoppingSessionRepo: &shoppingsession.Repo{},
+}
+
+func NewAuthenticationHandler(db *sql.DB) *Authentication {
+	authenticationHandler.UserRepo = repository.GetUser(func() *sql.DB {
+		return db
+	})
+	authenticationHandler.SessionRepo = repository.GetSession(func() *sql.DB {
+		return db
+	})
+	authenticationHandler.ShoppingSessionRepo = repository.GetShoppingSession(func() *sql.DB {
+		return db
+	})
+	return authenticationHandler
 }
 
 func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {

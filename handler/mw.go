@@ -69,7 +69,11 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 
 		shoppingSession, err = a.ShoppingSessionRepo.GetShoppingSessionBySessionID(session.SessionID)
 		if err == sql.ErrNoRows {
-			shoppingSession = &model.ShoppingSession{SessionID: session.SessionID, Total: 0}
+			shoppingSession = &model.ShoppingSession{
+				ShoppingSessionID: uuid.New().String(),
+				SessionID:         session.SessionID,
+				Total:             0,
+			}
 
 			err := a.ShoppingSessionRepo.CreateShoppingSession(shoppingSession)
 			if err != nil {
