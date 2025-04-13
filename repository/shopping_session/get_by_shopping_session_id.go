@@ -7,7 +7,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *Repo) GetShoppingSessionByShoppingSessionID(shoppingSessionID int) (*model.ShoppingSession, error) {
+func (r *Repo) GetShoppingSessionByShoppingSessionID(shoppingSessionID string) (*model.ShoppingSession, error) {
 	shoppingSession := &model.ShoppingSession{}
 
 	row := r.Client.QueryRow("SELECT * FROM shopping_sessions WHERE shopping_session_id = $1", shoppingSessionID)
@@ -15,7 +15,7 @@ func (r *Repo) GetShoppingSessionByShoppingSessionID(shoppingSessionID int) (*mo
 		if err == sql.ErrNoRows {
 			return shoppingSession, err
 		}
-		return shoppingSession, fmt.Errorf("GetShoppingSessionByShoppingSessionID %d: %v", shoppingSessionID, err)
+		return shoppingSession, fmt.Errorf("GetShoppingSessionByShoppingSessionID %s: %v", shoppingSessionID, err)
 	}
 	return shoppingSession, nil
 

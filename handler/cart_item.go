@@ -64,7 +64,7 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *CartItem) GetCartItemsByShoppingSessionID(w http.ResponseWriter, r *http.Request) {
-	shoppingSessionID := r.Context().Value("shopping_session_id").(int)
+	shoppingSessionID := r.Context().Value("shopping_session_id").(string)
 
 	var cartProps []views.CartItemProp
 

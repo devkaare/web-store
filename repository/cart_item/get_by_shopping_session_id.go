@@ -7,7 +7,7 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *Repo) GetCartItemsByShoppingSessionID(shoppingSessionID int) ([]model.CartItem, error) {
+func (r *Repo) GetCartItemsByShoppingSessionID(shoppingSessionID string) ([]model.CartItem, error) {
 	var cartItems []model.CartItem
 
 	rows, err := r.Client.Query("SELECT * FROM cart_items WHERE shopping_session_id = $1", shoppingSessionID)
@@ -22,7 +22,7 @@ func (r *Repo) GetCartItemsByShoppingSessionID(shoppingSessionID int) ([]model.C
 			if err == sql.ErrNoRows {
 				return cartItems, err
 			}
-			return cartItems, fmt.Errorf("GetCartItemsByShoppingSessionID %d: %v", cartItem.ShoppingSessionID, err)
+			return cartItems, fmt.Errorf("GetCartItemsByShoppingSessionID %s: %v", cartItem.ShoppingSessionID, err)
 		}
 		cartItems = append(cartItems, cartItem)
 	}

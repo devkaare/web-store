@@ -8,7 +8,6 @@ import (
 
 	"github.com/devkaare/web-store/model"
 	"github.com/google/uuid"
-	// "github.com/google/uuid"
 )
 
 // func (a *Authentication) SessionMiddleware(next http.Handler) http.Handler {
