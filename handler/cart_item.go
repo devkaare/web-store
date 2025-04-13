@@ -42,7 +42,7 @@ func NewCartItemHandler(db *sql.DB) *CartItem {
 // }
 
 func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
-	shoppingSessionID := r.Context().Value("shopping_session_id").(int)
+	shoppingSessionID := r.Context().Value("shopping_session_id").(string)
 	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
 	// log.Printf("Found shopping session id: %d, product id: %d, quantity: %d\n", shoppingSessionID, productID, quantity)

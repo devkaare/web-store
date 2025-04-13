@@ -1,7 +1,7 @@
 package model
 
 type ShoppingSession struct {
-	ShoppingSessionID int
+	ShoppingSessionID string
 	SessionID         string
 	Total             int
 }

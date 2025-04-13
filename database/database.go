@@ -71,7 +71,7 @@ func createTables(db *sql.DB) {
 
 	if _, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS shopping_sessions (
-			shopping_session_id SERIAL PRIMARY KEY,
+			shopping_session_id TEXT PRIMARY KEY,
 			session_id TEXT NOT NULL,
 			total INT NOT NULL
 		)

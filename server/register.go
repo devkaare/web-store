@@ -59,10 +59,10 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 
 	r.Get("/", cartItemHandler.GetCartItemsByShoppingSessionID)
 	r.Post("/{product_id}", cartItemHandler.CreateCartItem)
-	r.Post("/cart/delete/{cart_item_id}", cartItemHandler.DeleteCartItemByCartItemID)
-	r.Post("/cart/add/{cart_item_id}", cartItemHandler.IncreaseCartItemQuantityByCartItemID)
-	r.Post("/cart/remove/{cart_item_id}", cartItemHandler.DecreaseCartItemQuantityByCartItemID)
-	r.Post("/cart/update/{cart_item_id}", cartItemHandler.UpdateCartItemQuantityByCartItemID)
+	r.Delete("/delete/{cart_item_id}", cartItemHandler.DeleteCartItemByCartItemID)
+	r.Patch("/add/{cart_item_id}", cartItemHandler.IncreaseCartItemQuantityByCartItemID)
+	r.Patch("/remove/{cart_item_id}", cartItemHandler.DecreaseCartItemQuantityByCartItemID)
+	r.Patch("/update/{cart_item_id}", cartItemHandler.UpdateCartItemQuantityByCartItemID)
 }
 
 func (s *Server) registerSessionRoutes(r chi.Router) {

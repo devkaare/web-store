@@ -18,7 +18,7 @@ func (r *Repo) GetAllShoppingSessions() ([]model.ShoppingSession, error) {
 	for rows.Next() {
 		var shoppingSession model.ShoppingSession
 		if err := rows.Scan(&shoppingSession.ShoppingSessionID, &shoppingSession.SessionID, &shoppingSession.Total); err != nil {
-			return shoppingSessions, fmt.Errorf("GetAllShoppingSessions %d: %v", shoppingSession.ShoppingSessionID, err)
+			return shoppingSessions, fmt.Errorf("GetAllShoppingSessions %s: %v", shoppingSession.ShoppingSessionID, err)
 		}
 		shoppingSessions = append(shoppingSessions, shoppingSession)
 	}

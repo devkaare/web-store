@@ -6,15 +6,14 @@ import (
 	"github.com/devkaare/web-store/model"
 )
 
-func (r *Repo) CreateShoppingSession(shoppingSession *model.ShoppingSession) (int, error) {
-	lastInsertedID := 0
+func (r *Repo) CreateShoppingSession(shoppingSession *model.ShoppingSession) error {
 	err := r.Client.QueryRow(
-		"INSERT INTO shopping_sessions (session_id, total) VALUES ($1, $2) RETURNING shopping_session_id",
-		shoppingSession.SessionID, shoppingSession.Total,
-	).Scan(&lastInsertedID)
+		"INSERT INTO shopping_sessions (shopping_session_id, session_id, total) VALUES ($1, $2, $3)",
+		shoppingSession.ShoppingSessionID, shoppingSession.SessionID, shoppingSession.Total,
+	)
 	if err != nil {
-		return lastInsertedID, fmt.Errorf("CreateShoppingSession: %v", err)
+		return fmt.Errorf("CreateShoppingSession: %v", err)
 	}
 
-	return lastInsertedID, nil
+	return nil
 }

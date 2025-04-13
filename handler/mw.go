@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/devkaare/web-store/model"
+	"github.com/google/uuid"
 	// "github.com/google/uuid"
 )
 
@@ -71,13 +72,14 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 		if err == sql.ErrNoRows {
 			shoppingSession = &model.ShoppingSession{SessionID: session.SessionID, Total: 0}
 
-			shoppingSessionID, err := a.ShoppingSessionRepo.CreateShoppingSession(shoppingSession)
+			err := a.ShoppingSessionRepo.CreateShoppingSession(shoppingSession)
 			if err != nil {
 				log.Printf("ShoppingSessionMiddleware: error creating shopping session: %v", err)
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-			shoppingSession.ShoppingSessionID = shoppingSessionID
+
+			shoppingSession.ShoppingSessionID = uuid.New().String()
 		} else if err != nil {
 			log.Printf("ShoppingSessionMiddleware: error fetching shopping session by shopping session ID: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
