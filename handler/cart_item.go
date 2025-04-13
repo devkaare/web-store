@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -104,7 +105,7 @@ func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	http.Redirect(w, r, "/cart", http.StatusSeeOther)
+	w.Write([]byte("<p>Successfully deleted item from cart!</p>"))
 }
 
 func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +127,7 @@ func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 		return
 	}
 
-	http.Redirect(w, r, "/cart", http.StatusSeeOther)
+	fmt.Fprintf(w, "<p id=\"quantity\">%d</p>", cartItem.Quantity)
 }
 
 func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
@@ -148,7 +149,7 @@ func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 		return
 	}
 
-	http.Redirect(w, r, "/cart", http.StatusSeeOther)
+	fmt.Fprintf(w, "<p id=\"quantity\">%d</p>", cartItem.Quantity)
 }
 
 func (c *CartItem) UpdateCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
@@ -172,5 +173,5 @@ func (c *CartItem) UpdateCartItemQuantityByCartItemID(w http.ResponseWriter, r *
 		return
 	}
 
-	http.Redirect(w, r, "/cart", http.StatusSeeOther)
+	fmt.Fprintf(w, "<p id=\"quantity\">%d</p>", cartItem.Quantity)
 }
