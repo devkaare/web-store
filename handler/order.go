@@ -32,7 +32,7 @@ func NewOrderHandler(db *sql.DB) *Order {
 }
 
 func (o *Order) CreateOrder(w http.ResponseWriter, r *http.Request) {
-	shoppingSessionID := ""
+	shoppingSessionID := r.Context().Value("shopping_session_id").(string)
 
 	shoppingSession, err := o.ShoppingSession.GetShoppingSessionByShoppingSessionID(shoppingSessionID)
 	if err != nil {
