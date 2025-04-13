@@ -84,18 +84,18 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	var categoryID int
 
 	existingCategory, err := p.Repo.GetCategoryByCategoryName(categoryName)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			category := &model.Category{
-				Name: categoryName,
-			}
-
-			categoryID, err = p.Repo.CreateCategory(category)
-			if err != nil {
-				log.Printf("CreateProduct: error creating category: %v", err)
-				w.WriteHeader(http.StatusInternalServerError)
-			}
+	if err == sql.ErrNoRows {
+		category := &model.Category{
+			Name: categoryName,
 		}
+
+		categoryID, err = p.Repo.CreateCategory(category)
+		if err != nil {
+			log.Printf("CreateProduct: error creating category: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+	}
+	if err != nil && err != sql.ErrNoRows {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

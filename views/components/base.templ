@@ -1,12 +1,12 @@
 package components
 
-templ Base() {
+templ Base(title string) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1"/>
-			<title>Webstore | by Kaare</title>
+			<title>{ title } | by Kaare</title>
 			<meta name="color-scheme" content="light dark"/>
 			<!-- <link href="assets/css/output.css" rel="stylesheet"/> -->
 			<script src="../assets/js/htmx.min.js"></script>

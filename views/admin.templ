@@ -5,7 +5,7 @@ import (
 )
 
 templ AdminPanelPage() {
-	@components.Base() {
+	@components.Base("Admin Panel") {
 		<div id="panel">
 			<h1>Create A New Product</h1>
 			<form hx-post="/products" hx-target="#panel" hx-swap="outerHTML" enctype="multipart/form-data">

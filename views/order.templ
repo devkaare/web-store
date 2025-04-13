@@ -19,7 +19,7 @@ type OrderItemProp struct {
 }
 
 templ OrderPage(orderItems []OrderItemProp) {
-	@components.Base() {
+	@components.Base("Order") {
 		<h1>{ fmt.Sprintf("Order ID: %d", orderItems[0].OrderDetailsID) }</h1>
 		for _, p := range orderItems {
 			<div>

@@ -10,7 +10,7 @@ import (
 )
 
 templ ProductListingsPage(products []model.Product, currentPage, lastPage int) {
-	@components.Base() {
+	@components.Base("Products") {
 		for _, p := range products {
 			<div>
 				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product-imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>

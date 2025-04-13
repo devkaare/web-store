@@ -19,7 +19,7 @@ type CartItemProp struct {
 }
 
 templ CartPage(cartItems []CartItemProp) {
-	@components.Base() {
+	@components.Base("Cart") {
 		for _, p := range cartItems {
 			<div>
 				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product-imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>

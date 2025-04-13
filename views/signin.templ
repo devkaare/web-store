@@ -5,7 +5,7 @@ import (
 )
 
 templ SignInPage() {
-	@components.Base() {
+	@components.Base("Sign In") {
 		<div>
 			<h1>Sign In</h1>
 			<form hx-post="/auth/signin" hx-target="this" hx-swap="outerHTML">

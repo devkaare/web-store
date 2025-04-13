@@ -10,7 +10,7 @@ import (
 )
 
 templ ProductPage(p *model.Product) {
-	@components.Base() {
+	@components.Base("Product") {
 		<div>
 			<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product-imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
 			<div>
