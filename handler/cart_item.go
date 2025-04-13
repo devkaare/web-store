@@ -43,8 +43,9 @@ func NewCartItemHandler(db *sql.DB) *CartItem {
 
 func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 	shoppingSessionID := r.Context().Value("shopping_session_id").(int)
-	productID, _ := strconv.Atoi(r.FormValue("productID"))
+	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
+	log.Printf("Found shopping session id: %d, product id: %d, quantity: %d\n", shoppingSessionID, productID, quantity)
 
 	product := &model.CartItem{
 		ShoppingSessionID: shoppingSessionID,
@@ -58,22 +59,29 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (c *CartItem) GetCartItemsByShoppingSessionID(w http.ResponseWriter, r *http.Request) {
 	shoppingSessionID := r.Context().Value("shopping_session_id").(int)
 
+	var cartProps []views.CartItemProp
+
 	cartItems, err := c.Repo.GetCartItemsByShoppingSessionID(shoppingSessionID)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		templ.Handler(views.CartPage(cartProps)).ServeHTTP(w, r)
+		return
+	}
+	if err != nil && err != sql.ErrNoRows {
 		log.Printf("GetCartItemsByShoppingSessionID: error fetching cart items by shopping session ID: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	var cartProps []views.CartItemProp
 	for _, ci := range cartItems {
 		product, err := productHandler.Repo.GetProductByProductID(ci.ProductID)
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			log.Printf("GetCartItemsByShoppingSessionID: error fetching product by product ID: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -105,6 +113,7 @@ func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("<p>Successfully deleted item from cart!</p>"))
 }
 
@@ -127,6 +136,7 @@ func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "<p id=\"quantity\">%d</p>", cartItem.Quantity)
 }
 
@@ -149,6 +159,7 @@ func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "<p id=\"quantity\">%d</p>", cartItem.Quantity)
 }
 
@@ -173,5 +184,6 @@ func (c *CartItem) UpdateCartItemQuantityByCartItemID(w http.ResponseWriter, r *
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "<p id=\"quantity\">%d</p>", cartItem.Quantity)
 }

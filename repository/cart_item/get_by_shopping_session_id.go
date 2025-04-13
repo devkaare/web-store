@@ -1,6 +1,7 @@
 package cartitem
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/devkaare/web-store/model"
@@ -18,6 +19,9 @@ func (r *Repo) GetCartItemsByShoppingSessionID(shoppingSessionID int) ([]model.C
 	for rows.Next() {
 		var cartItem model.CartItem
 		if err := rows.Scan(&cartItem.CartItemID, &cartItem.ShoppingSessionID, &cartItem.ProductID, &cartItem.Quantity); err != nil {
+			if err == sql.ErrNoRows {
+				return cartItems, err
+			}
 			return cartItems, fmt.Errorf("GetCartItemsByShoppingSessionID %d: %v", cartItem.ShoppingSessionID, err)
 		}
 		cartItems = append(cartItems, cartItem)

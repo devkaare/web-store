@@ -1,6 +1,7 @@
 package product
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/devkaare/web-store/model"
@@ -18,6 +19,9 @@ func (r *Repo) GetProductsBySearch(search string) ([]model.Product, error) {
 	for rows.Next() {
 		var product model.Product
 		if err := rows.Scan(&product.ProductID, &product.CategoryID, &product.Name, &product.Description, &product.Price, &product.ImagePath); err != nil {
+			if err == sql.ErrNoRows {
+				return products, err
+			}
 			return products, fmt.Errorf("GetProductsBySearch %d: %v", product.ProductID, err)
 		}
 		products = append(products, product)

@@ -3,17 +3,20 @@ package handler
 import (
 	"database/sql"
 	"net/http"
+	"time"
 
 	"github.com/devkaare/web-store/hash"
 	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository/session"
+	"github.com/devkaare/web-store/repository/shopping_session"
 	"github.com/devkaare/web-store/repository/user"
 	"github.com/google/uuid"
 )
 
 type Authentication struct {
-	UserRepo    *user.Repo
-	SessionRepo *session.Repo
+	UserRepo            *user.Repo
+	SessionRepo         *session.Repo
+	ShoppingSessionRepo *shoppingsession.Repo
 }
 
 func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
@@ -109,9 +112,15 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	expiry := time.Now().Add(20 * time.Minute)
 	http.SetCookie(w, &http.Cookie{
-		Name:  "session_token",
-		Value: sessionID,
+		Name:     "session_token",
+		Value:    sessionID,
+		Path:     "/",
+		Expires:  expiry,
+		MaxAge:   86400,
+		HttpOnly: true,
+		Secure:   true,
 	})
 
 	w.WriteHeader(http.StatusOK)

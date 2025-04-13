@@ -51,8 +51,7 @@ func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// w.Write([]byte("User is authorized"))
-	http.Redirect(w, r, "/listings", http.StatusSeeOther)
+	w.Write([]byte("User is authorized"))
 }
 
 func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
