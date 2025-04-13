@@ -41,7 +41,7 @@ func createTables(db *sql.DB) {
 	if _, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS sessions (
 			session_id TEXT PRIMARY KEY,
-			user_id INT
+			user_id INTEGER
 		)
 	`); err != nil {
 		log.Fatal(err)
@@ -59,10 +59,10 @@ func createTables(db *sql.DB) {
 	if _, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS products (
 			product_id SERIAL PRIMARY KEY,
-			category_id INT NOT NULL,
+			category_id INTEGER NOT NULL,
 			name TEXT NOT NULL,
 			description TEXT NOT NULL,
-			price INT NOT NULL,
+			price INTEGER NOT NULL,
 			image_path TEXT NOT NULL
 		)
 	`); err != nil {
@@ -73,7 +73,7 @@ func createTables(db *sql.DB) {
 		CREATE TABLE IF NOT EXISTS shopping_sessions (
 			shopping_session_id TEXT PRIMARY KEY,
 			session_id TEXT NOT NULL,
-			total INT NOT NULL
+			total INTEGER NOT NULL
 		)
 	`); err != nil {
 		log.Fatal(err)
@@ -83,8 +83,8 @@ func createTables(db *sql.DB) {
 		CREATE TABLE IF NOT EXISTS cart_items (
 			cart_item_id SERIAL PRIMARY KEY,
 			shopping_session_id TEXT NOT NULL,
-			product_id INT NOT NULL,
-			quantity INT NOT NULL
+			product_id INTEGER NOT NULL,
+			quantity INTEGER NOT NULL
 		)
 	`); err != nil {
 		log.Fatal(err)
@@ -93,9 +93,9 @@ func createTables(db *sql.DB) {
 	if _, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS order_details (
 			order_details_id SERIAL PRIMARY KEY,
-			user_id INT NOT NULL,
+			user_id INTEGER NOT NULL,
 			payment_id TEXT NOT NULL,
-			total INT NOT NULL
+			total INTEGER NOT NULL
 		)
 	`); err != nil {
 		log.Fatal(err)
@@ -104,9 +104,9 @@ func createTables(db *sql.DB) {
 	if _, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS order_items (
 			order_item_id SERIAL PRIMARY KEY,
-			order_details_id INT NOT NULL,
-			product_id INT NOT NULL,
-			quantity INT NOT NULL
+			order_details_id INTEGER NOT NULL,
+			product_id INTEGER NOT NULL,
+			quantity INTEGER NOT NULL
 		)
 	`); err != nil {
 		log.Fatal(err)

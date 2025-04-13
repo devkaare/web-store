@@ -23,20 +23,16 @@ templ CartPage(cartItems []CartItemProp) {
 	@components.Base("Cart") {
 		for _, p := range cartItems {
 			<div>
-				<form hx-patch="/cart/update" hx-params="cart_item_id" hx-target="#quantity" hx-swap="outerHTML">
-					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
-					<input id="quantity" name="quantity" type="number" value={ fmt.Sprintf("%d", p.Quantity) }/>
-					<input type="submit" value="UPDATE"/>
-				</form>
-				<form hx-delete="/cart/delete" hx-params="cart_item_id" hx-target="#quantity" hx-swap="outerHTML">
+				<p id={ fmt.Sprintf("quantity-%d", p.CartItemID) }>{ fmt.Sprintf("%d", p.Quantity) }</p>
+				<form hx-delete="/cart/delete" hx-params="cart_item_id" hx-target={ fmt.Sprintf("#quantity-%d", p.CartItemID) } hx-swap="innerHTML">
 					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
 					<input type="submit" value="DELETE"/>
 				</form>
-				<form hx-patch="/cart/add" hx-params="cart_item_id" hx-target="#quantity" hx-swap="outerHTML">
+				<form hx-patch="/cart/add" hx-params="cart_item_id" hx-target={ fmt.Sprintf("#quantity-%d", p.CartItemID) } hx-swap="innerHTML">
 					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
 					<input type="submit" value="ADD"/>
 				</form>
-				<form hx-patch="/cart/remove" hx-params="cart_item_id" hx-target="#quantity" hx-swap="outerHTML">
+				<form hx-patch="/cart/remove" hx-params="cart_item_id" hx-target={ fmt.Sprintf("#quantity-%d", p.CartItemID) } hx-swap="innerHTML">
 					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
 					<input type="submit" value="REMOVE"/>
 				</form>
