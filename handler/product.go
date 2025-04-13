@@ -53,8 +53,8 @@ func (p *Product) GetAllProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
+	categoryName := r.PostFormValue("category_name")
 	productName := r.FormValue("product_name")
-	categoryName := r.FormValue("category_name")
 	description := r.FormValue("description")
 	price, _ := strconv.Atoi(r.FormValue("price"))
 
@@ -81,15 +81,27 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category := &model.Category{
-		Name: categoryName,
-	}
+	var categoryID int
 
-	categoryID, err := p.Repo.CreateCategory(category)
+	existingCategory, err := p.Repo.GetCategoryByCategoryName(categoryName)
 	if err != nil {
-		log.Printf("CreateProduct: error creating category: %v", err)
+		if err == sql.ErrNoRows {
+			category := &model.Category{
+				Name: categoryName,
+			}
+
+			categoryID, err = p.Repo.CreateCategory(category)
+			if err != nil {
+				log.Printf("CreateProduct: error creating category: %v", err)
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		return
+	}
+
+	if existingCategory.CategoryID != 0 || existingCategory.Name != "" {
+		categoryID = existingCategory.CategoryID
 	}
 
 	product := &model.Product{

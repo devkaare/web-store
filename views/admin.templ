@@ -10,7 +10,13 @@ templ AdminPanelPage() {
 			<h1>Create A New Product</h1>
 			<form hx-post="/products" hx-target="#panel" hx-swap="outerHTML" enctype="multipart/form-data">
 				<label for="category_name">Category Name:</label>
-				<input type="text" id="category_name" name="category_name" required/>
+				<select name="category_name" id="category_name">
+					<option value="">--Please choose an option--</option>
+					<option value="shirt">Shirt</option>
+					<option value="pants">Pants</option>
+					<option value="shoes">Shoes</option>
+					<option value="accessories">Accessories</option>
+				</select>
 				<br/>
 				<br/>
 				<label for="product_name">Product Name:</label>
