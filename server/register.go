@@ -37,8 +37,9 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 
 func (s *Server) registerAuthRoutes(r chi.Router) {
 	authHandler := &handler.Authentication{
-		UserRepo:    handler.NewUserHandler(s.db).Repo,
-		SessionRepo: handler.NewSessionHandler(s.db).Repo,
+		UserRepo:            handler.NewUserHandler(s.db).Repo,
+		SessionRepo:         handler.NewSessionHandler(s.db).Repo,
+		ShoppingSessionRepo: handler.NewShoppingSessionHandler(s.db).Repo,
 	}
 
 	r.Post("/signup", authHandler.SignUp)
@@ -56,12 +57,12 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 
 	cartItemHandler := handler.NewCartItemHandler(s.db)
 
-	r.Post("/cart/remove/{cart_item_id}", cartItemHandler.DeleteCartItemByCartItemID)
-	r.Post("/cart/increment/{cart_item_id}", cartItemHandler.IncreaseCartItemQuantityByCartItemID)
-	r.Post("/cart/decrement/{cart_item_id}", cartItemHandler.DecreaseCartItemQuantityByCartItemID)
-	r.Post("/cart/update/{cart_item_id}", cartItemHandler.UpdateCartItemQuantityByCartItemID)
-	r.Post("/{product_id}", cartItemHandler.CreateCartItem)
 	r.Get("/", cartItemHandler.GetCartItemsByShoppingSessionID)
+	r.Post("/{product_id}", cartItemHandler.CreateCartItem)
+	r.Post("/cart/delete/{cart_item_id}", cartItemHandler.DeleteCartItemByCartItemID)
+	r.Post("/cart/add/{cart_item_id}", cartItemHandler.IncreaseCartItemQuantityByCartItemID)
+	r.Post("/cart/remove/{cart_item_id}", cartItemHandler.DecreaseCartItemQuantityByCartItemID)
+	r.Post("/cart/update/{cart_item_id}", cartItemHandler.UpdateCartItemQuantityByCartItemID)
 }
 
 func (s *Server) registerSessionRoutes(r chi.Router) {

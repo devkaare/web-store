@@ -172,6 +172,9 @@
   .flex {
     display: flex;
   }
+  .hidden {
+    display: none;
+  }
   .resize {
     resize: both;
   }

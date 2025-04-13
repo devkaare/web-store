@@ -45,7 +45,7 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 	shoppingSessionID := r.Context().Value("shopping_session_id").(int)
 	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
 	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
-	log.Printf("Found shopping session id: %d, product id: %d, quantity: %d\n", shoppingSessionID, productID, quantity)
+	// log.Printf("Found shopping session id: %d, product id: %d, quantity: %d\n", shoppingSessionID, productID, quantity)
 
 	product := &model.CartItem{
 		ShoppingSessionID: shoppingSessionID,
@@ -104,7 +104,7 @@ func (c *CartItem) GetCartItemsByShoppingSessionID(w http.ResponseWriter, r *htt
 }
 
 func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Request) {
-	cartItemID, _ := strconv.Atoi(chi.URLParam(r, "cart_item_id"))
+	cartItemID, _ := strconv.Atoi(r.URL.Query().Get("cart_item_id"))
 
 	err := c.Repo.DeleteCartItemByCartItemID(cartItemID)
 	if err != nil {
@@ -113,12 +113,11 @@ func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("<p>Successfully deleted item from cart!</p>"))
 }
 
 func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
-	cartItemID, _ := strconv.Atoi(chi.URLParam(r, "cart_item_id"))
+	cartItemID, _ := strconv.Atoi(r.URL.Query().Get("cart_item_id"))
 
 	cartItem, err := c.Repo.GetCartItemByCartItemID(cartItemID)
 	if err != nil {
@@ -136,12 +135,11 @@ func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "<p id=\"quantity\">%d</p>", cartItem.Quantity)
 }
 
 func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
-	cartItemID, _ := strconv.Atoi(chi.URLParam(r, "cart_item_id"))
+	cartItemID, _ := strconv.Atoi(r.URL.Query().Get("cart_item_id"))
 
 	cartItem, err := c.Repo.GetCartItemByCartItemID(cartItemID)
 	if err != nil {
@@ -164,9 +162,8 @@ func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 }
 
 func (c *CartItem) UpdateCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
-	cartItemID, _ := strconv.Atoi(chi.URLParam(r, "cart_item_id"))
-	// quantity, _ := strconv.Atoi(r.URL.Query().Get("quantity"))
-	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
+	cartItemID, _ := strconv.Atoi(r.URL.Query().Get("cart_item_id"))
+	quantity, _ := strconv.Atoi(r.URL.Query().Get("quantity"))
 
 	cartItem, err := c.Repo.GetCartItemByCartItemID(cartItemID)
 	if err != nil {

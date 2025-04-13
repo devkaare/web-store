@@ -84,7 +84,6 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 			return
 		}
 
-		log.Printf("Set shopping session id: %d\n", shoppingSession.ShoppingSessionID)
 		ctx := context.WithValue(r.Context(), "shopping_session_id", shoppingSession.ShoppingSessionID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

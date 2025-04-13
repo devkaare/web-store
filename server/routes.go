@@ -13,6 +13,7 @@ import (
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	r.Use(httprate.LimitByIP(100, time.Minute))
 
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
@@ -22,20 +23,18 @@ func (s *Server) RegisterRoutes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	r.Use(httprate.LimitByIP(100, time.Minute))
-
-	// fileServer := http.FileServer(http.FS(views.Files))
-	// r.Handle("/assets/*", fileServer)
-	fileServer := http.StripPrefix("/assets/", http.FileServer(http.Dir("./views/assets")))
-	r.Handle("/assets/*", fileServer)
-
-	r.Route("/", s.registerRoutes)
 	r.Route("/utils", s.registerUtilsRoutes)
 	r.Route("/users", s.registerUserRoutes)
 	r.Route("/products", s.registerProductRoutes)
 	r.Route("/cart", s.registerCartRoutes)
 	r.Route("/sessions", s.registerSessionRoutes)
 	r.Route("/auth", s.registerAuthRoutes)
+	r.Route("/", s.registerRoutes)
+
+	fileServer := http.StripPrefix("/assets/", http.FileServer(http.Dir("./views/assets")))
+	r.Handle("/assets/*", fileServer)
+	// fileServer := http.FileServer(http.FS(views.Files))
+	// r.Handle("/assets/*", fileServer)
 
 	return r
 }
