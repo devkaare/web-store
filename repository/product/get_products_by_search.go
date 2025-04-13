@@ -19,14 +19,15 @@ func (r *Repo) GetProductsBySearch(search string) ([]model.Product, error) {
 	for rows.Next() {
 		var product model.Product
 		if err := rows.Scan(&product.ProductID, &product.CategoryID, &product.Name, &product.Description, &product.Price, &product.ImagePath); err != nil {
-			if err == sql.ErrNoRows {
-				return products, err
-			}
 			return products, fmt.Errorf("GetProductsBySearch %d: %v", product.ProductID, err)
 		}
 		products = append(products, product)
 	}
 	if err := rows.Err(); err != nil {
+		if err == sql.ErrNoRows {
+			return products, nil
+		}
+
 		return products, fmt.Errorf("GetProductsBySearch %v:", err)
 	}
 	return products, nil

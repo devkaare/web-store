@@ -60,7 +60,7 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	// w.WriteHeader(http.StatusOK)
 }
 
 func (c *CartItem) GetCartItemsByShoppingSessionID(w http.ResponseWriter, r *http.Request) {

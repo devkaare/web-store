@@ -19,14 +19,15 @@ func (r *Repo) GetProductsByCategoryID(categoryID, page int) ([]model.Product, e
 	for rows.Next() {
 		var product model.Product
 		if err := rows.Scan(&product.ProductID, &product.CategoryID, &product.Name, &product.Description, &product.Price, &product.ImagePath); err != nil {
-			if err == sql.ErrNoRows {
-				return products, err
-			}
 			return products, fmt.Errorf("GetProductsByCategoryID %d: %v", product.ProductID, err)
 		}
 		products = append(products, product)
 	}
 	if err := rows.Err(); err != nil {
+		if err == sql.ErrNoRows {
+			return products, nil
+		}
+
 		return products, fmt.Errorf("GetProductsByCategoryID %v:", err)
 	}
 	return products, nil

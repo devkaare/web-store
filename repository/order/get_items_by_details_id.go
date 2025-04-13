@@ -19,14 +19,15 @@ func (r *Repo) GetOrderItemsByOrderDetailsID(orderDetailsID int) ([]model.OrderI
 	for rows.Next() {
 		var orderItem model.OrderItem
 		if err := rows.Scan(&orderItem.OrderItemID, &orderItem.OrderDetailsID, &orderItem.ProductID, &orderItem.Quantity); err != nil {
-			if err == sql.ErrNoRows {
-				return orderItems, err
-			}
 			return orderItems, fmt.Errorf("GetOrderItemsByOrderDetailsID %d: %v", orderItem.OrderItemID, err)
 		}
 		orderItems = append(orderItems, orderItem)
 	}
 	if err := rows.Err(); err != nil {
+		if err == sql.ErrNoRows {
+			return orderItems, nil
+		}
+
 		return orderItems, fmt.Errorf("GetOrderItemsByOrderDetailsID %v:", err)
 	}
 	return orderItems, nil

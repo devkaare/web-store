@@ -1,6 +1,7 @@
 package cartitem
 
 import (
+	"database/sql"
 	"fmt"
 )
 
@@ -11,10 +12,15 @@ func (r *Repo) DeleteCartItemByCartItemID(cartItemID int) error {
 	}
 	count, err := result.RowsAffected()
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil
+		}
+
 		return fmt.Errorf("DeleteCartItemByCartItemID %d: %v", cartItemID, err)
 	}
 	if count < 1 {
 		return fmt.Errorf("DeleteCartItemByCartItemID %d: cart item not found", cartItemID)
 	}
+
 	return nil
 }

@@ -19,14 +19,15 @@ func (r *Repo) GetCartItemsByShoppingSessionID(shoppingSessionID string) ([]mode
 	for rows.Next() {
 		var cartItem model.CartItem
 		if err := rows.Scan(&cartItem.CartItemID, &cartItem.ShoppingSessionID, &cartItem.ProductID, &cartItem.Quantity); err != nil {
-			if err == sql.ErrNoRows {
-				return cartItems, err
-			}
 			return cartItems, fmt.Errorf("GetCartItemsByShoppingSessionID %s: %v", cartItem.ShoppingSessionID, err)
 		}
 		cartItems = append(cartItems, cartItem)
 	}
 	if err := rows.Err(); err != nil {
+		if err == sql.ErrNoRows {
+			return cartItems, nil
+		}
+
 		return cartItems, fmt.Errorf("GetCartItemsByShoppingSessionID %v:", err)
 	}
 	return cartItems, nil
