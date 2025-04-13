@@ -111,12 +111,12 @@ func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	w.Write([]byte("<p>Successfully deleted item from cart!</p>"))
+	w.Write([]byte("<p>Successfully deleted item from cart! <a href=\"/cart\">Refresh</a></p>"))
 	return
 }
 
 func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
-	cartItemID, _ := strconv.Atoi(r.URL.Query().Get("cart_item_id"))
+	cartItemID, _ := strconv.Atoi(r.FormValue("cart_item_id"))
 
 	cartItem, err := c.Repo.GetCartItemByCartItemID(cartItemID)
 	if err != nil {
@@ -128,7 +128,10 @@ func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 	cartItem.Quantity = cartItem.Quantity + 1
 
 	err = c.Repo.UpdateCartItemQuantityByCartItemID(cartItem)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	} else if err != nil {
 		log.Printf("IncreaseCartItemQuantityByCartItemID: error updating cart item by cart item ID: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -139,7 +142,7 @@ func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 }
 
 func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
-	cartItemID, _ := strconv.Atoi(r.URL.Query().Get("cart_item_id"))
+	cartItemID, _ := strconv.Atoi(r.FormValue("cart_item_id"))
 
 	cartItem, err := c.Repo.GetCartItemByCartItemID(cartItemID)
 	if err != nil {
@@ -151,7 +154,10 @@ func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 	cartItem.Quantity = cartItem.Quantity - 1
 
 	err = c.Repo.UpdateCartItemQuantityByCartItemID(cartItem)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	} else if err != nil {
 		log.Printf("DecreaseCartItemQuantityByCartItemID: error updating cart item by cart item ID: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -161,26 +167,26 @@ func (c *CartItem) DecreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r
 	return
 }
 
-func (c *CartItem) UpdateCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
-	cartItemID, _ := strconv.Atoi(r.URL.Query().Get("cart_item_id"))
-	quantity, _ := strconv.Atoi(r.URL.Query().Get("quantity"))
-
-	cartItem, err := c.Repo.GetCartItemByCartItemID(cartItemID)
-	if err != nil {
-		log.Printf("UpdateCartItemQuantityByCartItemID: error fetching cart item by cart item ID: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	cartItem.Quantity = quantity
-
-	err = c.Repo.UpdateCartItemQuantityByCartItemID(cartItem)
-	if err != nil {
-		log.Printf("UpdateCartItemQuantityByCartItemID: error updating cart item by cart item ID: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	fmt.Fprintf(w, "<p id=\"quantity-%d\">%d</p>", cartItem.CartItemID, cartItem.Quantity)
-	return
-}
+// func (c *CartItem) UpdateCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
+// 	cartItemID, _ := strconv.Atoi(r.URL.Query().Get("cart_item_id"))
+// 	quantity, _ := strconv.Atoi(r.URL.Query().Get("quantity"))
+//
+// 	cartItem, err := c.Repo.GetCartItemByCartItemID(cartItemID)
+// 	if err != nil {
+// 		log.Printf("UpdateCartItemQuantityByCartItemID: error fetching cart item by cart item ID: %v", err)
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		return
+// 	}
+//
+// 	cartItem.Quantity = quantity
+//
+// 	err = c.Repo.UpdateCartItemQuantityByCartItemID(cartItem)
+// 	if err != nil {
+// 		log.Printf("UpdateCartItemQuantityByCartItemID: error updating cart item by cart item ID: %v", err)
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		return
+// 	}
+//
+// 	fmt.Fprintf(w, "<p id=\"quantity-%d\">%d</p>", cartItem.CartItemID, cartItem.Quantity)
+// 	return
+// }

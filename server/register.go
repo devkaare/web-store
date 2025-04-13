@@ -61,7 +61,7 @@ func (s *Server) registerCartRoutes(r chi.Router) {
 	r.Delete("/delete", cartItemHandler.DeleteCartItemByCartItemID)
 	r.Patch("/add", cartItemHandler.IncreaseCartItemQuantityByCartItemID)
 	r.Patch("/remove", cartItemHandler.DecreaseCartItemQuantityByCartItemID)
-	r.Patch("/update", cartItemHandler.UpdateCartItemQuantityByCartItemID)
+	// r.Patch("/update", cartItemHandler.UpdateCartItemQuantityByCartItemID)
 	r.Post("/{product_id}", cartItemHandler.CreateCartItem)
 }
 

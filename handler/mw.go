@@ -67,6 +67,11 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 			return
 		}
 
+		if session == nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
 		shoppingSession, err = a.ShoppingSessionRepo.GetShoppingSessionBySessionID(session.SessionID)
 		if err == sql.ErrNoRows {
 			shoppingSession = &model.ShoppingSession{
