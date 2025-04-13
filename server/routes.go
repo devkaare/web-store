@@ -33,7 +33,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Route("/utils", s.registerUtilsRoutes)
 	r.Route("/users", s.registerUserRoutes)
 	r.Route("/products", s.registerProductRoutes)
-	r.Route("/carts", s.registerCartRoutes)
+	r.Route("/cart", s.registerCartRoutes)
 	r.Route("/sessions", s.registerSessionRoutes)
 	r.Route("/auth", s.registerAuthRoutes)
 

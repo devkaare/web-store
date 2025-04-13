@@ -30,7 +30,7 @@ func NewUserHandler(db *sql.DB) *User {
 
 func (u *User) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := u.Repo.GetAllUsers()
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -53,7 +53,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hashedPassword, err := hash.HashPassword(password)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -66,7 +66,7 @@ func (u *User) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	userID, err := u.Repo.CreateUser(user)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -82,7 +82,11 @@ func (u *User) GetUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	user, err := u.Repo.GetUserByUserID(userID)
-	if checkIfNotErrNoRows(err) {
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -96,13 +100,13 @@ func (u *User) DeleteUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	_, err := u.Repo.GetUserByUserID(userID)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	err = u.Repo.DeleteUserByUserID(userID)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -112,7 +116,11 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	userID, _ := strconv.Atoi(chi.URLParam(r, "id"))
 
 	_, err := u.Repo.GetUserByUserID(userID)
-	if checkIfNotErrNoRows(err) {
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -121,7 +129,7 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 
 	hashedPassword, err := hash.HashPassword(password)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -133,7 +141,7 @@ func (u *User) UpdateUserByUserID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = u.Repo.UpdateUserByUserID(user)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

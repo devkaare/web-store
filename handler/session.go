@@ -3,6 +3,7 @@ package handler
 import (
 	"database/sql"
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/devkaare/web-store/model"
@@ -28,7 +29,12 @@ func NewSessionHandler(db *sql.DB) *Session {
 
 func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
-	if checkIfErrNoCookie(err) {
+	if err != nil {
+		if err == http.ErrNoCookie {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -36,7 +42,11 @@ func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 	sessionID := cookie.Value
 
 	_, err = s.Repo.GetSessionBySessionID(sessionID)
-	if checkIfErrNoRows(err) {
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -47,7 +57,11 @@ func (s *Session) Welcome(w http.ResponseWriter, r *http.Request) {
 
 func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
-	if checkIfErrNoRows(err) {
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -55,7 +69,11 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	sessionID := cookie.Value
 
 	session, err := s.Repo.GetSessionBySessionID(sessionID)
-	if checkIfErrNoRows(err) {
+	if err != nil {
+		if err == sql.ErrNoRows {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -68,13 +86,13 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = s.Repo.CreateSession(newSession)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	err = s.Repo.DeleteSessionBySessionID(sessionID)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -87,7 +105,12 @@ func (s *Session) Refresh(w http.ResponseWriter, r *http.Request) {
 
 func (s *Session) LogOut(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
-	if checkIfErrNoCookie(err) {
+	if err != nil {
+		if err == http.ErrNoCookie {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -95,7 +118,7 @@ func (s *Session) LogOut(w http.ResponseWriter, r *http.Request) {
 	sessionID := cookie.Value
 
 	err = s.Repo.DeleteSessionBySessionID(sessionID)
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -103,7 +126,7 @@ func (s *Session) LogOut(w http.ResponseWriter, r *http.Request) {
 
 func (s *Session) GetAllSessions(w http.ResponseWriter, r *http.Request) {
 	sessions, err := s.Repo.GetAllSessions()
-	if check(err) {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

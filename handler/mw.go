@@ -13,7 +13,12 @@ import (
 func (a *Authentication) SessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookie, err := r.Cookie("session_token")
-		if checkIfErrNoCookie(err) {
+		if err != nil {
+			if err == http.ErrNoCookie {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -21,7 +26,12 @@ func (a *Authentication) SessionMiddleware(next http.Handler) http.Handler {
 		sessionID := cookie.Value
 
 		session, err := sessionHandler.Repo.GetSessionBySessionID(sessionID)
-		if checkIfErrNoRows(err) {
+		if err != nil {
+			if err == sql.ErrNoRows {
+				w.WriteHeader(http.StatusUnauthorized)
+				return
+			}
+			log.Println(err)
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
