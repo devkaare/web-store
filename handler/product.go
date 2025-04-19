@@ -65,7 +65,7 @@ func (p *Product) CreateProduct(w http.ResponseWriter, r *http.Request) {
 
 	workingDir, _ := os.Getwd()
 
-	dst, err := os.Create(filepath.Join(workingDir, "views/assets/product-imgs/", imagePath))
+	dst, err := os.Create(filepath.Join(workingDir, "views/assets/product_imgs/", imagePath))
 	if err != nil {
 		log.Printf("CreateProduct: error creating file: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
