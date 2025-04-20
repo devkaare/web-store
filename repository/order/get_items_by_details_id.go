@@ -10,7 +10,7 @@ import (
 func (r *Repo) GetOrderItemsByOrderDetailsID(orderDetailsID int) ([]model.OrderItem, error) {
 	var orderItems []model.OrderItem
 
-	rows, err := r.Client.Query("SELECT order_item_id, user_id, quantity FROM order_items WHERE order_details_id = $1", orderDetailsID)
+	rows, err := r.Client.Query("SELECT order_item_id, order_details_id, product_id, quantity FROM order_items WHERE order_details_id = $1", orderDetailsID)
 	if err != nil {
 		return orderItems, err
 	}

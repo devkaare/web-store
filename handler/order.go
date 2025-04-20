@@ -72,7 +72,7 @@ func (o *Order) CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 	user, err := o.Session.GetSessionBySessionID(shoppingSession.SessionID)
 	if err != nil {
-		log.Printf("CreateOrder: error fetching order user: %v", err)
+		log.Printf("CreateOrder: error fetching session user: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -145,12 +145,12 @@ func (o *Order) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	// err = o.ShoppingSession.DeleteShoppingSessionBySessionID(shoppingSessionID)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
+	err = o.ShoppingSession.DeleteShoppingSessionBySessionID(shoppingSessionID)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	log.Println(orderDetailsID)
 
@@ -162,14 +162,14 @@ func (o *Order) GetOrderByOrderDetailsID(w http.ResponseWriter, r *http.Request)
 
 	orderDetails, err := o.OrderRepo.GetOrderDetailsByOrderDetailsID(orderDetailsID)
 	if err != nil && err != sql.ErrNoRows {
-		log.Printf("CreateOrder: error fetching order: %v", err)
+		log.Printf("GetOrderByOrderDetailsID: error fetching order: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	items, err := o.OrderRepo.GetOrderItemsByOrderDetailsID(orderDetailsID)
 	if err != nil {
-		log.Printf("CreateOrder: error fetching order: %v", err)
+		log.Printf("GetOrderByOrderDetailsID: error fetching order: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -181,7 +181,7 @@ func (o *Order) GetOrderByOrderDetailsID(w http.ResponseWriter, r *http.Request)
 
 		product, err := o.ProductRepo.GetProductByProductID(item.ProductID)
 		if err != nil {
-			log.Printf("CreateOrder: error fetching product: %v", err)
+			log.Printf("GetOrderByOrderDetailsID: error fetching product: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
