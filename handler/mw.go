@@ -45,7 +45,6 @@ import (
 func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var session *model.Session
-		var shoppingSession *model.ShoppingSession
 
 		cookie, err := r.Cookie("session_token")
 		if err == http.ErrNoCookie {
@@ -72,7 +71,10 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 			return
 		}
 
-		shoppingSession, err = a.ShoppingSessionRepo.GetShoppingSessionBySessionID(session.SessionID)
+		var existingShoppingSession *model.ShoppingSession
+		var shoppingSession *model.ShoppingSession
+
+		existingShoppingSession, err = a.ShoppingSessionRepo.GetShoppingSessionBySessionID(session.SessionID)
 		if err == sql.ErrNoRows {
 			shoppingSession = &model.ShoppingSession{
 				ShoppingSessionID: uuid.New().String(),
@@ -87,14 +89,14 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 				return
 			}
 
-			shoppingSession.ShoppingSessionID = uuid.New().String()
+			existingShoppingSession = shoppingSession
 		} else if err != nil {
 			log.Printf("ShoppingSessionMiddleware: error fetching shopping session by shopping session ID: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "shopping_session_id", shoppingSession.ShoppingSessionID)
+		ctx := context.WithValue(r.Context(), "shopping_session_id", existingShoppingSession.ShoppingSessionID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
