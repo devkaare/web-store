@@ -11,6 +11,7 @@ import (
 	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository"
 	"github.com/devkaare/web-store/repository/cart_item"
+	// "github.com/devkaare/web-store/repository/shopping_session"
 	"github.com/devkaare/web-store/views"
 	"github.com/go-chi/chi/v5"
 )
@@ -21,6 +22,8 @@ type CartItem struct {
 
 var cartItemHandler = &CartItem{
 	Repo: &cartitem.Repo{},
+	// CartItemRepo: &cartitem.Repo{},
+	// ShoppingSessionRepo: &shoppingsession.Repo{},
 }
 
 func NewCartItemHandler(db *sql.DB) *CartItem {
