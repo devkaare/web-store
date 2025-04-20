@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"context"
+	// "context"
 	"database/sql"
 	"fmt"
 	"io"
@@ -17,7 +17,7 @@ import (
 	"github.com/devkaare/web-store/repository/product"
 	"github.com/devkaare/web-store/slug"
 	"github.com/devkaare/web-store/views"
-	"github.com/devkaare/web-store/views/components"
+	// "github.com/devkaare/web-store/views/components"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -140,27 +140,27 @@ func (p *Product) GetProductByProductID(w http.ResponseWriter, r *http.Request) 
 	templ.Handler(views.ProductPage(product)).ServeHTTP(w, r)
 }
 
-func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
-	search := r.FormValue("search")
-	if search == "" {
-		return
-	}
-
-	products, err := p.Repo.GetProductsBySearch(search)
-	if err == sql.ErrNoRows {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("<p>Couldn't find the product you were looking for</p>"))
-		return
-	}
-	if err != nil && err != sql.ErrNoRows {
-		log.Printf("GetProductsBySearch: error searching for products: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	searchResults := components.SearchResults(products)
-	searchResults.Render(context.Background(), w)
-}
+// func (p *Product) GetProductsBySearch(w http.ResponseWriter, r *http.Request) {
+// 	search := r.FormValue("search")
+// 	if search == "" {
+// 		return
+// 	}
+//
+// 	products, err := p.Repo.GetProductsBySearch(search)
+// 	if err == sql.ErrNoRows {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		w.Write([]byte("<p>Couldn't find the product you were looking for</p>"))
+// 		return
+// 	}
+// 	if err != nil && err != sql.ErrNoRows {
+// 		log.Printf("GetProductsBySearch: error searching for products: %v", err)
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		return
+// 	}
+//
+// 	searchResults := components.SearchResults(products)
+// 	searchResults.Render(context.Background(), w)
+// }
 
 func (p *Product) GetProductsByCategoryID(w http.ResponseWriter, r *http.Request) {
 	categoryID, _ := strconv.Atoi(chi.URLParam(r, "category_id"))

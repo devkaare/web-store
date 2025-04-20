@@ -27,7 +27,7 @@ func (s *Server) registerProductRoutes(r chi.Router) {
 	productHandler := handler.NewProductHandler(s.db)
 
 	r.Post("/", productHandler.CreateProduct)
-	r.Post("/search", productHandler.GetProductsBySearch)
+	// r.Post("/search", productHandler.GetProductsBySearch)
 	r.Get("/categories/{category_id}", productHandler.GetProductsByCategoryID)
 	r.Get("/", productHandler.GetAllProducts)
 	r.Get("/{product_id}", productHandler.GetProductByProductID)
