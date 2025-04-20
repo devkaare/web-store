@@ -21,7 +21,10 @@ type Order struct {
 }
 
 var orderHandler = &Order{
-	OrderRepo: &order.Repo{},
+	OrderRepo:       &order.Repo{},
+	CartItemRepo:    &cartitem.Repo{},
+	ShoppingSession: &shoppingsession.Repo{},
+	Session:         &session.Repo{},
 }
 
 func NewOrderHandler(db *sql.DB) *Order {

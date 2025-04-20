@@ -19,34 +19,37 @@ type CartItemProp struct {
 	ImagePath         string
 }
 
-templ CartPage(cartItems []CartItemProp) {
+templ CartPage(cartItems []CartItemProp, total int) {
 	@components.Base("Cart") {
 		for _, p := range cartItems {
 			<div id="product">
-				<p id={ fmt.Sprintf("quantity-%d", p.CartItemID) }>{ fmt.Sprintf("%d", p.Quantity) }</p>
-				<form action="/cart/delete" method="post">
-					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
-					<input type="submit" value="DELETE"/>
-				</form>
-				<form hx-patch="/cart/add" hx-params="cart_item_id" hx-target={ fmt.Sprintf("#quantity-%d", p.CartItemID) } hx-swap="innerHTML">
-					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
-					<input type="submit" value="ADD"/>
-				</form>
-				<form hx-patch="/cart/remove" hx-params="cart_item_id" hx-target={ fmt.Sprintf("#quantity-%d", p.CartItemID) } hx-swap="innerHTML">
-					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
-					<input type="submit" value="REMOVE"/>
-				</form>
 				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product_imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
 				<div>
 					<a href={ templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) }>{ p.Name }</a>
 					<p>{ fmt.Sprintf("$%d", p.Price) }</p>
 				</div>
-			</div>
-			<div>
-				<form action="/checkout" method="post">
-					<input type="submit" value="CHECKOUT"/>
+				<p id={ fmt.Sprintf("quantity-%d", p.CartItemID) }>{ fmt.Sprintf("%d", p.Quantity) }</p>
+				<form action="/cart/delete" method="post">
+					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
+					<input type="submit" value="DELETE"/>
+				</form>
+				<form action="/cart/add" method="post">
+					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
+					<input type="submit" value="ADD"/>
+				</form>
+				<form action="/cart/remove" method="post">
+					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
+					<input type="submit" value="REMOVE"/>
 				</form>
 			</div>
 		}
+		<div>
+			<div>
+				<p>{  fmt.Sprintf("$%d", total) }</p>
+			</div>
+			<form action="/checkout" method="post">
+				<input type="submit" value="CHECKOUT"/>
+			</form>
+		</div>
 	}
 }
