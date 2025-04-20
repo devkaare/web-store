@@ -113,11 +113,11 @@ func (c *CartItem) GetCartItemsByShoppingSessionID(w http.ResponseWriter, r *htt
 		return
 	}
 
-	var cartProps []views.CartItemProp
+	var itemProps []views.CartItemProp
 
 	items, err := c.CartItemRepo.GetCartItemsByShoppingSessionID(shoppingSessionID)
 	if err == sql.ErrNoRows {
-		templ.Handler(views.CartPage(cartProps, shoppingSession.Total)).ServeHTTP(w, r)
+		templ.Handler(views.CartPage(itemProps, shoppingSession.Total)).ServeHTTP(w, r)
 		return
 	}
 	if err != nil && err != sql.ErrNoRows {
@@ -134,20 +134,20 @@ func (c *CartItem) GetCartItemsByShoppingSessionID(w http.ResponseWriter, r *htt
 			return
 		}
 
-		var cartProp views.CartItemProp
+		var itemProp views.CartItemProp
 
-		cartProp.CartItemID = ci.CartItemID
-		cartProp.ShoppingSessionID = ci.ShoppingSessionID
-		cartProp.ProductID = ci.ProductID
-		cartProp.Quantity = ci.Quantity
-		cartProp.Name = product.Name
-		cartProp.Price = product.Price
-		cartProp.ImagePath = product.ImagePath
+		itemProp.CartItemID = ci.CartItemID
+		itemProp.ShoppingSessionID = ci.ShoppingSessionID
+		itemProp.ProductID = ci.ProductID
+		itemProp.Quantity = ci.Quantity
+		itemProp.Name = product.Name
+		itemProp.Price = product.Price
+		itemProp.ImagePath = product.ImagePath
 
-		cartProps = append(cartProps, cartProp)
+		itemProps = append(itemProps, itemProp)
 	}
 
-	templ.Handler(views.CartPage(cartProps, shoppingSession.Total)).ServeHTTP(w, r)
+	templ.Handler(views.CartPage(itemProps, shoppingSession.Total)).ServeHTTP(w, r)
 }
 
 func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Request) {

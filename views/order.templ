@@ -6,6 +6,7 @@ import (
 
 	"github.com/devkaare/web-store/views/components"
 	"github.com/devkaare/web-store/slug"
+	"github.com/devkaare/web-store/model"
 )
 
 type OrderItemProp struct {
@@ -18,9 +19,8 @@ type OrderItemProp struct {
 	ImagePath      string
 }
 
-templ OrderPage(orderItems []OrderItemProp) {
+templ OrderPage(orderItems []OrderItemProp, orderDetails *model.OrderDetails) {
 	@components.Base("Order") {
-		<h1>{ fmt.Sprintf("Order ID: %d", orderItems[0].OrderDetailsID) }</h1>
 		for _, p := range orderItems {
 			<div>
 				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product_imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
@@ -31,5 +31,9 @@ templ OrderPage(orderItems []OrderItemProp) {
 				<p>{ fmt.Sprintf("%d", p.Quantity) }</p>
 			</div>
 		}
+		<div>
+			<h4>Total:</h4>
+			<p>{ fmt.Sprintf("$%d", orderDetails.Total ) }</p>
+		</div>
 	}
 }

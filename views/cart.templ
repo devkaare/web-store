@@ -45,9 +45,10 @@ templ CartPage(cartItems []CartItemProp, total int) {
 		}
 		<div>
 			<div>
+				<h4>Total:</h4>
 				<p>{  fmt.Sprintf("$%d", total) }</p>
 			</div>
-			<form action="/checkout" method="post">
+			<form action="/order" method="post">
 				<input type="submit" value="CHECKOUT"/>
 			</form>
 		</div>

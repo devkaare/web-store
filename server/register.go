@@ -75,9 +75,18 @@ func (s *Server) registerSessionRoutes(r chi.Router) {
 }
 
 func (s *Server) registerOrderRoutes(r chi.Router) {
-	// orderHandler := handler.NewOrderHandler(s.db)
-	//
-	// r.Post("/", orderHandler.CreateOrder)
+	authHandler := &handler.Authentication{
+		UserRepo:            handler.NewUserHandler(s.db).Repo,
+		SessionRepo:         handler.NewSessionHandler(s.db).Repo,
+		ShoppingSessionRepo: handler.NewShoppingSessionHandler(s.db).Repo,
+	}
+
+	r.Use(authHandler.ShoppingSessionMiddleware)
+
+	orderHandler := handler.NewOrderHandler(s.db)
+
+	r.Post("/", orderHandler.CreateOrder)
+	r.Get("/{order_details_id}", orderHandler.GetOrderByOrderDetailsID)
 }
 
 func (s *Server) registerCheckoutRoutes(r chi.Router) {
