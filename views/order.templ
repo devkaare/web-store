@@ -23,7 +23,7 @@ templ OrderPage(orderItems []OrderItemProp) {
 		<h1>{ fmt.Sprintf("Order ID: %d", orderItems[0].OrderDetailsID) }</h1>
 		for _, p := range orderItems {
 			<div>
-				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product-imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
+				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product_imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
 				<div>
 					<a href={ templ.URL(fmt.Sprintf("/listings/%d", p.ProductID)) }>{ p.Name }</a>
 					<p>{ fmt.Sprintf("$%d", p.Price) }</p>

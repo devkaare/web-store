@@ -36,7 +36,7 @@ templ CartPage(cartItems []CartItemProp) {
 					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
 					<input type="submit" value="REMOVE"/>
 				</form>
-				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product-imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
+				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product_imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
 				<div>
 					<a href={ templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) }>{ p.Name }</a>
 					<p>{ fmt.Sprintf("$%d", p.Price) }</p>

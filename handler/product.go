@@ -214,7 +214,7 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 
 	workingDir, _ := os.Getwd()
 
-	err = os.Remove(filepath.Join(workingDir, "views/assets/product-imgs", imagePath))
+	err = os.Remove(filepath.Join(workingDir, "views/assets/product_imgs", imagePath))
 	if err != nil {
 		log.Printf("DeleteProductByProductID: error deleting file: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -223,35 +223,3 @@ func (p *Product) DeleteProductByProductID(w http.ResponseWriter, r *http.Reques
 
 	w.Write([]byte("<p>Successfully deleted product! <a href=\"/admin\">Refresh</a></p></p>"))
 }
-
-// func (p *Product) UpdateProductByProductID(w http.ResponseWriter, r *http.Request) {
-// 	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
-//
-// 	_, err := p.Repo.GetProductByProductID(productID)
-// 	if checkIfNotErrNoRows(err) {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		return
-// 	}
-//
-// 	productName := r.FormValue("product_name")
-// 	imagePath := r.FormValue("image_path")
-// 	price, _ := strconv.Atoi(r.FormValue("price"))
-//
-// 	product := &model.Product{
-// 		ProductID: productID,
-// 		Name:      productName,
-// 		Price:     price,
-// 		ImagePath: imagePath,
-// 	}
-//
-// 	err = p.Repo.UpdateProductByProductID(product)
-//      if err == sql.ErrNoRows {
-//      	w.WriteHeader(http.StatusBadRequest)
-//		return
-//      }
-//      if err != nil && err != sql.ErrNoRows {
-//      	log.Printf("UpdateProductByProductID: error updating product: %v", err)
-//      	w.WriteHeader(http.StatusInternalServerError)
-//      	return
-//      }
-// }
