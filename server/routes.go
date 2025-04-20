@@ -29,6 +29,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Route("/cart", s.registerCartRoutes)
 	r.Route("/sessions", s.registerSessionRoutes)
 	r.Route("/auth", s.registerAuthRoutes)
+	r.Route("/order", s.registerOrderRoutes)
+	r.Route("/checkout", s.registerCheckoutRoutes)
 	r.Route("/", s.registerRoutes)
 
 	fileServer := http.StripPrefix("/assets/", http.FileServer(http.Dir("./views/assets")))

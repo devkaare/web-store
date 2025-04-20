@@ -13,7 +13,7 @@ import (
 type Checkout struct{}
 
 func NewCheckoutHandler() *Checkout {
-	stripe.Key = os.Getenv("STRIPE_KEY")
+	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
 
 	return &Checkout{}
 }

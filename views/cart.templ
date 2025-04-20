@@ -42,6 +42,11 @@ templ CartPage(cartItems []CartItemProp) {
 					<p>{ fmt.Sprintf("$%d", p.Price) }</p>
 				</div>
 			</div>
+			<div>
+				<form action="/checkout" method="post">
+					<input type="submit" value="CHECKOUT"/>
+				</form>
+			</div>
 		}
 	}
 }

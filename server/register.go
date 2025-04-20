@@ -74,6 +74,21 @@ func (s *Server) registerSessionRoutes(r chi.Router) {
 	r.Get("/logout", sessionHandler.LogOut)
 }
 
+func (s *Server) registerOrderRoutes(r chi.Router) {
+	// orderHandler := handler.NewOrderHandler(s.db)
+	//
+	// r.Post("/", orderHandler.CreateOrder)
+}
+
+func (s *Server) registerCheckoutRoutes(r chi.Router) {
+	checkoutHandler := handler.NewCheckoutHandler()
+
+	r.Post("/", checkoutHandler.CreateCheckoutSession)
+
+	r.Handle("/success", templ.Handler(views.SuccessPage()))
+	r.Handle("/cancel", templ.Handler(views.CancelPage()))
+}
+
 func (s *Server) registerRoutes(r chi.Router) {
 	r.Handle("/", templ.Handler(views.IndexPage()))
 	r.Handle("/signup", templ.Handler(views.SignUpPage()))
