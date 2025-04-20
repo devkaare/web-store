@@ -143,6 +143,5 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 		Secure:   true,
 	})
 
-	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("<p>Successfully logged in! Go to products <a href=\"/\">here</a></p>"))
 }
