@@ -47,14 +47,14 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 	verifPass := r.FormValue("verif_password")
 
 	if firstName == "" || lastName == "" || email == "" || password == "" || verifPass == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("<p>Missing required fields</p>"))
+		// w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("<p>Missing required fields <a href=\"/signup\">Try Again</a></p>"))
 		return
 	}
 
 	if password != verifPass {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("<p>Please make sure that both passwords match!</p>"))
+		// w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("<p>Please make sure that both passwords match! <a href=\"/signup\">Try Again</a></p>"))
 		return
 	}
 
@@ -65,8 +65,8 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !(existingUser.FirstName == "" || existingUser.LastName == "" || existingUser.Email == "" || existingUser.Password == "") {
-		w.WriteHeader(http.StatusConflict)
-		w.Write([]byte("<p>User with email already exists</p>"))
+		// w.WriteHeader(http.StatusConflict)
+		w.Write([]byte("<p>User with email already exists <a href=\"/signup\">Try Again</a></p>"))
 		return
 	}
 
@@ -89,7 +89,8 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/signin", http.StatusSeeOther)
+	// w.WriteHeader(http.StatusOK)
+	w.Write([]byte("<p>Successfully created account! <a href=\"/signin\">Sign In</a></p>"))
 }
 
 func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +98,7 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 	expectedPassword := r.FormValue("password")
 
 	if email == "" || expectedPassword == "" {
-		w.WriteHeader(http.StatusBadRequest)
+		// w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("<p>Missing required fields</p>"))
 		return
 	}
@@ -105,8 +106,8 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 	existingUser, err := a.UserRepo.GetUserByEmail(email)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("Invalid email or password"))
+			// w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte("<p>Invalid email or password <a href=\"/signin\">Try Again</a></p>"))
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
@@ -114,8 +115,8 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !hash.CheckPasswordHash(expectedPassword, existingUser.Password) {
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Invalid email or password"))
+		// w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("<p>Invalid email or password <a href=\"/signin\">Try Again</a></p>"))
 		return
 	}
 
@@ -143,5 +144,6 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 		Secure:   true,
 	})
 
-	w.Write([]byte("<p>Successfully logged in! Go to products <a href=\"/\">here</a></p>"))
+	// w.WriteHeader(http.StatusOK)
+	w.Write([]byte("<p>Successfully logged in! <a href=\"/\">Go To Catalog</a></p>"))
 }
