@@ -96,6 +96,8 @@ func (a *Authentication) ShoppingSessionMiddleware(next http.Handler) http.Handl
 			return
 		}
 
+		existingShoppingSession.SessionID = session.SessionID
+
 		ctx := context.WithValue(r.Context(), "shopping_session_id", existingShoppingSession.ShoppingSessionID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

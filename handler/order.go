@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/a-h/templ"
@@ -39,6 +40,8 @@ var orderHandler = &Order{
 }
 
 func NewOrderHandler(db *sql.DB) *Order {
+	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
+
 	orderHandler.OrderRepo = repository.GetOrder(func() *sql.DB {
 		return db
 	})
@@ -62,14 +65,14 @@ func (o *Order) CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 	shoppingSession, err := o.ShoppingSession.GetShoppingSessionByShoppingSessionID(shoppingSessionID)
 	if err != nil {
-		log.Println(err)
+		log.Printf("CreateOrder: error fetching shopping session: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	user, err := o.Session.GetSessionBySessionID(shoppingSession.SessionID)
 	if err != nil {
-		log.Println(err)
+		log.Printf("CreateOrder: error fetching order user: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -82,14 +85,14 @@ func (o *Order) CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 	orderDetailsID, err := o.OrderRepo.CreateOrderDetails(orderDetails)
 	if err != nil {
-		log.Println(err)
+		log.Printf("CreateOrder: error fetching order details: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	cartItems, err := o.CartItemRepo.GetCartItemsByShoppingSessionID(shoppingSessionID)
 	if err != nil {
-		log.Println(err)
+		log.Printf("CreateOrder: error fetching shopping session: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -106,14 +109,14 @@ func (o *Order) CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 		_, err := o.OrderRepo.CreateOrderItem(item)
 		if err != nil {
-			log.Println(err)
+			log.Printf("CreateOrder: error creating order: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		product, err := o.ProductRepo.GetProductByProductID(item.ProductID)
 		if err != nil {
-			log.Println(err)
+			log.Printf("CreateOrder: error fetching product: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -133,8 +136,8 @@ func (o *Order) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	params := &stripe.CheckoutSessionParams{
 		Mode:       stripe.String(string(stripe.CheckoutSessionModePayment)),
 		LineItems:  items,
-		SuccessURL: stripe.String("http://localhost:3000/checkout/success"),
-		CancelURL:  stripe.String("http://localhost:3000/checkout/cancel"),
+		SuccessURL: stripe.String("http://localhost:3000/success"),
+		CancelURL:  stripe.String("http://localhost:3000/cancel"),
 	}
 
 	s, err := payment.New(params)
@@ -158,15 +161,15 @@ func (o *Order) GetOrderByOrderDetailsID(w http.ResponseWriter, r *http.Request)
 	orderDetailsID, _ := strconv.Atoi(chi.URLParam(r, "order_details_id"))
 
 	orderDetails, err := o.OrderRepo.GetOrderDetailsByOrderDetailsID(orderDetailsID)
-	if err != nil {
-		log.Println(err)
+	if err != nil && err != sql.ErrNoRows {
+		log.Printf("CreateOrder: error fetching order: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	items, err := o.OrderRepo.GetOrderItemsByOrderDetailsID(orderDetailsID)
 	if err != nil {
-		log.Println(err)
+		log.Printf("CreateOrder: error fetching order: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -178,7 +181,7 @@ func (o *Order) GetOrderByOrderDetailsID(w http.ResponseWriter, r *http.Request)
 
 		product, err := o.ProductRepo.GetProductByProductID(item.ProductID)
 		if err != nil {
-			log.Println(err)
+			log.Printf("CreateOrder: error fetching product: %v", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
