@@ -22,7 +22,7 @@ CMD ["air", "-c", ".air.toml"]
 FROM base AS prod
 WORKDIR / 
 COPY --from=base /main ./main 
-COPY --from=base /app/views /views 
+COPY --from=base /app/views ./views 
 # COPY --from=base . .
 EXPOSE ${PORT}
 CMD ["./main"]
