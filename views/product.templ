@@ -1,6 +1,7 @@
 package views
 
 import (
+	"strconv"
 	"fmt"
 	"path/filepath"
 
@@ -18,7 +19,8 @@ templ ProductPage(p *model.Product) {
 				<p>{ fmt.Sprintf("$%d", p.Price) }</p>
 			</div>
 			<p>{ p.Description }</p>
-			<form hx-post={ string(templ.URL(fmt.Sprintf("/cart/%d", p.ProductID))) }>
+			<form action="/cart" method="post">
+				<input id="product_id" name="product_id" type="hidden" value={ strconv.Itoa(p.ProductID) }/>
 				<input type="number" id="quantity" name="quantity" min="1" max="50" value="1"/>
 				<input type="submit" value="ADD TO CART"/>
 			</form>

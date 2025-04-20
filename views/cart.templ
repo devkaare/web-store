@@ -24,14 +24,10 @@ templ CartPage(cartItems []CartItemProp) {
 		for _, p := range cartItems {
 			<div id="product">
 				<p id={ fmt.Sprintf("quantity-%d", p.CartItemID) }>{ fmt.Sprintf("%d", p.Quantity) }</p>
-				<form hx-delete="/cart/delete" hx-params="cart_item_id" hx-target="#product" hx-swap="outerHTML">
+				<form action="/cart/delete" method="post">
 					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
 					<input type="submit" value="DELETE"/>
 				</form>
-				// 				<form action="/cart/delete" method="post">
-				// 					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
-				// 					<input type="submit" value="DELETE"/>
-				// 				</form>
 				<form hx-patch="/cart/add" hx-params="cart_item_id" hx-target={ fmt.Sprintf("#quantity-%d", p.CartItemID) } hx-swap="innerHTML">
 					<input id="cart_item_id" name="cart_item_id" type="hidden" value={ strconv.Itoa(p.CartItemID) }/>
 					<input type="submit" value="ADD"/>

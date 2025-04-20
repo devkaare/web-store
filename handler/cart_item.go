@@ -13,7 +13,6 @@ import (
 	"github.com/devkaare/web-store/repository/cart_item"
 	// "github.com/devkaare/web-store/repository/shopping_session"
 	"github.com/devkaare/web-store/views"
-	"github.com/go-chi/chi/v5"
 )
 
 type CartItem struct {
@@ -46,7 +45,7 @@ func NewCartItemHandler(db *sql.DB) *CartItem {
 
 func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 	shoppingSessionID := r.Context().Value("shopping_session_id").(string)
-	productID, _ := strconv.Atoi(chi.URLParam(r, "product_id"))
+	productID, _ := strconv.Atoi(r.FormValue("product_id"))
 	quantity, _ := strconv.Atoi(r.FormValue("quantity"))
 	// log.Printf("Found shopping session id: %d, product id: %d, quantity: %d\n", shoppingSessionID, productID, quantity)
 
@@ -62,6 +61,8 @@ func (c *CartItem) CreateCartItem(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	http.Redirect(w, r, fmt.Sprintf("/products/%d", productID), http.StatusSeeOther)
 }
 
 func (c *CartItem) GetCartItemsByShoppingSessionID(w http.ResponseWriter, r *http.Request) {
@@ -105,7 +106,7 @@ func (c *CartItem) GetCartItemsByShoppingSessionID(w http.ResponseWriter, r *htt
 }
 
 func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Request) {
-	cartItemID, _ := strconv.Atoi(r.URL.Query().Get("cart_item_id"))
+	cartItemID, _ := strconv.Atoi(r.FormValue("cart_item_id"))
 
 	err := c.Repo.DeleteCartItemByCartItemID(cartItemID)
 	if err != nil {
@@ -114,8 +115,7 @@ func (c *CartItem) DeleteCartItemByCartItemID(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	w.Write([]byte("<p>Successfully deleted item from cart! <a href=\"/cart\">Refresh</a></p>"))
-	return
+	http.Redirect(w, r, "/cart", http.StatusSeeOther)
 }
 
 func (c *CartItem) IncreaseCartItemQuantityByCartItemID(w http.ResponseWriter, r *http.Request) {
