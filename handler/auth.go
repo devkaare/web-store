@@ -89,7 +89,7 @@ func (a *Authentication) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	http.Redirect(w, r, "/signin", http.StatusSeeOther)
 }
 
 func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
@@ -144,4 +144,5 @@ func (a *Authentication) SignIn(w http.ResponseWriter, r *http.Request) {
 	})
 
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("<p>Successfully logged in! Go to products <a href=\"/\">here</a></p>"))
 }
