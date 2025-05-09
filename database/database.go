@@ -95,7 +95,8 @@ func createTables(db *sql.DB) {
 			order_details_id SERIAL PRIMARY KEY,
 			user_id INTEGER NOT NULL,
 			payment_id TEXT NOT NULL,
-			total INTEGER NOT NULL
+			total INTEGER NOT NULL,
+			payment_status TEXT NOT NULL DEFAULT 'pending'
 		)
 	`); err != nil {
 		log.Fatal(err)

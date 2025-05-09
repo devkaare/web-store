@@ -17,7 +17,7 @@ func (r *Repo) GetAllOrderDetails() ([]model.OrderDetails, error) {
 
 	for rows.Next() {
 		var orderDetails model.OrderDetails
-		if err := rows.Scan(&orderDetails.OrderDetailsID, &orderDetails.UserID, &orderDetails.PaymentID, &orderDetails.Total); err != nil {
+		if err := rows.Scan(&orderDetails.OrderDetailsID, &orderDetails.UserID, &orderDetails.PaymentID, &orderDetails.Total, &orderDetails.PaymentStatus); err != nil {
 			return allOrderDetails, fmt.Errorf("GetAllOrderDetails %d: %v", orderDetails.OrderDetailsID, err)
 		}
 		allOrderDetails = append(allOrderDetails, orderDetails)

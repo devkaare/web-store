@@ -11,7 +11,7 @@ func (r *Repo) GetOrderDetailsByOrderDetailsID(orderDetailsID int) (*model.Order
 	orderDetails := &model.OrderDetails{}
 
 	row := r.Client.QueryRow("SELECT * FROM order_details WHERE order_details_id = $1", orderDetailsID)
-	if err := row.Scan(&orderDetails.OrderDetailsID, &orderDetails.UserID, &orderDetails.PaymentID, &orderDetails.Total); err != nil {
+	if err := row.Scan(&orderDetails.OrderDetailsID, &orderDetails.UserID, &orderDetails.PaymentID, &orderDetails.Total, &orderDetails.PaymentStatus); err != nil {
 		if err == sql.ErrNoRows {
 			return orderDetails, err
 		}

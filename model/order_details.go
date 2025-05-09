@@ -5,4 +5,5 @@ type OrderDetails struct {
 	UserID         int
 	PaymentID      string
 	Total          int
+	PaymentStatus  string
 }

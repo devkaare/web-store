@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -10,11 +11,11 @@ import (
 	"github.com/a-h/templ"
 	"github.com/devkaare/web-store/model"
 	"github.com/devkaare/web-store/repository"
-	"github.com/devkaare/web-store/repository/cart_item"
+	cartitem "github.com/devkaare/web-store/repository/cart_item"
 	"github.com/devkaare/web-store/repository/order"
 	"github.com/devkaare/web-store/repository/product"
 	"github.com/devkaare/web-store/repository/session"
-	"github.com/devkaare/web-store/repository/shopping_session"
+	shoppingsession "github.com/devkaare/web-store/repository/shopping_session"
 	"github.com/devkaare/web-store/views"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -78,9 +79,10 @@ func (o *Order) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	orderDetails := &model.OrderDetails{
-		UserID:    user.UserID,
-		PaymentID: uuid.New().String(),
-		Total:     shoppingSession.Total,
+		UserID:        user.UserID,
+		PaymentID:     uuid.New().String(),
+		Total:         shoppingSession.Total,
+		PaymentStatus: "pending",
 	}
 
 	orderDetailsID, err := o.OrderRepo.CreateOrderDetails(orderDetails)
@@ -136,8 +138,11 @@ func (o *Order) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	params := &stripe.CheckoutSessionParams{
 		Mode:       stripe.String(string(stripe.CheckoutSessionModePayment)),
 		LineItems:  items,
-		SuccessURL: stripe.String("http://localhost:3000/success"),
+		SuccessURL: stripe.String(fmt.Sprintf("http://localhost:3000/order/success?order_id=%d", orderDetailsID)),
 		CancelURL:  stripe.String("http://localhost:3000/cancel"),
+		Metadata: map[string]string{
+			"order_id": fmt.Sprintf("%d", orderDetailsID),
+		},
 	}
 
 	s, err := payment.New(params)
@@ -198,4 +203,38 @@ func (o *Order) GetOrderByOrderDetailsID(w http.ResponseWriter, r *http.Request)
 	}
 
 	templ.Handler(views.OrderPage(itemProps, orderDetails)).ServeHTTP(w, r)
+}
+
+func (o *Order) HandleSuccess(w http.ResponseWriter, r *http.Request) {
+	orderID := r.URL.Query().Get("order_id")
+	if orderID == "" {
+		log.Printf("HandleSuccess: missing order_id parameter")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	orderDetailsID, err := strconv.Atoi(orderID)
+	if err != nil {
+		log.Printf("HandleSuccess: invalid order_id: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	orderDetails, err := o.OrderRepo.GetOrderDetailsByOrderDetailsID(orderDetailsID)
+	if err != nil {
+		log.Printf("HandleSuccess: error fetching order details: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	orderDetails.PaymentStatus = "completed"
+	err = o.OrderRepo.UpdateOrderDetailsByOrderDetailsID(orderDetails)
+	if err != nil {
+		log.Printf("HandleSuccess: error updating payment status: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect to the order details page
+	http.Redirect(w, r, fmt.Sprintf("/order/%d", orderDetailsID), http.StatusSeeOther)
 }

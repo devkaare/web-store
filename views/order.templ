@@ -25,7 +25,7 @@ templ OrderPage(orderItems []OrderItemProp, orderDetails *model.OrderDetails) {
 			<div>
 				<img src={ fmt.Sprintf("%s", templ.URL(filepath.Join("/assets/product_imgs/", fmt.Sprintf("%s.png", slug.CreateSlug(p.Name))))) }/>
 				<div>
-					<a href={ templ.URL(fmt.Sprintf("/listings/%d", p.ProductID)) }>{ p.Name }</a>
+					<a href={ templ.URL(fmt.Sprintf("/products/%d", p.ProductID)) }>{ p.Name }</a>
 					<p>{ fmt.Sprintf("$%d", p.Price) }</p>
 				</div>
 				<p>{ fmt.Sprintf("%d", p.Quantity) }</p>

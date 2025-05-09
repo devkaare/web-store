@@ -86,6 +86,7 @@ func (s *Server) registerOrderRoutes(r chi.Router) {
 	orderHandler := handler.NewOrderHandler(s.db)
 
 	r.Post("/", orderHandler.CreateOrder)
+	r.Get("/success", orderHandler.HandleSuccess)
 	r.Get("/{order_details_id}", orderHandler.GetOrderByOrderDetailsID)
 }
 
@@ -94,6 +95,5 @@ func (s *Server) registerRoutes(r chi.Router) {
 	r.Handle("/signup", templ.Handler(views.SignUpPage()))
 	r.Handle("/signin", templ.Handler(views.SignInPage()))
 	r.Handle("/admin", templ.Handler(views.AdminPanelPage()))
-	r.Handle("/success", templ.Handler(views.SuccessPage()))
 	r.Handle("/cancel", templ.Handler(views.CancelPage()))
 }

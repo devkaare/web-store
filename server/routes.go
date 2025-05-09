@@ -34,8 +34,6 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	fileServer := http.StripPrefix("/assets/", http.FileServer(http.Dir("./views/assets")))
 	r.Handle("/assets/*", fileServer)
-	// fileServer := http.FileServer(http.FS(views.Files))
-	// r.Handle("/assets/*", fileServer)
 
 	return r
 }

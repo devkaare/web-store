@@ -16,7 +16,8 @@ DB_USERNAME=admin
 DB_PASSWORD=password
 DB_SCHEMA=public
 API_KEY=
-STRIPE_KEY=
+STRIPE_PUBLIC_KEY=
+STRIPE_SECRET_KEY=
 ```
 
 Here are A FEW handy commands for using the API
